@@ -589,7 +589,7 @@ LayoutCanvas::paint_event ()
 #if QT_VERSION >= 0x050000
     img.setDevicePixelRatio (dpr ());
 #endif
-    painter.drawImage (QPoint (0, 0), img);
+    painter.drawImage (QPoint (0, 0), img);//最后渲染到界面的图片 	img.save("d:\\klayout2.jpg"); 可以调试
 
     if (fg_bitmaps () > 0) {
 

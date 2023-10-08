@@ -22,7 +22,9 @@
 
 #define STRINGIFY(s) _STRINGIFY(s)
 #define _STRINGIFY(s) #s
-
+#define KLAYOUT_VERSION 1.0.0.0
+#define KLAYOUT_VERSION_DATE 2020
+#define KLAYOUT_VERSION_REV 1.0.0.0
 const char *prg_exe_name        = "klayout";
 const char *prg_name            = "KLayout";
 
