@@ -236,7 +236,7 @@ GridNet::render_bg (const lay::Viewport &vp, ViewObjectCanvas &canvas)
     if (! bmp_canvas || ! bmp_canvas->bg_image ()) {
       return;
     }
-
+	
 	//bmp_canvas可见视图的
     PixelBufferPainter painter (*bmp_canvas->bg_image (), bmp_canvas->canvas_width (), bmp_canvas->canvas_height (), bmp_canvas->resolution ());
 
@@ -287,6 +287,7 @@ GridNet::render_bg (const lay::Viewport &vp, ViewObjectCanvas &canvas)
       int xoffset = int (floor (0.5 + fw * 2.5));
       int yoffset = int (floor (0.5 + fw * 2.5));
 
+
 	  painter.fill_rect(db::Point(xoffset, vp.height() - yoffset - rh / 2),
 		  db::Point(xoffset + int(floor(0.5 + dgrid)), vp.height() - yoffset + rh / 2),
 		  ruler_color);
@@ -297,8 +298,8 @@ GridNet::render_bg (const lay::Viewport &vp, ViewObjectCanvas &canvas)
 
       painter.draw_text (tl::sprintf ("%g \265m", grid * 2).c_str (), 
                          db::Point (xoffset + int (floor (0.5 + trans.ctrans (2 * grid))), vp.height () - yoffset - rh / 2 - 2),
-                         ruler_color, -1, 1);
-
+                         ruler_color, -1, 1); //画左下角刻度尺内容
+	
       if (mp_view->global_trans ().fp_trans () != db::DFTrans ()) {
 
         //  draw a small "F" indicating any global transformation
@@ -362,7 +363,6 @@ GridNet::render_bg (const lay::Viewport &vp, ViewObjectCanvas &canvas)
           }
         }
       }
-
     } else if (style == Crosses) {
 
       for (db::DCoord x = x1; x < x2 + grid * eps; x += grid) {
