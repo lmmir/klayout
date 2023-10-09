@@ -2272,7 +2272,7 @@ private:
 
   vector<R> m_u;
   R m_sin, m_cos;
-  R m_mag;
+  R m_mag; //放大系数
 };
 
 /**

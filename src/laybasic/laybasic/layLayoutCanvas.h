@@ -399,8 +399,8 @@ public:
 private:
   lay::LayoutViewBase *mp_view;
   tl::PixelBuffer *mp_image;
-  tl::PixelBuffer *mp_image_bg;
-  tl::PixelBuffer *mp_image_fg;
+  tl::PixelBuffer *mp_image_bg;//背景白布格子加左下角缩放系数
+  tl::PixelBuffer *mp_image_fg;//显示完成图像
   db::DBox m_precious_box;
   lay::Viewport m_viewport, m_viewport_l;
   tl::color_t m_background;
