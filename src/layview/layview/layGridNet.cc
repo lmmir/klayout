@@ -298,7 +298,7 @@ GridNet::render_bg (const lay::Viewport &vp, ViewObjectCanvas &canvas)
 
       painter.draw_text (tl::sprintf ("%g \265m", grid * 2).c_str (), 
                          db::Point (xoffset + int (floor (0.5 + trans.ctrans (2 * grid))), vp.height () - yoffset - rh / 2 - 2),
-                         ruler_color, -1, 1); //»­×óÏÂ½Ç¿Ì¶È³ßÄÚÈÝ
+                         ruler_color, -1, 1); //»­×óÏÂ½Ç¿Ì¶È³ßÎÄ×ÖÄÚÈÝ
 	
       if (mp_view->global_trans ().fp_trans () != db::DFTrans ()) {
 

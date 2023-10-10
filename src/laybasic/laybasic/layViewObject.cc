@@ -1024,9 +1024,12 @@ ViewObjectUI::pixel_to_um (const db::Point &pt) const
   return m_trans.inverted () * db::DPoint (pt.x (), widget_height () - 1 - pt.y ());
 }
 
+//该函数将视窗坐标转为微米坐标
 db::DPoint
 ViewObjectUI::pixel_to_um (const db::DPoint &pt) const
 {
+	//db::DPoint (pt.x (), widget_height () - 1 - pt.y ()) 这部分是视窗坐标转为画布坐标
+	// m_trans.inverted ()* 上面的db::DPoint 就是微米坐标
   return m_trans.inverted () * db::DPoint (pt.x (), widget_height () - 1 - pt.y ());
 }
 

@@ -103,7 +103,8 @@ PixelBufferPainter::draw_rect (const db::Point &p1, const db::Point &p2, tl::Col
 
 void
 PixelBufferPainter::draw_text (const char *t, const db::Point &p, tl::Color c, int halign, int valign)
-{//看不明白代码，应该类似点阵实现字符绘画。
+{
+	//看不明白代码，应该类似点阵实现字符绘画。ch转具体字符 是由FixedFont实现的。
   const lay::FixedFont &ff = lay::FixedFont::get_font (m_resolution);
   int x = p.x (), y = p.y ();
 
