@@ -544,7 +544,7 @@ LayoutCanvas::paint_event ()
       } 
 
       clear_fg_bitmaps ();
-      do_render (m_viewport_l, *this, true);
+      do_render (m_viewport_l, *this, true);//选中box, 绘画状态的效果显示
 
       mp_image_fg = new tl::PixelBuffer ();
 
