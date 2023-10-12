@@ -105,7 +105,8 @@ protected:
 
     std::vector <lay::ViewOp> ops;
     ops.resize (1);
-    ops[0] = lay::ViewOp (cursor_color (canvas), lay::ViewOp::Copy, 0, (unsigned int) dither_pattern, 0, lay::ViewOp::Rect, lw, 0);
+
+    ops[0] = lay::ViewOp (cursor_color (canvas),  lay::ViewOp::Copy, 0, (unsigned int) dither_pattern, 0, lay::ViewOp::Rect, lw, 0);
     lay::CanvasPlane *plane = canvas.plane (ops);
 
     ops[0] = lay::ViewOp (cursor_color (canvas), lay::ViewOp::Copy, 0, (unsigned int) cross_dither_pattern, 0, lay::ViewOp::Rect, lw, 0);

@@ -351,6 +351,7 @@ GridNet::render_bg (const lay::Viewport &vp, ViewObjectCanvas &canvas)
       n = nx;
       for (db::DCoord x = x1; n > 0; x += grid, --n) {
         for (db::DCoord y = y1; y < y2 + g * eps; y += g) {
+            //trans * db::DPoint (x, y) 微米坐标转为画布坐标
           painter.set (draw_round (trans * db::DPoint (x, y), vp.height ()), grid_color);//画纵方向的点
         }
       }

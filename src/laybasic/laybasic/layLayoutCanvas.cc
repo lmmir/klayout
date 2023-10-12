@@ -506,7 +506,7 @@ LayoutCanvas::paint_event ()
 
         //  clear the image and paint the background objects
         mp_image->fill (m_background);
-        do_render_bg (m_viewport_l, *this);
+        do_render_bg (m_viewport_l, *this);//会把背景渲染到mp_image这个bitmap数据结构上
 
         //  save the current background image
         if (mp_image_bg) {
@@ -518,10 +518,11 @@ LayoutCanvas::paint_event ()
         //  else reuse the saved image
         *mp_image = *mp_image_bg;
       }
-
+      //mp_image->to_image().save("/home/yangqi/mp_image.png");
       //  render the main bitmaps
+      //将绘画的图像渲染到mp_image, 上下两行注释代码放开就可以观察出来。
       to_image (scaled_view_ops (1.0 / resolution ()), dither_pattern (), line_styles (), 1.0 / resolution (), background_color (), foreground_color (), active_color (), this, *mp_image, m_viewport_l.width (), m_viewport_l.height ());
-
+      //mp_image->to_image().save("/home/yangqi/mp_image2.png");
       if (mp_image_fg) {
         delete mp_image_fg;
         mp_image_fg = 0;

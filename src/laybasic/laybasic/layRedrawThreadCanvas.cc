@@ -401,13 +401,15 @@ BitmapRedrawThreadCanvas::to_image (const std::vector <lay::ViewOp> &view_ops, c
     height = m_height;
   }
 
+  //img.to_image().save("/home/yangqi/to_image1.png");
   //  convert the plane data to image data
-  bitmaps_to_image (view_ops, mp_plane_buffers, dp, ls, dpr, &img, width, height, true, &mutex ());
-
+  bitmaps_to_image (view_ops, mp_plane_buffers, dp, ls, dpr, &img, width, height, true, &mutex ());//如果画了一个box，这部会把box渲染到img里
+  //img.to_image().save("/home/yangqi/to_image2.png");
   //  convert the planes of the "drawing" objects too:
   std::vector <std::vector <lay::Bitmap *> >::const_iterator bt = mp_drawing_plane_buffers.begin ();
   for (lay::Drawings::const_iterator d = drawings->begin (); d != drawings->end () && bt != mp_drawing_plane_buffers.end (); ++d, ++bt) {
     bitmaps_to_image (d->get_view_ops (*this, background, foreground, active), *bt, dp, ls, dpr, &img, width, height, true, &mutex ());
+    //img.to_image().save("/home/yangqi/to_image3.png");
   }
 }
 
