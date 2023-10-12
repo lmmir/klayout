@@ -2270,7 +2270,7 @@ public:
 private:
   template <class FF, class II, class RR> friend class complex_trans;
 
-  vector<R> m_u;
+  vector<R> m_u;//偏移量,位移
   R m_sin, m_cos;
   R m_mag; //放大系数
 };
