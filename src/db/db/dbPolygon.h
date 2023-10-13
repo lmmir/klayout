@@ -589,6 +589,10 @@ public:
 
       //  and store the pointer along with two flags: ortho mode and hole flag
       tl_assert (((size_t) pts & 3) == 0);
+
+      //下面是骚操作，正常分配的地址是能被4整除的，通过拨动指针，来表示该数据结构的一些标记。
+      //比如分配指针的时候，是0x40000, 如果这个hole是true ,ortho false，指针是0x40001 .如果 hole false，ortho true 指针则是 0x40002 ，两个都是true
+      //指针是0x40003. 进行指针操作的时候需要调整指针到正确位置，对指针进行 & ~3运算 即拨回指针。
       mp_points = (point_type *) ((size_t) pts | (hole ? 2 : 0) | (ortho ? 1 : 0)); 
 
     }
