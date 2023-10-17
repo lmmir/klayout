@@ -138,7 +138,7 @@ BitmapRenderer::insert (const db::DBox &b)
 
 void 
 BitmapRenderer::insert (const db::DEdge &e)
-{
+{// e 画布坐标
   if (m_edges.begin () == m_edges.end ()) {
     m_xmin = std::min (e.x1 (), e.x2 ());
     m_xmax = std::max (e.x1 (), e.x2 ());
@@ -725,14 +725,14 @@ BitmapRenderer::draw (const db::Box &box, const db::CplxTrans &trans,
         render_vertices (*vertices, 2);
       }
       if (fill && (fill != frame || (box.width () > threshold && box.height () > threshold))) {
-        render_fill (*fill);
+        render_fill (*fill);//矩形内部样式
       }
       if (frame) {
         if (m_xfill) {
           insert (trans * db::Edge (box.p1 (), box.p2 ()));
           insert (trans * db::Edge (box.lower_right (), box.upper_left ()));
         }
-        render_contour (*frame);
+        render_contour (*frame);//矩形画轮廓
       }
 
     }
