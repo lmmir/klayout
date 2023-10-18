@@ -1769,9 +1769,9 @@ public:
     complex_trans<R, R, R> inv;
 
     inv.m_mag = 1.0 / m_mag;
-    inv.m_sin = -m_sin * (m_mag < 0.0 ? -1.0 : 1.0);
+    inv.m_sin = -m_sin * (m_mag < 0.0 ? -1.0 : 1.0);//旋转后逆旋转，即恢复到原来，参考旋转矩阵，sin参数正负对换一下即可。
     inv.m_cos = m_cos;
-    inv.m_u = inv.operator () (-m_u);
+    inv.m_u = inv.operator () (-m_u);//位移向量
 
     return inverse_trans (inv);
   }
@@ -1836,14 +1836,23 @@ public:
    */
   point<F> operator() (const point<I> &p) const
   {
-      //旋转矩阵
-      //[x, y]*[ cosa, sina]
-      //       [-sina, cosa] = [xcosa-ysina, xsina+yconsa] 顺时针旋转
-
-      //旋转矩阵
+      //旋转矩阵，角度a
       //[x, y]*[cosa, -sina]
       //       [sina,  cosa] 逆时针旋转
-      //如下代码按照顺时针转动计算
+
+      //旋转矩阵，角度a
+      //[x, y]*[ cosa, sina]
+      //       [-sina, cosa] = [x*cosa-ysina, x*sina+y*consa] 顺时针旋转
+
+      //旋转后放大
+      //[x*cosa-y*sina, x*sina+y*consa]*[m_mag, 0]
+      //                                [0, m_mag] = [x*cosa*m_mag-y*sina*m_mag, x*sina*m_mag+y*consa*m_mag] 顺时针旋转
+
+      //旋转缩放矩阵
+      //[x, y] * [ cosa*m_mag,  sina*m_mag]
+      //         [-sina*m_mag,  cosa*m_mag]
+
+      //如下代码按照顺时针转动放大计算
     db::point<R> mp (m_cos * p.x () * fabs (m_mag) - m_sin * p.y () * m_mag,
                      m_sin * p.x () * fabs (m_mag) + m_cos * p.y () * m_mag);
     return point<F> (mp + m_u);
