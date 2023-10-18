@@ -1836,6 +1836,14 @@ public:
    */
   point<F> operator() (const point<I> &p) const
   {
+      //旋转矩阵
+      //[x, y]*[ cosa, sina]
+      //       [-sina, cosa] = [xcosa-ysina, xsina+yconsa] 顺时针旋转
+
+      //旋转矩阵
+      //[x, y]*[cosa, -sina]
+      //       [sina,  cosa] 逆时针旋转
+      //如下代码按照顺时针转动计算
     db::point<R> mp (m_cos * p.x () * fabs (m_mag) - m_sin * p.y () * m_mag,
                      m_sin * p.x () * fabs (m_mag) + m_cos * p.y () * m_mag);
     return point<F> (mp + m_u);
