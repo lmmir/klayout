@@ -58,6 +58,7 @@ src/klayout.pro.user
 *.egg-info/
 build/
 dist/
+.idea/
 
 # python type hints
 py.typed
@@ -80,3 +81,5 @@ py.typed
 /.vs/
 /build/
 /.github/
+src/doc/docForceLink.cc.autosave
+src/rdb/rdb/rdbRVEReader.cc.autosave
