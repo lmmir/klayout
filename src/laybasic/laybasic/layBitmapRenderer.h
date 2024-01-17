@@ -128,12 +128,13 @@ public:
 
   /**
    *  @brief Render the interior of the object to the bitmap
+   * ¶à±ßĞÎÄÚ²¿Ìî³äÑùÊ½£¬Ğ±ÏßµÈµÈ¡£
    */
   void render_fill(lay::CanvasPlane &bitmap);
 
   /**
    *  @brief Render the contour of the object to the bitmap
-   *  å¯ä»¥çœ‹ä½œæ˜¯borderï¼Œå›¾å½¢è¾¹æ¡†
+   *  ¿ÉÒÔ¿´×÷ÊÇborder£¬Í¼ĞÎ±ß¿ò
    */
   void render_contour(lay::CanvasPlane &bitmap);
 
@@ -144,7 +145,7 @@ public:
    *  0 for "all vertices" (2 per edge)
    *  1 for "one vertex per edge"
    *  2 for "one vertex per every second edge"
-   *  é¡¶ç‚¹ï¼Œå¯ä»¥åœ¨é€‰ä¸­æŸä¸ªå›¾å½¢çš„æ—¶å€™ï¼Œæœ‰é¡¶ç‚¹æ˜¾ç¤º
+   *  ¶¥µã£¬¿ÉÒÔÔÚÑ¡ÖĞÄ³¸öÍ¼ĞÎµÄÊ±ºò£¬ÓĞ¶¥µãÏÔÊ¾
    */
   void render_vertices(lay::CanvasPlane &bitmap, int mode);
 
