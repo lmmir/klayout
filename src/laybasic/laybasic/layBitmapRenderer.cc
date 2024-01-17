@@ -22,7 +22,8 @@
 
 #include "layBitmapRenderer.h"
 #include "layBitmap.h"
-
+#include <QElapsedTimer>
+#include <QImage>
 namespace lay {
 
 // ----------------------------------------------------------------------------------------------
@@ -206,6 +207,7 @@ void BitmapRenderer::render_vertices(lay::CanvasPlane &plane, int mode) {
 }
 
 void BitmapRenderer::render_contour(lay::CanvasPlane &plane) {
+
   lay::Bitmap *bitmap = static_cast<lay::Bitmap *>(&plane);
 
   //  a basic shortcut if there are no edges to render
@@ -252,6 +254,8 @@ void BitmapRenderer::render_contour(lay::CanvasPlane &plane) {
 }
 
 void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
+  //多边形内部区域填充，用来表示哪些是内部区域,为后面布多边形内部区域进行样式渲染做标记。
+  //参考render_fill.png
   lay::Bitmap *bitmap = static_cast<lay::Bitmap *>(&plane);
 
   //  a basic shortcut if there are no edges to render
@@ -295,6 +299,18 @@ void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
   } else {
     bitmap->render_fill(m_edges);
   }
+
+
+
+//  QImage image(bitmap->width(), bitmap->height(), QImage::Format_Mono);
+//
+//  // image.fill(Qt::white);
+//  for (int i = 0; i < bitmap->height(); i++) {
+//    if (!bitmap->is_scanline_empty(i)) {
+//      memcpy(image.scanLine(i), bitmap->scanline(i), bitmap->width() / 8);
+//    }
+//  }
+//  image.save("/home/yangqi/image.png");
 }
 
 void BitmapRenderer::render_dot(double x, double y, lay::CanvasPlane *plane) {
