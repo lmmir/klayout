@@ -106,8 +106,8 @@ struct RenderText {
  *  shapes. The basic ability is to provide scanlines. A scanline
  *  is an array of uint32_t. It is up to the renderer how the
  *  scanlines are used.
- *  Mono  1 bit 存储 1
- * pixel，即一个uint32_t存储32个像素，0和1(不是一个pixel用一个uint32_t存储)。
+ *  Mono，1个bit存储
+ *  1个pixel，即一个uint32_t存储32个像素，0和1(不是一个pixel用一个uint32_t存储)。
  */
 
 class LAYBASIC_PUBLIC Bitmap : public CanvasPlane {
