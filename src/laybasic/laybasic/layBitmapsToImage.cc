@@ -513,7 +513,9 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
                           : i;
     const lay::Bitmap *pb = bi < pbitmaps_in.size() ? pbitmaps_in[bi] : 0;
 
-    if ((vop.ormask() | ~vop.andmask()) != 0 && pb && !pb->empty()) {
+    if ((vop.ormask() | ~vop.andmask()) !=
+            0 // ormask二进制不是全为0且andmask不是二进制全为1，满足条件
+        && pb && !pb->empty()) {
       vo_map.push_back(i);
       bm_map.push_back(bi);
       ++n_in;
@@ -725,12 +727,12 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
       }
     }
   }
-//  static int i = 0;
-//  static QVector<tl::PixelBuffer *> list;
-//  if (list.indexOf(pimage) == -1) {
-//    list.append(pimage);
-//    pimage->to_image().save(QString("/home/yangqi/image/%1.png").arg(i++));
-//  }
+  //  static int i = 0;
+  //  static QVector<tl::PixelBuffer *> list;
+  //  if (list.indexOf(pimage) == -1) {
+  //    list.append(pimage);
+  //    pimage->to_image().save(QString("/home/yangqi/image/%1.png").arg(i++));
+  //  }
 
   //  free the pixel buffer
   delete[] buffer;

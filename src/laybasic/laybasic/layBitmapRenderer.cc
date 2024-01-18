@@ -300,17 +300,15 @@ void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
     bitmap->render_fill(m_edges);
   }
 
-
-
-//  QImage image(bitmap->width(), bitmap->height(), QImage::Format_Mono);
-//
-//  // image.fill(Qt::white);
-//  for (int i = 0; i < bitmap->height(); i++) {
-//    if (!bitmap->is_scanline_empty(i)) {
-//      memcpy(image.scanLine(i), bitmap->scanline(i), bitmap->width() / 8);
-//    }
-//  }
-//  image.save("/home/yangqi/image.png");
+  //  QImage image(bitmap->width(), bitmap->height(), QImage::Format_Mono);
+  //
+  //  // image.fill(Qt::white);
+  //  for (int i = 0; i < bitmap->height(); i++) {
+  //    if (!bitmap->is_scanline_empty(i)) {
+  //      memcpy(image.scanLine(i), bitmap->scanline(i), bitmap->width() / 8);
+  //    }
+  //  }
+  //  image.save("/home/yangqi/image.png");
 }
 
 void BitmapRenderer::render_dot(double x, double y, lay::CanvasPlane *plane) {
@@ -463,10 +461,10 @@ void BitmapRenderer::draw(const db::Shape &shape, const db::CplxTrans &trans,
         }
 
         if (vertices) {
-          render_vertices(*vertices, 1);
+          render_vertices(*vertices, 1); //标记需要画定点的区域
         }
         if (fill) {
-          render_fill(*fill);
+          render_fill(*fill); //标记需要内部填充的区域
         }
         if (frame) {
           if (m_xfill) {
