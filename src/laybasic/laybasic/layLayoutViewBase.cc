@@ -4232,6 +4232,7 @@ void LayoutViewBase::set_view_ops() {
           //  default line width is 0 for parents and 1 for leafs
           lw = l->has_children() ? 0 : 1;
         }
+        //修改该处，可以看出各个参数的效果。
         view_ops.push_back(
             lay::ViewOp(frame_color, mode, ls, 0, 0, lay::ViewOp::Rect, lw));
 
