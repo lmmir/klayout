@@ -1760,6 +1760,9 @@ public:
     res.m_u = m_u + tu;
 
     res.m_mag = m_mag * t.m_mag;
+
+    // https://blog.csdn.net/liyazhen2011/article/details/81429945
+    //参数复合旋转
     res.m_cos = m_cos * t.m_cos - s1 * m_sin * t.m_sin;
     res.m_sin = m_sin * t.m_cos + s1 * m_cos * t.m_sin;
 
