@@ -269,6 +269,7 @@ inline unit_trans<C> operator*(const unit_trans<C> & /*t1*/,
  *  The fixpoint transformation applies a rotation and/or mirroring operation.
  *  Even though this transformation does not require a coordinate type, it is
  * provided to fulfil the contract.
+ * 单个点的操作：旋转，镜像。
  */
 
 template <class C> class fixpoint_trans : public default_trans<C> {
@@ -363,8 +364,12 @@ public:
   static const int r180 = 2; //  Rotation by 180 degree counterclockwise
   static const int r270 = 3; //  Rotation by 270 degree counterclockwise
   static const int m0 = 4;   //  Mirroring at x-axis
-  static const int m45 = 5;  //  Mirroring at 45-degree axis
-  static const int m90 = 6;  //  Mirroring at y-axis
+  static const int m45 =
+      5; //  Mirroring at 45-degree
+         //  axis，与x轴45度夹角的斜线为对称轴进行镜像，可以理解为相当于先关于X轴镜像后，再逆时针转90。
+  static const int m90 =
+      6; //  Mirroring at
+         //  y-axis，可以理解为相当于先关于X轴镜像后，再逆时针转180。
   static const int m135 = 7; //  Mirroring at 135-degree axis
 
   /**
@@ -2232,6 +2237,7 @@ typedef complex_trans<db::DCoord, db::DCoord> DCplxTrans;
  *  @param t The transformation to apply
  *  @param p The point to transform
  *  @return The transformed point
+ * 对P进行tr转换
  */
 template <class C, class Tr>
 inline point<typename Tr::target_coord_type> operator*(const Tr &t,
