@@ -1496,7 +1496,7 @@ public:
     inv.m_mag = 1.0 / m_mag;
     inv.m_sin = -m_sin * (m_mag < 0.0 ? -1.0 : 1.0);
     inv.m_cos = m_cos;
-    inv.m_u = inv.operator()(-m_u); //先进行复位位移，然后逆向旋转缩放。
+    inv.m_u = inv.operator()(-m_u); //逆矩阵，平移参数不是简单的相反数。
 
     *this = complex_trans(inv);
     return *this;
@@ -1558,6 +1558,7 @@ public:
     //         [-sina*m_mag,  cosa*m_mag]
 
     //如下代码按照顺时针转动放大计算
+    //[ cosa, -sina, -sinay - xcosa]
     db::point<R> mp(m_cos * p.x() * fabs(m_mag) - m_sin * p.y() * m_mag,
                     m_sin * p.x() * fabs(m_mag) + m_cos * p.y() * m_mag);
     return point<F>(mp + m_u);
