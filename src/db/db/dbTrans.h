@@ -269,7 +269,7 @@ inline unit_trans<C> operator*(const unit_trans<C> & /*t1*/,
  *  The fixpoint transformation applies a rotation and/or mirroring operation.
  *  Even though this transformation does not require a coordinate type, it is
  * provided to fulfil the contract.
- * 单个点的操作：旋转，镜像。
+ * //cn 单个点的操作：旋转，镜像。
  */
 
 template <class C> class fixpoint_trans : public default_trans<C> {
@@ -366,7 +366,8 @@ public:
   static const int m0 = 4;   //  Mirroring at x-axis
   static const int m45 =
       5; //  Mirroring at 45-degree
-         //  axis，与x轴45度夹角的斜线为对称轴进行镜像，可以理解为相当于先关于X轴镜像后，再逆时针转90。
+         // cn
+         // axis，与x轴45度夹角的斜线为对称轴进行镜像，可以理解为相当于先关于X轴镜像后，再逆时针转90。
   static const int m90 =
       6; //  Mirroring at
          //  y-axis，可以理解为相当于先关于X轴镜像后，再逆时针转180。
@@ -1378,7 +1379,7 @@ public:
       : m_u(u) {
     tl_assert(mag > 0.0);
     m_mag = mirrx ? -mag : mag;
-    rot *= M_PI / 180.0;
+    rot *= M_PI / 180.0; // cn 转成弧度，sin,cos函数参数为弧度。
     m_sin = sin(rot);
     m_cos = cos(rot);
   }
@@ -1473,7 +1474,8 @@ public:
         -m_sin *
         (m_mag < 0.0
              ? -1.0
-             : 1.0); //旋转后逆旋转，即恢复到原来，参考旋转矩阵，sin参数正负对换一下即可。
+             : 1.0); // cn
+                     // 旋转后逆旋转，即恢复到原来，参考旋转矩阵，sin参数正负对换一下即可。
     inv.m_cos = m_cos;
     inv.m_u = inv.operator()(-m_u); //位移向量
 
@@ -1488,12 +1490,13 @@ public:
    * in the sense of inv(T) * T == 1 because of potential rounding effects.
    */
   complex_trans &invert() {
+    // cn
     complex_trans<R, R, R> inv;
 
     inv.m_mag = 1.0 / m_mag;
     inv.m_sin = -m_sin * (m_mag < 0.0 ? -1.0 : 1.0);
     inv.m_cos = m_cos;
-    inv.m_u = inv.operator()(-m_u);
+    inv.m_u = inv.operator()(-m_u); //先进行复位位移，然后逆向旋转缩放。
 
     *this = complex_trans(inv);
     return *this;
@@ -1537,7 +1540,7 @@ public:
    *  @return The transformed point
    */
   point<F> operator()(const point<I> &p) const {
-    //旋转矩阵，角度a
+    // cn 旋转矩阵，角度a
     //[x, y]*[cosa, -sina]
     //       [sina,  cosa] 逆时针旋转
 
@@ -1767,7 +1770,7 @@ public:
     res.m_mag = m_mag * t.m_mag;
 
     // https://blog.csdn.net/liyazhen2011/article/details/81429945
-    //参数复合旋转
+    // cn  参数复合旋转
     res.m_cos = m_cos * t.m_cos - s1 * m_sin * t.m_sin;
     res.m_sin = m_sin * t.m_cos + s1 * m_cos * t.m_sin;
 
