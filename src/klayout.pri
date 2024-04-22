@@ -17,6 +17,7 @@ LAYUI_INC = $$PWD/layui/layui
 LAY_INC = $$PWD/lay/lay
 DOC_INC = $$PWD/doc
 ICONS_INC = $$PWD/icons
+KAPI_INC = $$PWD/kapi
 
 QTBASIC_INC = $$PWD/gsiqt/qtbasic
 

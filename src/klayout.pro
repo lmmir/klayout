@@ -10,7 +10,6 @@ SUBDIRS = \
   rdb \
   lib \
   plugins \
-  unit_tests \
   buddies \
   lym \
   laybasic \
@@ -18,6 +17,7 @@ SUBDIRS = \
   ant \
   img \
   edt \
+  kapi \
 
 equals(HAVE_RUBY, "1") {
   SUBDIRS += drc lvs
@@ -76,6 +76,7 @@ img.depends += layview
 edt.depends += layview
 
 plugins.depends += lib
+kapi.depends += lay gsi laybasic layview db layui tl img plugins
 
 equals(HAVE_PYTHON, "1") {
   pymod.depends += layview lib ant img edt lym
@@ -121,13 +122,8 @@ equals(HAVE_RUBY, "1") {
 }
 
 buddies.depends += plugins lym $$LANG_DEPENDS
-unit_tests.depends += plugins lym $$MAIN_DEPENDS $$LANG_DEPENDS
 
-!equals(HAVE_QT, "0") {
 
-  unit_tests.depends += doc icons
-
-}
 
 # Adds an extra target for generating the doc: "update_doc"
 update_doc.commands = $$PWD/../scripts/make_drc_lvs_doc.sh

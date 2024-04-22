@@ -21,10 +21,10 @@ win32 {
   RC_FILE = $$PWD/klayout.rc
 }
 
-INCLUDEPATH += $$DOC_INC $$ICONS_INC $$QTBASIC_INC
+INCLUDEPATH += $$DOC_INC $$ICONS_INC $$QTBASIC_INC $$KAPI_INC
 DEPENDPATH += $$DOC_INC $$ICONS_INC $$QTBASIC_INC
 
-LIBS += -lklayout_doc -lklayout_icons
+LIBS += -lklayout_doc -lklayout_icons -lklayout_kapi
 
 equals(HAVE_QTBINDINGS, "1") {
 
