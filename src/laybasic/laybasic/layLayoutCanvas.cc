@@ -482,7 +482,7 @@ void LayoutCanvas::paint_event() {
         //  clear the image and paint the background objects
         mp_image->fill(m_background);
         do_render_bg(m_viewport_l,
-                     *this); //会把背景渲染到mp_image这个bitmap数据结构上
+                     *this); //会把背景渲染到mp_image这个bitmap数据结构上.
 
         //  save the current background image
         if (mp_image_bg) {
@@ -496,7 +496,7 @@ void LayoutCanvas::paint_event() {
       }
       // mp_image->to_image().save("/home/yangqi/mp_image.png");
       //  render the main bitmaps
-      //将绘画的图像渲染到mp_image, 上下两行注释代码放开就可以观察出来。
+      //将绘画的图像渲染到mp_image, 上下两行注释代码放开就可以观察出来.
       to_image(scaled_view_ops(1.0 / resolution()), dither_pattern(),
                line_styles(), 1.0 / resolution(), background_color(),
                foreground_color(), active_color(), this, *mp_image,
@@ -524,7 +524,7 @@ void LayoutCanvas::paint_event() {
       }
 
       clear_fg_bitmaps();
-      do_render(m_viewport_l, *this, true); //选中box, 绘画状态的效果显示
+      do_render(m_viewport_l, *this, true); //选中box, 绘画状态的效果显示.
 
       mp_image_fg = new tl::PixelBuffer();
 
@@ -574,7 +574,7 @@ void LayoutCanvas::paint_event() {
     img.setDevicePixelRatio(dpr());
 #endif
     painter.drawImage(QPoint(0, 0),
-                      img); //最后渲染到界面的图片
+                      img); //最后渲染到界面的图片.
                             // img.save("d:\\klayout2.jpg"); 可以调试
 
     if (fg_bitmaps() > 0) {

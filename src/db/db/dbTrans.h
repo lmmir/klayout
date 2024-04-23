@@ -269,7 +269,7 @@ inline unit_trans<C> operator*(const unit_trans<C> & /*t1*/,
  *  The fixpoint transformation applies a rotation and/or mirroring operation.
  *  Even though this transformation does not require a coordinate type, it is
  * provided to fulfil the contract.
- * //cn 单个点的操作：旋转，镜像。
+ * //cn 单个点的操作：旋转，镜像.
  */
 
 template <class C> class fixpoint_trans : public default_trans<C> {
@@ -367,10 +367,10 @@ public:
   static const int m45 =
       5; //  Mirroring at 45-degree
          // cn
-         // axis，与x轴45度夹角的斜线为对称轴进行镜像，可以理解为相当于先关于X轴镜像后，再逆时针转90。
+         // axis，与x轴45度夹角的斜线为对称轴进行镜像，可以理解为相当于先关于X轴镜像后，再逆时针转90.
   static const int m90 =
       6; //  Mirroring at
-         //  y-axis，可以理解为相当于先关于X轴镜像后，再逆时针转180。
+         //  y-axis，可以理解为相当于先关于X轴镜像后，再逆时针转180.
   static const int m135 = 7; //  Mirroring at 135-degree axis
 
   /**
@@ -1379,7 +1379,7 @@ public:
       : m_u(u) {
     tl_assert(mag > 0.0);
     m_mag = mirrx ? -mag : mag;
-    rot *= M_PI / 180.0; // cn 转成弧度，sin,cos函数参数为弧度。
+    rot *= M_PI / 180.0; // cn 转成弧度，sin,cos函数参数为弧度.
     m_sin = sin(rot);
     m_cos = cos(rot);
   }
@@ -1475,9 +1475,9 @@ public:
         (m_mag < 0.0
              ? -1.0
              : 1.0); // cn
-                     // 旋转后逆旋转，即恢复到原来，参考旋转矩阵，sin参数正负对换一下即可。
+                     // 旋转后逆旋转，即恢复到原来，参考旋转矩阵，sin参数正负对换一下即可.
     inv.m_cos = m_cos;
-    inv.m_u = inv.operator()(-m_u); //位移向量
+    inv.m_u = inv.operator()(-m_u); //位移向量.
 
     return inverse_trans(inv);
   }
@@ -1496,7 +1496,7 @@ public:
     inv.m_mag = 1.0 / m_mag;
     inv.m_sin = -m_sin * (m_mag < 0.0 ? -1.0 : 1.0);
     inv.m_cos = m_cos;
-    inv.m_u = inv.operator()(-m_u); //逆矩阵，平移参数不是简单的相反数。
+    inv.m_u = inv.operator()(-m_u); //逆矩阵，平移参数不是简单的相反数.
 
     *this = complex_trans(inv);
     return *this;
@@ -1546,7 +1546,7 @@ public:
 
     //旋转矩阵，角度a
     //[x, y]*[ cosa, sina]
-    //       [-sina, cosa] = [x*cosa-ysina, x*sina+y*consa] 顺时针旋转
+    //       [-sina, cosa] = [x*cosa-ysina, x*sina+y*consa] 顺时针旋转.
 
     //旋转后放大
     //[x*cosa-y*sina, x*sina+y*consa]*[m_mag, 0]
@@ -1771,7 +1771,7 @@ public:
     res.m_mag = m_mag * t.m_mag;
 
     // https://blog.csdn.net/liyazhen2011/article/details/81429945
-    // cn  参数复合旋转
+    // cn  参数复合旋转.
     res.m_cos = m_cos * t.m_cos - s1 * m_sin * t.m_sin;
     res.m_sin = m_sin * t.m_cos + s1 * m_cos * t.m_sin;
 
@@ -1937,7 +1937,7 @@ public:
 private:
   template <class FF, class II, class RR> friend class complex_trans;
 
-  vector<R> m_u;  //偏移量,位移
+  vector<R> m_u;  //偏移量,位移.
   R m_sin, m_cos; // 旋转参数
   R m_mag;        //放大系数
 };
@@ -2241,7 +2241,7 @@ typedef complex_trans<db::DCoord, db::DCoord> DCplxTrans;
  *  @param t The transformation to apply
  *  @param p The point to transform
  *  @return The transformed point
- * 对P进行tr转换
+ * 对P进行tr转换.
  */
 template <class C, class Tr>
 inline point<typename Tr::target_coord_type> operator*(const Tr &t,

@@ -10,7 +10,6 @@ SUBDIRS = \
   rdb \
   lib \
   plugins \
-  buddies \
   lym \
   laybasic \
   layview \

@@ -148,7 +148,7 @@ RecursiveShapeIterator::RecursiveShapeIterator(const layout_type &layout,
     : m_box_convert(layout, layer) {
   // overlapping用来 确定region和shape之前的关系，false 是touching
   // mode:边界至少有一个公共的点就满足，true需要区域相交。
-  //从应用调试，这个类可能是按照每个图案的最大外接矩形与选中区域进行比较的，不是图形。
+  //从应用调试，这个类可能是按照每个图案的最大外接矩形与选中区域进行比较的，不是图形..
   m_layer = layer;
   m_has_layers = false;
   mp_layout.reset(const_cast<db::Layout *>(&layout));

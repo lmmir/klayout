@@ -767,7 +767,7 @@ void BoxService::do_begin_edit(const db::DPoint &p) {
 }
 
 db::Box BoxService::get_box() const {
-  // m_p1 m_p2 微米坐标, trans () * m_p1,转到画布坐标
+  // m_p1 m_p2 微米坐标, trans () * m_p1,转到画布坐标.
   return db::Box(trans() * m_p1, trans() * m_p2);
 }
 

@@ -239,7 +239,7 @@ void GridNet::render_bg(const lay::Viewport &vp, ViewObjectCanvas &canvas) {
       return;
     }
 
-    // bmp_canvas可见视图的
+    // bmp_canvas可见视图的.
     PixelBufferPainter painter(
         *bmp_canvas->bg_image(), bmp_canvas->canvas_width(),
         bmp_canvas->canvas_height(), bmp_canvas->resolution());
@@ -308,7 +308,7 @@ void GridNet::render_bg(const lay::Viewport &vp, ViewObjectCanvas &canvas) {
           tl::sprintf("%g \265m", grid * 2).c_str(),
           db::Point(xoffset + int(floor(0.5 + trans.ctrans(2 * grid))),
                     vp.height() - yoffset - rh / 2 - 2),
-          ruler_color, -1, 1); //画左下角刻度尺文字内容
+          ruler_color, -1, 1); //画左下角刻度尺文字内容.
 
       if (mp_view->global_trans().fp_trans() != db::DFTrans()) {
 
@@ -356,7 +356,7 @@ void GridNet::render_bg(const lay::Viewport &vp, ViewObjectCanvas &canvas) {
       n = nx;
       for (db::DCoord x = x1; n > 0; x += grid, --n) {
         for (db::DCoord y = y1; y < y2 + g * eps; y += g) {
-          // trans * db::DPoint (x, y) 微米坐标转为画布坐标
+          // trans * db::DPoint (x, y) 微米坐标转为画布坐标.
           painter.set(draw_round(trans * db::DPoint(x, y), vp.height()),
                       grid_color); //画纵方向的点
         }
@@ -367,7 +367,7 @@ void GridNet::render_bg(const lay::Viewport &vp, ViewObjectCanvas &canvas) {
         for (db::DCoord y = y1; n > 0; y += grid, --n) {
           for (db::DCoord x = x1; x < x2 + g * eps; x += g) {
             painter.set(draw_round(trans * db::DPoint(x, y), vp.height()),
-                        grid_color); //画横方向的点
+                        grid_color); //画横方向的点.
           }
         }
       }

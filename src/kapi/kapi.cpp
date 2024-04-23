@@ -51,7 +51,42 @@ void KapiPluginDeclaration::slotNewConnection() {
 
 void KapiPluginDeclaration::slotTextMessageReceived(const QString &message) {
   qDebug() << message;
-  lay::MainWindow::instance()->exit();
+  auto mainWindow = lay::MainWindow::instance();
+  if (mainWindow->current_view() == 0)
+    return;
+  qDebug() << mainWindow->views() << mainWindow->current_view()->cellviews()
+           << mainWindow->current_view()->active_cellview_index();
+  auto cellViewIndex = mainWindow->current_view()->active_cellview_index();
+  auto &cellView = mainWindow->current_view()->cellview(cellViewIndex);
+  qDebug() << cellView.cell()->layout() << &cellView->layout();
+
+  qDebug() << cellView->layout().cells();
+  qDebug() << "current top cell's:" << cellView.cell()->layers()
+           << ", all layers:" << cellView->layout().layers();
+
+  {
+
+    db::LayerProperties lp = cellView->layout().get_properties(0);
+    qDebug() << lp.layer << lp.datatype << QString::fromStdString(lp.name);
+    //  collect valid layers
+    std::vector<lay::LayerPropertiesConstIterator> valid_sel;
+    std::set<std::pair<db::Layout *, unsigned int>> valid_layers;
+    //    for (std::vector<lay::LayerPropertiesConstIterator>::const_iterator si
+    //    =
+    //             sel.begin();
+    //         si != sel.end(); ++si)
+    {
+      int cv_index = cellViewIndex;
+
+      //      if (!(*si)->has_children() && cv_index >= 0 &&
+      //          int(view()->cellviews()) > cv_index && (*si)->layer_index() >=
+      //          0 && cv.is_valid()) {
+      //        valid_sel.push_back(*si);
+      //        valid_layers.insert(
+      //            std::make_pair(&cv->layout(), (*si)->layer_index()));
+      //      }
+    }
+  }
 }
 static tl::RegisteredClass<lay::PluginDeclaration>
     kapi(new KapiPluginDeclaration());

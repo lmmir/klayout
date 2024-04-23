@@ -118,7 +118,7 @@ void BitmapRenderer::insert(const db::DBox &b) {
   m_edges.insert(m_edges.end(), edges, edges + 4);
 }
 
-void BitmapRenderer::insert(const db::DEdge &e) { // e 画布坐标
+void BitmapRenderer::insert(const db::DEdge &e) { // e 画布坐标.
   if (m_edges.begin() == m_edges.end()) {
     m_xmin = std::min(e.x1(), e.x2());
     m_xmax = std::max(e.x1(), e.x2());
@@ -254,7 +254,7 @@ void BitmapRenderer::render_contour(lay::CanvasPlane &plane) {
 }
 
 void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
-  //多边形内部区域填充，用来表示哪些是内部区域,为后面布多边形内部区域进行样式渲染做标记。
+  //多边形内部区域填充，用来表示哪些是内部区域,为后面布多边形内部区域进行样式渲染做标记.
   //参考render_fill.png
   lay::Bitmap *bitmap = static_cast<lay::Bitmap *>(&plane);
 
@@ -427,7 +427,7 @@ void BitmapRenderer::draw(const db::Shape &shape, const db::CplxTrans &trans,
 
     if (bbox.width() <= threshold && bbox.height() <= threshold &&
         !shape
-             .is_point()) { //缩放的时候，如果类似一个点，则画点，降低矩形绘制的性能消耗。
+             .is_point()) { //缩放的时候，如果类似一个点，则画点，降低矩形绘制的性能消耗.
 
       db::DPoint dc = trans * bbox.center();
       if (fill && !shape.is_edge()) {
@@ -450,7 +450,7 @@ void BitmapRenderer::draw(const db::Shape &shape, const db::CplxTrans &trans,
       db::Box b(shape.bbox());
       if (simplify_box(
               b,
-              trans)) { //缩放的时候，如果类似一个矩形，则使用矩形绘制，降低复杂多边形绘制的性能消耗。
+              trans)) { //缩放的时候，如果类似一个矩形，则使用矩形绘制，降低复杂多边形绘制的性能消耗.
         draw(b, trans, fill, frame, vertices, text);
       } else {
 
@@ -461,7 +461,7 @@ void BitmapRenderer::draw(const db::Shape &shape, const db::CplxTrans &trans,
         }
 
         if (vertices) {
-          render_vertices(*vertices, 1); //标记需要画定点的区域
+          render_vertices(*vertices, 1); //标记需要画定点的区域.
         }
         if (fill) {
           render_fill(*fill); //标记需要内部填充的区域
@@ -720,7 +720,7 @@ void BitmapRenderer::draw(const db::Box &box, const db::CplxTrans &trans,
       if (vertices) {
         render_vertices(*vertices,
                         2); //见 debugdata里 layBitmapRenderer.png图片
-                            //红圈，进行画图形的时候 marker显示顶点。
+                            //红圈，进行画图形的时候 marker显示顶点.
       }
       if (fill && (fill != frame ||
                    (box.width() > threshold && box.height() > threshold))) {

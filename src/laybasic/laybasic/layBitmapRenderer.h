@@ -128,13 +128,13 @@ public:
 
   /**
    *  @brief Render the interior of the object to the bitmap
-   * 多边形内部填充样式，斜线等等。
+   * 多边形内部填充样式，斜线等等.
    */
   void render_fill(lay::CanvasPlane &bitmap);
 
   /**
    *  @brief Render the contour of the object to the bitmap
-   *  可以看作是border，图形边框
+   *  可以看作是border，图形边框,
    */
   void render_contour(lay::CanvasPlane &bitmap);
 
@@ -145,7 +145,7 @@ public:
    *  0 for "all vertices" (2 per edge)
    *  1 for "one vertex per edge"
    *  2 for "one vertex per every second edge"
-   *  顶点，可以在选中某个图形的时候，有顶点显示
+   *  顶点，可以在选中某个图形的时候，有顶点显示.
    */
   void render_vertices(lay::CanvasPlane &bitmap, int mode);
 

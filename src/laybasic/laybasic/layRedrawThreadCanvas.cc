@@ -399,7 +399,7 @@ void BitmapRedrawThreadCanvas::to_image(
   bitmaps_to_image(view_ops, mp_plane_buffers, dp, ls, dpr, &img, width, height,
                    true,
                    &mutex()); //如果画了一个box，这步会把box渲染到img里,
-                              //查看图片debugdata/layRedrawThreadCanvas1.png
+                              //查看图片debugdata/layRedrawThreadCanvas1.png.
   {
     //    tl::PixelBuffer pb(width, height);
     //    pb.fill(Qt::transparent);
@@ -418,7 +418,7 @@ void BitmapRedrawThreadCanvas::to_image(
                      *bt, dp, ls, dpr, &img, width, height, true, &mutex());
 
     {
-      //暂时不清楚是啥图片数据。
+      //暂时不清楚是啥图片数据.
       //      tl::PixelBuffer pb(width, height);
       //      pb.fill(Qt::transparent);
       //      bitmaps_to_image(d->get_view_ops(*this, background, foreground,

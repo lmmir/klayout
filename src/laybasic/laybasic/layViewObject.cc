@@ -957,9 +957,9 @@ db::DPoint ViewObjectUI::pixel_to_um(const db::Point &pt) const {
   return m_trans.inverted() * db::DPoint(pt.x(), widget_height() - 1 - pt.y());
 }
 
-//该函数将视窗坐标转为微米坐标
+//该函数将视窗坐标转为微米坐标.
 db::DPoint ViewObjectUI::pixel_to_um(const db::DPoint &pt) const {
-  // m_trans*orign_point = pt,即存储的是源坐标转到画布的坐标的参数
+  // m_trans*orign_point = pt,即存储的是源坐标转到画布的坐标的参数.
   //默认是cos=1 sin=0 ,display中设置逆时针90度的话，则参数边为cos=0 sin=1
   // inverted则获取逆变换的参数
 
