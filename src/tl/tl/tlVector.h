@@ -20,58 +20,53 @@
 
 */
 
-
 #ifndef HDR_tlVector
 #define HDR_tlVector
 
-#include <vector>
 #include "tlTypeTraits.h"
+#include <vector>
 
-namespace tl 
-{
+namespace tl {
 
 /**
- *  @brief a specialized vector class that is (once) supposed to support garbage collection mechanisms
+ *  @brief a specialized vector class that is (once) supposed to support garbage
+ * collection mechanisms
  *
- *  The general idea to use vectors as containers as far as possible. 
- *  This special incarnation of a vector is supposed to: 
+ *  The general idea to use vectors as containers as far as possible.
+ *  This special incarnation of a vector is supposed to:
  *  1.) provide fast allocation schemes using thread-local storage
  *      and per-object size freelists.
- *  2.) by use of a special allocator provide a garbage collection 
+ *  2.) by use of a special allocator provide a garbage collection
  *      mechanism that may move and compact the blocks allocated by
  *      the vectors.
  *  3.) Avoid memory fragmentation by using blocks with a maximum size
  */
 
-template <class T>
-class vector 
-  : public std::vector<T>
-{
+template <class T> class vector : public std::vector<T> {
 public:
   typedef std::vector<T> base;
 
   /**
    *  @brief Default constructor: creates an empty vector
    */
-  vector () : std::vector<T> () { }
+  vector() : std::vector<T>() {}
 
   /**
    *  @brief Copy constructor
    */
-  explicit vector (const tl::vector<T> &d) : base (d) { }
+  explicit vector(const tl::vector<T> &d) : base(d) {}
 
   /**
    *  @brief Move constructor
    */
-  explicit vector (const tl::vector<T> &&d) : base (d) { }
+  explicit vector(const tl::vector<T> &&d) : base(d) {}
 
   /**
    *  @brief Assignment
    */
-  vector &operator= (const tl::vector<T> &d)
-  {
+  vector &operator=(const tl::vector<T> &d) {
     if (&d != this) {
-      base::operator= (d);
+      base::operator=(d);
     }
     return *this;
   }
@@ -79,10 +74,9 @@ public:
   /**
    *  @brief Assignment (Move)
    */
-  vector &operator= (const tl::vector<T> &&d)
-  {
+  vector &operator=(const tl::vector<T> &&d) {
     if (&d != this) {
-      base::operator= (d);
+      base::operator=(d);
     }
     return *this;
   }
@@ -90,10 +84,9 @@ public:
   /**
    *  @brief Initialization with value and length
    */
-  vector (const T &v, int s) : base (v, s) { }
+  vector(const T &v, int s) : base(v, s) {}
 };
 
 } // namespace tl
 
 #endif
-

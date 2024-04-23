@@ -35,8 +35,7 @@
 
 #include <set>
 
-namespace lay
-{
+namespace lay {
 
 class LayoutView;
 class AbstractMenu;
@@ -44,27 +43,25 @@ class AbstractMenu;
 /**
  *  @brief A widget to display a bookmark list
  */
-class LAYUI_PUBLIC BookmarksView
-  : public QFrame
-{
-Q_OBJECT
+class LAYUI_PUBLIC BookmarksView : public QFrame {
+  Q_OBJECT
 
 public:
-  BookmarksView (lay::LayoutViewBase *view, QWidget *parent, const char *name);
-  ~BookmarksView ();
+  BookmarksView(lay::LayoutViewBase *view, QWidget *parent, const char *name);
+  ~BookmarksView();
 
-  void set_background_color (tl::Color c);
-  void set_text_color (tl::Color c);
-  void follow_selection (bool f);
+  void set_background_color(tl::Color c);
+  void set_text_color(tl::Color c);
+  void follow_selection(bool f);
 
-  std::set<size_t> selected_bookmarks ();
+  std::set<size_t> selected_bookmarks();
 
-  void refresh ();
+  void refresh();
 
 public slots:
-  void bookmark_triggered (const QModelIndex &index);
-  void current_bookmark_changed (const QModelIndex &index);
-  void context_menu (const QPoint &p);
+  void bookmark_triggered(const QModelIndex &index);
+  void current_bookmark_changed(const QModelIndex &index);
+  void context_menu(const QPoint &p);
 
 private:
   LayoutViewBase *mp_view;
@@ -76,4 +73,4 @@ private:
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

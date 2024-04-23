@@ -22,112 +22,78 @@
 
 #if defined(HAVE_QT)
 
-#include "layBrowserPanel.h"
 #include "layBrowserDialog.h"
+#include "layBrowserPanel.h"
 #include "tlExceptions.h"
 
-namespace lay 
-{
+namespace lay {
 
-BrowserDialog::BrowserDialog ()
-  : QDialog (0)
-{
-  Ui::BrowserDialog::setupUi (this);
+BrowserDialog::BrowserDialog() : QDialog(0) {
+  Ui::BrowserDialog::setupUi(this);
 
-  setObjectName (QString::fromUtf8 ("html_browser"));
-  set_home ("int:/index.html");
-  show ();
+  setObjectName(QString::fromUtf8("html_browser"));
+  set_home("int:/index.html");
+  show();
 }
 
-BrowserDialog::BrowserDialog (QWidget *parent)
-  : QDialog (parent)
-{
-  Ui::BrowserDialog::setupUi (this);
+BrowserDialog::BrowserDialog(QWidget *parent) : QDialog(parent) {
+  Ui::BrowserDialog::setupUi(this);
 
-  setObjectName (QString::fromUtf8 ("html_browser"));
-  set_home ("int:/index.html");
-  show ();
+  setObjectName(QString::fromUtf8("html_browser"));
+  set_home("int:/index.html");
+  show();
 }
 
-BrowserDialog::BrowserDialog (const std::string &html)
-  : QDialog (0), m_default_source (html)
-{
-  Ui::BrowserDialog::setupUi (this);
+BrowserDialog::BrowserDialog(const std::string &html)
+    : QDialog(0), m_default_source(html) {
+  Ui::BrowserDialog::setupUi(this);
 
-  setObjectName (QString::fromUtf8 ("html_browser"));
-  set_source (& m_default_source);
-  set_home ("int:/index.html");
-  show ();
+  setObjectName(QString::fromUtf8("html_browser"));
+  set_source(&m_default_source);
+  set_home("int:/index.html");
+  show();
 }
 
-BrowserDialog::BrowserDialog (QWidget *parent, const std::string &html)
-  : QDialog (parent), m_default_source (html)
-{
-  Ui::BrowserDialog::setupUi (this);
+BrowserDialog::BrowserDialog(QWidget *parent, const std::string &html)
+    : QDialog(parent), m_default_source(html) {
+  Ui::BrowserDialog::setupUi(this);
 
-  setObjectName (QString::fromUtf8 ("html_browser"));
-  set_source (& m_default_source);
-  set_home ("int:/index.html");
-  show ();
+  setObjectName(QString::fromUtf8("html_browser"));
+  set_source(&m_default_source);
+  set_home("int:/index.html");
+  show();
 }
 
-BrowserDialog::~BrowserDialog ()
-{
-  set_source (0);
+BrowserDialog::~BrowserDialog() { set_source(0); }
+
+void BrowserDialog::load(const std::string &s) { browser->load(s); }
+
+void BrowserDialog::set_source(BrowserSource *source) {
+  browser->set_source(source);
 }
 
-void 
-BrowserDialog::load (const std::string &s)
-{
-  browser->load (s);
+void BrowserDialog::set_home(const std::string &url) { browser->set_home(url); }
+
+void BrowserDialog::set_label(const std::string &label) {
+  browser->set_label(label);
 }
 
-void 
-BrowserDialog::set_source (BrowserSource *source)
-{
-  browser->set_source (source);
+void BrowserDialog::set_search_url(const std::string &url,
+                                   const std::string &query_item) {
+  browser->set_search_url(url, query_item);
 }
 
-void 
-BrowserDialog::set_home (const std::string &url)
-{
-  browser->set_home (url);
-}
+void BrowserDialog::search(const std::string &s) { browser->search(s); }
 
-void 
-BrowserDialog::set_label (const std::string &label)
-{
-  browser->set_label (label);
-}
+void BrowserDialog::reload() { browser->reload(); }
 
-void 
-BrowserDialog::set_search_url (const std::string &url, const std::string &query_item)
-{
-  browser->set_search_url (url, query_item);
-}
-
-void 
-BrowserDialog::search (const std::string &s)
-{
-  browser->search (s);
-}
-
-void 
-BrowserDialog::reload ()
-{
-  browser->reload ();
-}
-
-void
-BrowserDialog::accept ()
-{
+void BrowserDialog::accept() {
   BEGIN_PROTECTED
-  closed ();
+  closed();
   END_PROTECTED
-  QDialog::accept ();
+  QDialog::accept();
 }
 
-}
+} // namespace lay
 
 #endif
-

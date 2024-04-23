@@ -23,23 +23,21 @@
 #include "layUtils.h"
 
 #if defined(HAVE_QT)
-#  include <QApplication>
+#include <QApplication>
 #endif
 
 namespace lay {
 
-bool
-has_gui ()
-{
+bool has_gui() {
 #if defined(HAVE_QT)
 #if QT_VERSION < 0x50000
-  return (QApplication::type () != QApplication::Tty);
+  return (QApplication::type() != QApplication::Tty);
 #else
-  return (dynamic_cast<QGuiApplication *> (QCoreApplication::instance ()) != 0);
+  return (dynamic_cast<QGuiApplication *>(QCoreApplication::instance()) != 0);
 #endif
 #else
   return false;
 #endif
 }
 
-}
+} // namespace lay

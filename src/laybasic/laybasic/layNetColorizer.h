@@ -20,50 +20,43 @@
 
 */
 
-
 #ifndef HDR_layNetColorizer
 #define HDR_layNetColorizer
 
-#include "laybasicCommon.h"
 #include "layColorPalette.h"
+#include "laybasicCommon.h"
 #include "tlColor.h"
 #include "tlEvents.h"
 
 #include <map>
 #include <memory>
 
-namespace db
-{
-  class Net;
+namespace db {
+class Net;
 }
 
-namespace lay
-{
+namespace lay {
 
 // ----------------------------------------------------------------------------------
 //  NetColorizer definition
 
-class LAYBASIC_PUBLIC NetColorizer
-  : public tl::Object
-{
+class LAYBASIC_PUBLIC NetColorizer : public tl::Object {
 public:
-  NetColorizer ();
+  NetColorizer();
 
-  void configure (const tl::Color &marker_color, const lay::ColorPalette *auto_colors);
-  bool has_color_for_net (const db::Net *net);
-  void set_color_of_net (const db::Net *net, const tl::Color &color);
-  void reset_color_of_net (const db::Net *net);
-  void clear ();
+  void configure(const tl::Color &marker_color,
+                 const lay::ColorPalette *auto_colors);
+  bool has_color_for_net(const db::Net *net);
+  void set_color_of_net(const db::Net *net, const tl::Color &color);
+  void reset_color_of_net(const db::Net *net);
+  void clear();
 
-  tl::Color color_of_net (const db::Net *net) const;
+  tl::Color color_of_net(const db::Net *net) const;
 
-  const tl::Color &marker_color () const
-  {
-    return m_marker_color;
-  }
+  const tl::Color &marker_color() const { return m_marker_color; }
 
-  void begin_changes ();
-  void end_changes ();
+  void begin_changes();
+  void end_changes();
 
   tl::Event colors_changed;
 
@@ -76,10 +69,9 @@ private:
   bool m_signals_enabled;
   mutable std::map<const db::Net *, size_t> m_net_index_by_object;
 
-  void emit_colors_changed ();
+  void emit_colors_changed();
 };
 
 } // namespace lay
 
 #endif
-

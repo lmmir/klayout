@@ -38,25 +38,24 @@
 #include "gsi.h"
 #include "gsiExpression.h"
 
-static PyObject *
-module_init (const char *pymod_name, const char *mod_name, const char *mod_description)
-{
+static PyObject *module_init(const char *pymod_name, const char *mod_name,
+                             const char *mod_description) {
   static pya::PythonModule module;
 
   PYA_TRY
-  
-    gsi::initialize ();
 
-    //  required for the tiling processor for example
-    gsi::initialize_expressions ();
+  gsi::initialize();
 
-    module.init (pymod_name, mod_description);
-    module.make_classes (mod_name);
+  //  required for the tiling processor for example
+  gsi::initialize_expressions();
 
-    return module.take_module ();
+  module.init(pymod_name, mod_description);
+  module.make_classes(mod_name);
+
+  return module.take_module();
 
   PYA_CATCH_ANYWHERE
-  
+
   return 0;
 }
 
@@ -65,39 +64,28 @@ module_init (const char *pymod_name, const char *mod_name, const char *mod_descr
 
 #if PY_MAJOR_VERSION < 3
 
-#define DEFINE_PYMOD(__name__, __name_str__, __description__) \
-  extern "C" \
-  DEF_INSIDE_PUBLIC \
-  void init##__name__ () \
-  { \
-    module_init (STRINGIFY(__name__), __name_str__, __description__); \
-  } \
+#define DEFINE_PYMOD(__name__, __name_str__, __description__)                  \
+  extern "C" DEF_INSIDE_PUBLIC void init##__name__() {                         \
+    module_init(STRINGIFY(__name__), __name_str__, __description__);           \
+  }
 
-#define DEFINE_PYMOD_WITH_INIT(__name__, __name_str__, __description__, __init__) \
-  extern "C" \
-  DEF_INSIDE_PUBLIC \
-  void init##__name__ () \
-  { \
-    __init__ (STRINGIFY(__name__), __name_str__, __description__); \
-  } \
+#define DEFINE_PYMOD_WITH_INIT(__name__, __name_str__, __description__,        \
+                               __init__)                                       \
+  extern "C" DEF_INSIDE_PUBLIC void init##__name__() {                         \
+    __init__(STRINGIFY(__name__), __name_str__, __description__);              \
+  }
 
 #else
 
-#define DEFINE_PYMOD(__name__, __name_str__, __description__) \
-  extern "C" \
-  DEF_INSIDE_PUBLIC \
-  PyObject *PyInit_##__name__ () \
-  { \
-    return module_init (STRINGIFY(__name__), __name_str__, __description__); \
-  } \
+#define DEFINE_PYMOD(__name__, __name_str__, __description__)                  \
+  extern "C" DEF_INSIDE_PUBLIC PyObject *PyInit_##__name__() {                 \
+    return module_init(STRINGIFY(__name__), __name_str__, __description__);    \
+  }
 
-#define DEFINE_PYMOD_WITH_INIT(__name__, __name_str__, __description__, __init__) \
-  extern "C" \
-  DEF_INSIDE_PUBLIC \
-  PyObject *PyInit_##__name__ () \
-  { \
-    return __init__ (STRINGIFY(__name__), __name_str__, __description__); \
-  } \
+#define DEFINE_PYMOD_WITH_INIT(__name__, __name_str__, __description__,        \
+                               __init__)                                       \
+  extern "C" DEF_INSIDE_PUBLIC PyObject *PyInit_##__name__() {                 \
+    return __init__(STRINGIFY(__name__), __name_str__, __description__);       \
+  }
 
 #endif
-

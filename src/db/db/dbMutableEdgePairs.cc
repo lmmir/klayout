@@ -20,39 +20,30 @@
 
 */
 
-
 #include "dbMutableEdgePairs.h"
 
-namespace db
-{
+namespace db {
 
 // -------------------------------------------------------------------------------------------------------------
 //  MutableEdgePairs implementation
 
-MutableEdgePairs::MutableEdgePairs ()
-  : AsIfFlatEdgePairs ()
-{
+MutableEdgePairs::MutableEdgePairs() : AsIfFlatEdgePairs() {
   //  .. nothing yet ..
 }
 
-MutableEdgePairs::MutableEdgePairs (const MutableEdgePairs &other)
-  : AsIfFlatEdgePairs (other)
-{
+MutableEdgePairs::MutableEdgePairs(const MutableEdgePairs &other)
+    : AsIfFlatEdgePairs(other) {
   //  .. nothing yet ..
 }
 
-MutableEdgePairs::~MutableEdgePairs ()
-{
+MutableEdgePairs::~MutableEdgePairs() {
   //  .. nothing yet ..
 }
 
-void
-MutableEdgePairs::insert (const db::Shape &shape)
-{
-  if (shape.is_edge_pair ()) {
-    insert (shape.edge_pair ());
+void MutableEdgePairs::insert(const db::Shape &shape) {
+  if (shape.is_edge_pair()) {
+    insert(shape.edge_pair());
   }
 }
 
-}
-
+} // namespace db

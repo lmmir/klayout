@@ -20,36 +20,31 @@
 
 */
 
-
 #include "dbLayer.h"
 #include "tlUnitTest.h"
 
-
-TEST(1) 
-{
+TEST(1) {
   db::layer<db::Box, db::stable_layer_tag> bl;
   db::Box b_empty;
 
-  bl.update_bbox ();
-  EXPECT_EQ (bl.bbox (), b_empty);
+  bl.update_bbox();
+  EXPECT_EQ(bl.bbox(), b_empty);
 
-  db::Box b (0, 100, 1000, 1200);
-  bl.insert (b);
-  bl.update_bbox ();
-  EXPECT_EQ (bl.bbox (), b);
+  db::Box b(0, 100, 1000, 1200);
+  bl.insert(b);
+  bl.update_bbox();
+  EXPECT_EQ(bl.bbox(), b);
 }
 
-TEST(2) 
-{
+TEST(2) {
   db::layer<db::Box, db::unstable_layer_tag> bl;
   db::Box b_empty;
 
-  bl.update_bbox ();
-  EXPECT_EQ (bl.bbox (), b_empty);
+  bl.update_bbox();
+  EXPECT_EQ(bl.bbox(), b_empty);
 
-  db::Box b (0, 100, 1000, 1200);
-  bl.insert (b);
-  bl.update_bbox ();
-  EXPECT_EQ (bl.bbox (), b);
+  db::Box b(0, 100, 1000, 1200);
+  bl.insert(b);
+  bl.update_bbox();
+  EXPECT_EQ(bl.bbox(), b);
 }
-

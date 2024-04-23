@@ -23,78 +23,73 @@
 #include "tlSleep.h"
 
 #if defined(_MSC_VER) || defined(_WIN32)
-#  include <Windows.h>
-#  include <Synchapi.h>
+#include <Synchapi.h>
+#include <Windows.h>
 #else
-#  include <unistd.h>
-#  include <signal.h>
-#  include <sys/time.h>
-#  include <sys/select.h>
+#include <signal.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <unistd.h>
 #endif
 
 #include <stdio.h>
 
-namespace tl
-{
+namespace tl {
 
 #if !defined(_WIN32)
 
-static void init_sigmask_for_sleep (sigset_t *mask)
-{
-  sigemptyset (mask);
+static void init_sigmask_for_sleep(sigset_t *mask) {
+  sigemptyset(mask);
   //  disable a couple of signals we don't want to interfere with our sleep
-  sigaddset (mask, SIGCHLD);
-  sigaddset (mask, SIGALRM);
-  sigaddset (mask, SIGVTALRM);
-  sigaddset (mask, SIGPROF);
-  sigaddset (mask, SIGWINCH);
+  sigaddset(mask, SIGCHLD);
+  sigaddset(mask, SIGALRM);
+  sigaddset(mask, SIGVTALRM);
+  sigaddset(mask, SIGPROF);
+  sigaddset(mask, SIGWINCH);
 }
 
 #endif
 
-void usleep (unsigned long us)
-{
+void usleep(unsigned long us) {
 #if defined(_WIN32)
 
-    Sleep ((DWORD) ((us + 999) / 1000));
+  Sleep((DWORD)((us + 999) / 1000));
 
 #else
 
-    // Portable sleep for platforms other than Windows.
+  // Portable sleep for platforms other than Windows.
 
-    struct timespec wait;
-    wait.tv_sec = (us / 1000000ul);
-    wait.tv_nsec = (us % 1000000ul) * 1000ul;
+  struct timespec wait;
+  wait.tv_sec = (us / 1000000ul);
+  wait.tv_nsec = (us % 1000000ul) * 1000ul;
 
-    sigset_t mask;
-    init_sigmask_for_sleep (&mask);
+  sigset_t mask;
+  init_sigmask_for_sleep(&mask);
 
-    pselect (0, NULL, NULL, NULL, &wait, &mask);
+  pselect(0, NULL, NULL, NULL, &wait, &mask);
 
 #endif
 }
 
-void msleep (unsigned long ms)
-{
+void msleep(unsigned long ms) {
 #if defined(_WIN32)
 
-    Sleep ((DWORD) ms);
+  Sleep((DWORD)ms);
 
 #else
 
-    // Portable sleep for platforms other than Windows.
+  // Portable sleep for platforms other than Windows.
 
-    struct timespec wait;
-    wait.tv_sec = (ms / 1000ul);
-    wait.tv_nsec = (ms % 1000ul) * 1000000ul;
+  struct timespec wait;
+  wait.tv_sec = (ms / 1000ul);
+  wait.tv_nsec = (ms % 1000ul) * 1000000ul;
 
-    sigset_t mask;
-    init_sigmask_for_sleep (&mask);
+  sigset_t mask;
+  init_sigmask_for_sleep(&mask);
 
-    pselect (0, NULL, NULL, NULL, &wait, &mask);
+  pselect(0, NULL, NULL, NULL, &wait, &mask);
 
 #endif
 }
 
-}
-
+} // namespace tl

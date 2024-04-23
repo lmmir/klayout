@@ -20,27 +20,25 @@
 
 */
 
-
-
 #ifndef HDR_edtMainService
 #define HDR_edtMainService
 
-#include "layEditable.h"
-#include "layPlugin.h"
-#include "layViewObject.h"
-#include "layMarker.h"
+#include "dbClipboard.h"
 #include "dbLayout.h"
 #include "dbShape.h"
-#include "dbClipboard.h"
 #include "edtUtils.h"
+#include "layEditable.h"
+#include "layMarker.h"
+#include "layPlugin.h"
+#include "layViewObject.h"
 
 #include <set>
 #include <vector>
 
 namespace lay {
-  class Dispatcher;
-  class FlattenInstOptionsDialog;
-}
+class Dispatcher;
+class FlattenInstOptionsDialog;
+} // namespace lay
 
 namespace edt {
 
@@ -56,149 +54,146 @@ class DistributeOptionsDialog;
 
 // -------------------------------------------------------------
 
-class MainService
-  : public lay::Plugin,
-    public lay::Editable,
-    public db::Object
-{
-public: 
+class MainService : public lay::Plugin,
+                    public lay::Editable,
+                    public db::Object {
+public:
   /**
    *  @brief The constructor
    */
-  MainService (db::Manager *manager, lay::LayoutViewBase *view, lay::Dispatcher *root);
+  MainService(db::Manager *manager, lay::LayoutViewBase *view,
+              lay::Dispatcher *root);
 
   /**
    *  @brief The destructor
    */
-  ~MainService ();
+  ~MainService();
 
   /**
    *  @brief Access to the view object
    */
-  lay::LayoutViewBase *view () const
-  {
-    return mp_view;
-  }
-
-  /** 
-   *  @brief Implementation of the menu functions
-   */
-  virtual void menu_activated (const std::string &symbol);
+  lay::LayoutViewBase *view() const { return mp_view; }
 
   /**
-   *  @brief Descend to selection 
+   *  @brief Implementation of the menu functions
    */
-  void cm_descend ();
+  virtual void menu_activated(const std::string &symbol);
+
+  /**
+   *  @brief Descend to selection
+   */
+  void cm_descend();
 
   /**
    *  @brief Ascend one level
    */
-  void cm_ascend ();
+  void cm_ascend();
 
   /**
    *  @brief Change the layer of the shapes in the selection
    */
-  void cm_change_layer ();
+  void cm_change_layer();
 
   /**
    *  @brief Round corners on selection
    */
-  void cm_round_corners ();
+  void cm_round_corners();
 
   /**
    *  @brief Show area and perimeter of selection
    */
-  void cm_area_perimeter ();
+  void cm_area_perimeter();
 
   /**
    *  @brief Convert selection to PCell
    */
-  void cm_convert_to_pcell ();
+  void cm_convert_to_pcell();
 
   /**
    *  @brief Convert selection to static cell
    */
-  void cm_convert_to_cell ();
+  void cm_convert_to_cell();
 
   /**
    *  @brief Size shapes (merge before)
    */
-  void cm_size ();
+  void cm_size();
 
   /**
    *  @brief Merge shapes
    */
-  void cm_union ();
+  void cm_union();
 
   /**
    *  @brief Intersection of shapes
    */
-  void cm_intersection ();
+  void cm_intersection();
 
   /**
    *  @brief Separation of shapes
    */
-  void cm_separate ();
+  void cm_separate();
 
   /**
    *  @brief Difference of shapes
    */
-  void cm_difference ();
+  void cm_difference();
 
   /**
    *  @brief Make array from the selected shapes and instances
    */
-  void cm_make_array ();
+  void cm_make_array();
 
   /**
    *  @brief Align the selected shapes and instances
    */
-  void cm_align ();
+  void cm_align();
 
   /**
    *  @brief Distribute the selected shapes and instances
    */
-  void cm_distribute ();
+  void cm_distribute();
 
   /**
    *  @brief Flatten instances
    */
-  void cm_flatten_insts ();
+  void cm_flatten_insts();
 
   /**
    *  @brief Resolve array refs
    */
-  void cm_resolve_arefs ();
+  void cm_resolve_arefs();
 
   /**
    *  @brief Move selection up in hierarchy
    */
-  void cm_move_hier_up ();
+  void cm_move_hier_up();
 
   /**
    *  @brief Make new cell from selection
    */
-  void cm_make_cell ();
+  void cm_make_cell();
 
   /**
    *  @brief Make variants for selection
    */
-  void cm_make_variants ();
+  void cm_make_variants();
 
   /**
-   *  @brief Make variants so that selection operations can be applied without disturbing other instances
+   *  @brief Make variants so that selection operations can be applied without
+   * disturbing other instances
    */
-  void cm_make_cell_variants ();
+  void cm_make_cell_variants();
 
   /**
    *  @brief Tap operation
    */
-  void cm_tap ();
+  void cm_tap();
 
-  /** 
+  /**
    *  @brief "paste" operation
    */
-  virtual void paste ();
+  virtual void paste();
 
 private:
   //  The layout view that this service is attached to
@@ -206,7 +201,7 @@ private:
   lay::Dispatcher *mp_root;
   bool m_needs_update;
 
-  //  options 
+  //  options
   int m_flatten_insts_levels;
   bool m_flatten_prune;
   int m_align_hmode;
@@ -237,20 +232,19 @@ private:
   edt::MakeArrayOptionsDialog *mp_make_array_options_dialog;
 #endif
 
-  void boolean_op (int mode);
-  void check_no_guiding_shapes ();
+  void boolean_op(int mode);
+  void check_no_guiding_shapes();
 #if defined(HAVE_QT)
-  edt::RoundCornerOptionsDialog *round_corners_dialog ();
-  edt::AreaAndPerimeterDialog *area_and_perimeter_dialog ();
-  edt::AlignOptionsDialog *align_options_dialog ();
-  edt::DistributeOptionsDialog *distribute_options_dialog ();
-  lay::FlattenInstOptionsDialog *flatten_inst_options_dialog ();
-  edt::MakeCellOptionsDialog *make_cell_options_dialog ();
-  edt::MakeArrayOptionsDialog *make_array_options_dialog ();
+  edt::RoundCornerOptionsDialog *round_corners_dialog();
+  edt::AreaAndPerimeterDialog *area_and_perimeter_dialog();
+  edt::AlignOptionsDialog *align_options_dialog();
+  edt::DistributeOptionsDialog *distribute_options_dialog();
+  lay::FlattenInstOptionsDialog *flatten_inst_options_dialog();
+  edt::MakeCellOptionsDialog *make_cell_options_dialog();
+  edt::MakeArrayOptionsDialog *make_array_options_dialog();
 #endif
 };
 
-}
+} // namespace edt
 
 #endif
-

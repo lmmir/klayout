@@ -25,15 +25,13 @@
 
 #include "gsiCommon.h"
 
-namespace gsi
-{
+namespace gsi {
 
 /**
  *  @brief Forces linking of the library
  */
-GSI_PUBLIC void initialize_external ();
+GSI_PUBLIC void initialize_external();
 
-}
+} // namespace gsi
 
 #endif
-

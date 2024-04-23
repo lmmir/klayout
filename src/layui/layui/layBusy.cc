@@ -23,11 +23,10 @@
 #if defined(HAVE_QT)
 
 #include "layBusy.h"
-#include "tlThreads.h"
 #include "tlFileSystemWatcher.h"
+#include "tlThreads.h"
 
-namespace lay
-{
+namespace lay {
 
 tl::Mutex s_lock;
 
@@ -35,17 +34,15 @@ BusyMode *sp_busy_mode = 0;
 
 // ----------------------------------------------------------------------------------------------------------
 
-BusyMode::BusyMode ()
-{
-  tl::MutexLocker locker (&s_lock);
+BusyMode::BusyMode() {
+  tl::MutexLocker locker(&s_lock);
   if (sp_busy_mode == 0) {
     sp_busy_mode = this;
   }
 }
 
-BusyMode::~BusyMode ()
-{
-  tl::MutexLocker locker (&s_lock);
+BusyMode::~BusyMode() {
+  tl::MutexLocker locker(&s_lock);
   if (sp_busy_mode == this) {
     sp_busy_mode = 0;
   }
@@ -53,40 +50,36 @@ BusyMode::~BusyMode ()
 
 // ----------------------------------------------------------------------------------------------------------
 
-BusySection::BusySection ()
-{
-  tl::MutexLocker locker (&s_lock);
+BusySection::BusySection() {
+  tl::MutexLocker locker(&s_lock);
   mp_busy_mode = sp_busy_mode;
   m_previous_mode = false;
   if (mp_busy_mode) {
-    m_previous_mode = mp_busy_mode->is_busy ();
-    mp_busy_mode->enter_busy_mode (true);
+    m_previous_mode = mp_busy_mode->is_busy();
+    mp_busy_mode->enter_busy_mode(true);
   }
 
   //  disable file system watchers during busy periods
-  tl::FileSystemWatcher::global_enable (false);
+  tl::FileSystemWatcher::global_enable(false);
 }
 
-BusySection::~BusySection ()
-{
-  tl::MutexLocker locker (&s_lock);
+BusySection::~BusySection() {
+  tl::MutexLocker locker(&s_lock);
   if (sp_busy_mode == mp_busy_mode && mp_busy_mode) {
-    mp_busy_mode->enter_busy_mode (m_previous_mode);
+    mp_busy_mode->enter_busy_mode(m_previous_mode);
   }
   mp_busy_mode = 0;
 
-  tl::FileSystemWatcher::global_enable (true);
+  tl::FileSystemWatcher::global_enable(true);
 }
 
-bool 
-BusySection::is_busy ()
-{
-  tl::MutexLocker locker (&s_lock);
-  return sp_busy_mode && sp_busy_mode->is_busy ();
+bool BusySection::is_busy() {
+  tl::MutexLocker locker(&s_lock);
+  return sp_busy_mode && sp_busy_mode->is_busy();
 }
 
 // ----------------------------------------------------------------------------------------------------------
 
-}
+} // namespace lay
 
 #endif

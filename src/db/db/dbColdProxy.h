@@ -20,96 +20,90 @@
 
 */
 
-
 #ifndef HDR_dbColdProxy
 #define HDR_dbColdProxy
 
 #include "dbCommon.h"
 
-#include "dbTypes.h"
 #include "dbCell.h"
+#include "dbTypes.h"
 
 #include "tlObject.h"
 #include "tlTypeTraits.h"
 
-namespace db
-{
+namespace db {
 
 struct LayoutOrCellContextInfo;
 
 /**
- *  @brief A cell specialization: a cold proxy representing a library or PCell which has gone out of scope
+ *  @brief A cell specialization: a cold proxy representing a library or PCell
+ * which has gone out of scope
  *
- *  If a PCell or library cell gets disconnected - for example, because the technology has changed or during
- *  development of PCell code - this proxy replaces the original one. It stores the connection information, so
- *  it can be regenerated when it becomes valid again.
+ *  If a PCell or library cell gets disconnected - for example, because the
+ * technology has changed or during development of PCell code - this proxy
+ * replaces the original one. It stores the connection information, so it can be
+ * regenerated when it becomes valid again.
  */
-class DB_PUBLIC ColdProxy 
-  : public Cell, public tl::Object
-{
+class DB_PUBLIC ColdProxy : public Cell, public tl::Object {
 public:
-  /** 
+  /**
    *  @brief The constructor
    *
    *  Creates a cold proxy represented by the ProxyContextInfo data.
    */
-  ColdProxy (db::cell_index_type ci, db::Layout &layout, const LayoutOrCellContextInfo &info);
+  ColdProxy(db::cell_index_type ci, db::Layout &layout,
+            const LayoutOrCellContextInfo &info);
 
   /**
    *  @brief The destructor
    */
-  ~ColdProxy ();
+  ~ColdProxy();
 
   /**
-   *  @brief Cloning 
+   *  @brief Cloning
    */
-  virtual Cell *clone (Layout &layout) const;
+  virtual Cell *clone(Layout &layout) const;
 
   /**
-   *  @brief Get the library id 
+   *  @brief Get the library id
    */
-  const LayoutOrCellContextInfo &context_info () const
-  {
+  const LayoutOrCellContextInfo &context_info() const {
     return *mp_context_info;
   }
 
   /**
    *  @brief Indicates that this cell is a proxy cell
    */
-  virtual bool is_proxy () const 
-  { 
-    return true; 
-  }
+  virtual bool is_proxy() const { return true; }
 
   /**
    *  @brief Gets a list of cold proxies for a given library name
    */
-  static const tl::weak_collection<ColdProxy> &cold_proxies_per_lib_name (const std::string &libname);
+  static const tl::weak_collection<ColdProxy> &
+  cold_proxies_per_lib_name(const std::string &libname);
 
   /**
    *  @brief Gets the basic name
    */
-  virtual std::string get_basic_name () const;
+  virtual std::string get_basic_name() const;
 
   /**
    *  @brief Gets the display name
    */
-  virtual std::string get_display_name () const;
+  virtual std::string get_display_name() const;
 
   /**
    *  @brief Gets the qualified name
    */
-  virtual std::string get_qualified_name () const;
+  virtual std::string get_qualified_name() const;
 
 private:
   LayoutOrCellContextInfo *mp_context_info;
 
-  ColdProxy (const ColdProxy &d);
-  ColdProxy &operator= (const ColdProxy &d);
+  ColdProxy(const ColdProxy &d);
+  ColdProxy &operator=(const ColdProxy &d);
 };
 
-}
+} // namespace db
 
 #endif
-
-

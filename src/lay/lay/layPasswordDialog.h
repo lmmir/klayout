@@ -28,23 +28,22 @@
 #include "ui_PasswordDialog.h"
 #include <QDialog>
 
-namespace lay
-{
+namespace lay {
 
 /**
  * @brief A password dialog for registration with tl::HttpStream
  */
-class PasswordDialog
-  : public QDialog, public tl::HttpCredentialProvider, private Ui::PasswordDialog
-{
+class PasswordDialog : public QDialog,
+                       public tl::HttpCredentialProvider,
+                       private Ui::PasswordDialog {
 public:
-  PasswordDialog (QWidget *parent);
+  PasswordDialog(QWidget *parent);
 
-  bool user_password (const std::string &url, const std::string &realm, bool proxy, int attempt, std::string &user, std::string &passwd);
+  bool user_password(const std::string &url, const std::string &realm,
+                     bool proxy, int attempt, std::string &user,
+                     std::string &passwd);
 };
 
-
-
-}
+} // namespace lay
 
 #endif

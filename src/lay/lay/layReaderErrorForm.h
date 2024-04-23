@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_rbaReaderErrorForm
 #define HDR_rbaReaderErrorForm
 
@@ -31,27 +30,23 @@
 
 #include "ui_ReaderErrorForm.h"
 
-namespace db
-{
-  class ReaderUnknownFormatException;
+namespace db {
+class ReaderUnknownFormatException;
 }
 
-namespace lay
-{
+namespace lay {
 
-class ReaderErrorForm
-  : public QDialog, private Ui::ReaderErrorForm
-{
-  Q_OBJECT 
+class ReaderErrorForm : public QDialog, private Ui::ReaderErrorForm {
+  Q_OBJECT
 
 public:
-  ReaderErrorForm (QWidget *parent, const char *name, const db::ReaderUnknownFormatException *error);
+  ReaderErrorForm(QWidget *parent, const char *name,
+                  const db::ReaderUnknownFormatException *error);
 
 public slots:
-  void show_details ();
+  void show_details();
 };
 
-}
+} // namespace lay
 
 #endif
-

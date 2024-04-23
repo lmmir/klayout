@@ -20,40 +20,29 @@
 
 */
 
-
 #include "dbClipboard.h"
 
-namespace db
-{
+namespace db {
 
 Clipboard Clipboard::m_instance;
 
-Clipboard::Clipboard ()
-{
+Clipboard::Clipboard() {
   // .. nothing yet ..
 }
 
-Clipboard::~Clipboard ()
-{
-  clear ();
-}
+Clipboard::~Clipboard() { clear(); }
 
-Clipboard &
-Clipboard::operator+= (ClipboardObject *object)
-{
-  m_objects.push_back (object);
+Clipboard &Clipboard::operator+=(ClipboardObject *object) {
+  m_objects.push_back(object);
   return *this;
 }
 
-void 
-Clipboard::clear ()
-{
-  for (iterator o = begin (); o != end (); ++o) {
-    ClipboardObject *p = const_cast<ClipboardObject *> (*o);
+void Clipboard::clear() {
+  for (iterator o = begin(); o != end(); ++o) {
+    ClipboardObject *p = const_cast<ClipboardObject *>(*o);
     delete p;
   }
-  m_objects.clear ();
+  m_objects.clear();
 }
 
-}
-
+} // namespace db

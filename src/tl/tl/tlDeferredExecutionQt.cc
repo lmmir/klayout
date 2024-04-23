@@ -26,64 +26,57 @@
 
 #include <QCoreApplication>
 
-namespace tl
-{
+namespace tl {
 
-DeferredMethodSchedulerQt::DeferredMethodSchedulerQt ()
-  : QObject (qApp), DeferredMethodScheduler ()
-{
-  m_event_type = QEvent::registerEventType ();
+DeferredMethodSchedulerQt::DeferredMethodSchedulerQt()
+    : QObject(qApp), DeferredMethodScheduler() {
+  m_event_type = QEvent::registerEventType();
 
-  connect (&m_timer, SIGNAL (timeout ()), this, SLOT (timer ()));
+  connect(&m_timer, SIGNAL(timeout()), this, SLOT(timer()));
 
-  m_timer.setInterval (0); // immediately
-  m_timer.setSingleShot (true); //  just once
+  m_timer.setInterval(0);      // immediately
+  m_timer.setSingleShot(true); //  just once
 
-  //  set up a fallback timer that cleans up pending execute jobs if something goes wrong
-  connect (&m_fallback_timer, SIGNAL (timeout ()), this, SLOT (timer ()));
-  m_fallback_timer.setInterval (500);
-  m_fallback_timer.setSingleShot (false);
+  //  set up a fallback timer that cleans up pending execute jobs if something
+  //  goes wrong
+  connect(&m_fallback_timer, SIGNAL(timeout()), this, SLOT(timer()));
+  m_fallback_timer.setInterval(500);
+  m_fallback_timer.setSingleShot(false);
 }
 
-DeferredMethodSchedulerQt::~DeferredMethodSchedulerQt ()
-{
+DeferredMethodSchedulerQt::~DeferredMethodSchedulerQt() {
   //  .. nothing yet ..
 }
 
-void 
-DeferredMethodSchedulerQt::queue_event ()
-{
-  qApp->postEvent (this, new QEvent (QEvent::Type (m_event_type)));
+void DeferredMethodSchedulerQt::queue_event() {
+  qApp->postEvent(this, new QEvent(QEvent::Type(m_event_type)));
 }
 
-bool
-DeferredMethodSchedulerQt::event (QEvent *event)
-{
-  if (event->type () == m_event_type) {
-    timer ();
+bool DeferredMethodSchedulerQt::event(QEvent *event) {
+  if (event->type() == m_event_type) {
+    timer();
     return true;
   } else {
-    return QObject::event (event);
+    return QObject::event(event);
   }
 }
 
-void 
-DeferredMethodSchedulerQt::timer ()
-{
-  if (is_disabled ()) {
+void DeferredMethodSchedulerQt::timer() {
+  if (is_disabled()) {
     //  start again if disabled
-    m_timer.start ();
+    m_timer.start();
   } else {
     try {
-      do_execute ();
+      do_execute();
     } catch (tl::Exception &ex) {
-      tl::error << tl::to_string (QObject::tr ("Exception caught: ")) << ex.msg ();
+      tl::error << tl::to_string(QObject::tr("Exception caught: ")) << ex.msg();
     } catch (std::exception &ex) {
-      tl::error << tl::to_string (QObject::tr ("Exception caught: ")) << ex.what ();
+      tl::error << tl::to_string(QObject::tr("Exception caught: "))
+                << ex.what();
     } catch (...) {
-      tl::error << tl::to_string (QObject::tr ("Unspecific exception caught"));
+      tl::error << tl::to_string(QObject::tr("Unspecific exception caught"));
     }
   }
 }
 
-}
+} // namespace tl

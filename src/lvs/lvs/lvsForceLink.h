@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_lvsForceLink
 #define HDR_lvsForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the lvs module
  */
 
-namespace lvs
-{
-  LVS_PUBLIC int _force_link_f ();
-  int _force_link_target = _force_link_f ();
-}
+namespace lvs {
+LVS_PUBLIC int _force_link_f();
+int _force_link_target = _force_link_f();
+} // namespace lvs
 
 #endif
-

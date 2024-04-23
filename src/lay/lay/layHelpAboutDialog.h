@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layHelpAboutDialog
 #define HDR_layHelpAboutDialog
 
@@ -29,27 +28,23 @@
 #include <QDialog>
 
 namespace Ui {
-  class HelpAboutDialog;
+class HelpAboutDialog;
 }
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief A dialog for showing the "help about" dialog
  */
-class LAY_PUBLIC HelpAboutDialog
-  : public QDialog
-{
+class LAY_PUBLIC HelpAboutDialog : public QDialog {
 public:
-  HelpAboutDialog (QWidget *parent);
-  ~HelpAboutDialog ();
+  HelpAboutDialog(QWidget *parent);
+  ~HelpAboutDialog();
 
 private:
   Ui::HelpAboutDialog *mp_ui;
 };
 
-}
+} // namespace lay
 
 #endif
-

@@ -20,26 +20,23 @@
 
 */
 
-
 #ifndef HDR_layInit
 #define HDR_layInit
 
 #include "layCommon.h"
 #include "layNativePlugin.h"
 
+#include <list>
 #include <string>
 #include <vector>
-#include <list>
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief A tiny struct describing a native plugin
  */
-struct PluginDescriptor
-{
-  typedef void (*runner_func_t) ();
+struct PluginDescriptor {
+  typedef void (*runner_func_t)();
 
   runner_func_t autorun;
   runner_func_t autorun_early;
@@ -47,9 +44,7 @@ struct PluginDescriptor
   std::string path;
   std::string description;
 
-  PluginDescriptor ()
-    : autorun (0), autorun_early (0)
-  { }
+  PluginDescriptor() : autorun(0), autorun_early(0) {}
 };
 
 /**
@@ -58,18 +53,19 @@ struct PluginDescriptor
  *  module. It will load the plugins and perform initialization of all
  *  of them.
  */
-LAY_PUBLIC void init (const std::vector<std::string> &paths = std::vector<std::string> ());
+LAY_PUBLIC void
+init(const std::vector<std::string> &paths = std::vector<std::string>());
 
 /**
  *  @brief Explicitly load a specific plugin
  */
-LAY_PUBLIC void load_plugin (const std::string &pp);
+LAY_PUBLIC void load_plugin(const std::string &pp);
 
 /**
  *  @brief Gets a list of all plugins registered
  */
-LAY_PUBLIC const std::list<lay::PluginDescriptor> &plugins ();
+LAY_PUBLIC const std::list<lay::PluginDescriptor> &plugins();
 
-}
+} // namespace lay
 
 #endif

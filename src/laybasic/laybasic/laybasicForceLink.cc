@@ -22,11 +22,6 @@
 
 #include "laybasicForceLink.h"
 
-namespace laybasic
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace laybasic {
+int _force_link_f() { return 0; }
+} // namespace laybasic

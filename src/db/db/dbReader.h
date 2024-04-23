@@ -20,8 +20,6 @@
 
 */
 
-
-
 #ifndef HDR_dbReader
 #define HDR_dbReader
 
@@ -31,13 +29,12 @@
 #include "tlInternational.h"
 #include "tlString.h"
 
-#include "tlStream.h"
 #include "dbLoadLayoutOptions.h"
+#include "tlStream.h"
 
 #include <vector>
 
-namespace db
-{
+namespace db {
 
 class Layout;
 class ReaderBase;
@@ -45,13 +42,9 @@ class ReaderBase;
 /**
  *  @brief Generic base class of reader exceptions
  */
-class DB_PUBLIC ReaderException
-  : public tl::Exception 
-{
+class DB_PUBLIC ReaderException : public tl::Exception {
 public:
-  ReaderException (const std::string &msg)
-    : tl::Exception (msg)
-  { }
+  ReaderException(const std::string &msg) : tl::Exception(msg) {}
 };
 
 /**
@@ -60,23 +53,15 @@ public:
  *  The purpose of this class is supply the header bytes of the
  *  data stream for analysis.
  */
-class DB_PUBLIC ReaderUnknownFormatException
-  : public ReaderException
-{
+class DB_PUBLIC ReaderUnknownFormatException : public ReaderException {
 public:
-  ReaderUnknownFormatException (const std::string &msg, const std::string &data, bool has_more)
-    : ReaderException (msg), m_data (data), m_has_more (has_more)
-  { }
+  ReaderUnknownFormatException(const std::string &msg, const std::string &data,
+                               bool has_more)
+      : ReaderException(msg), m_data(data), m_has_more(has_more) {}
 
-  const std::string &data () const
-  {
-    return m_data;
-  }
+  const std::string &data() const { return m_data; }
 
-  bool has_more () const
-  {
-    return m_has_more;
-  }
+  bool has_more() const { return m_has_more; }
 
 private:
   std::string m_data;
@@ -88,46 +73,39 @@ private:
  *  @param s The first layer name and output
  *  @param n The name to add
  */
-DB_PUBLIC void
-join_layer_names (std::string &s, const std::string &n);
+DB_PUBLIC void join_layer_names(std::string &s, const std::string &n);
 
 /**
  *  @brief The generic reader base class
  */
-class DB_PUBLIC ReaderBase
-{
+class DB_PUBLIC ReaderBase {
 public:
-  ReaderBase ();
-  virtual ~ReaderBase ();
+  ReaderBase();
+  virtual ~ReaderBase();
 
-  virtual const db::LayerMap &read (db::Layout &layout, const db::LoadLayoutOptions &options) = 0;
-  virtual const db::LayerMap &read (db::Layout &layout) = 0;
-  virtual const char *format () const = 0;
+  virtual const db::LayerMap &read(db::Layout &layout,
+                                   const db::LoadLayoutOptions &options) = 0;
+  virtual const db::LayerMap &read(db::Layout &layout) = 0;
+  virtual const char *format() const = 0;
 
   /**
    *  @brief Sets a flag indicating that warnings shall be treated as errors
    *  If this flag is set, warnings will be handled as errors.
    */
-  void set_warnings_as_errors (bool f);
+  void set_warnings_as_errors(bool f);
 
   /**
    *  @brief Gets a flag indicating that warnings shall be treated as errors
    */
-  bool warnings_as_errors () const
-  {
-    return m_warnings_as_errors;
-  }
+  bool warnings_as_errors() const { return m_warnings_as_errors; }
 
   /**
    *  @brief Gets the warning level
    */
-  int warn_level () const
-  {
-    return m_warn_level;
-  }
+  int warn_level() const { return m_warn_level; }
 
 protected:
-  virtual void init (const db::LoadLayoutOptions &options);
+  virtual void init(const db::LoadLayoutOptions &options);
 
 private:
   bool m_warnings_as_errors;
@@ -135,48 +113,48 @@ private:
 };
 
 /**
- *  @brief The generic stream reader 
+ *  @brief The generic stream reader
  *
  *  This reader is supposed to fork to one of the specific readers
  *  depending on the format detected.
  */
-class DB_PUBLIC Reader
-{
-public: 
+class DB_PUBLIC Reader {
+public:
   /**
    *  @brief Construct a reader object
    *
-   *  If no valid format can be detected, the constructor will throw 
+   *  If no valid format can be detected, the constructor will throw
    *  an exception. The stream must be opened already in order to allow
    *  format detection.
    *
    *  @param s The stream object from which to read stream data from
    */
-  Reader (tl::InputStream &s);
+  Reader(tl::InputStream &s);
 
-  /**  
+  /**
    *  @brief Destructor
    */
-  ~Reader ();
+  ~Reader();
 
-  /** 
-   *  @brief The basic read method 
+  /**
+   *  @brief The basic read method
    *
    *  This method will read the stream data and translate this to
    *  insert calls into the layout object. This will not do much
    *  on the layout object beside inserting the objects.
    *  It can be passed options with a layer map which tells which
    *  OASIS layer(s) to read on which logical layers.
-   *  In addition, a flag can be passed that tells whether to create 
+   *  In addition, a flag can be passed that tells whether to create
    *  new layers. The returned map will contain all layers, the passed
    *  ones and the newly created ones.
    *
    *  @param layout The layout object to write to
    *  @param options The LayerMap object
    */
-  const db::LayerMap &read (db::Layout &layout, const db::LoadLayoutOptions &options);
+  const db::LayerMap &read(db::Layout &layout,
+                           const db::LoadLayoutOptions &options);
 
-  /** 
+  /**
    *  @brief The basic read method (without mapping)
    *
    *  This method will read the stream data and translate this to
@@ -189,31 +167,26 @@ public:
    *  @param layout The layout object to write to
    *  @return The LayerMap object
    */
-  const db::LayerMap &read (db::Layout &layout);
+  const db::LayerMap &read(db::Layout &layout);
 
   /**
    *  @brief Returns a format describing the file format found
    */
-  const char *format () const
-  {
-    return mp_actual_reader->format ();
-  }
+  const char *format() const { return mp_actual_reader->format(); }
 
   /**
    *  @brief Sets a flag indicating that warnings shall be treated as errors
    *  If this flag is set, warnings will be handled as errors.
    */
-  void set_warnings_as_errors (bool f)
-  {
-    mp_actual_reader->set_warnings_as_errors (f);
+  void set_warnings_as_errors(bool f) {
+    mp_actual_reader->set_warnings_as_errors(f);
   }
 
   /**
    *  @brief Gets a flag indicating that warnings shall be treated as errors
    */
-  bool warnings_as_errors () const
-  {
-    return mp_actual_reader->warnings_as_errors ();
+  bool warnings_as_errors() const {
+    return mp_actual_reader->warnings_as_errors();
   }
 
 private:
@@ -221,7 +194,6 @@ private:
   tl::InputStream &m_stream;
 };
 
-}
+} // namespace db
 
 #endif
-

@@ -20,18 +20,14 @@
 
 */
 
-
 #include "antConfig.h"
 
-namespace ant
-{
+namespace ant {
 
 // ------------------------------------------------------------
 //  Helper functions to get and set the configuration
 
-std::string 
-ACConverter::to_string (const lay::angle_constraint_type &m)
-{
+std::string ACConverter::to_string(const lay::angle_constraint_type &m) {
   if (m == lay::AC_Any) {
     return "any";
   } else if (m == lay::AC_Diagonal) {
@@ -49,10 +45,9 @@ ACConverter::to_string (const lay::angle_constraint_type &m)
   }
 }
 
-void 
-ACConverter::from_string (const std::string &tt, lay::angle_constraint_type &m)
-{
-  std::string t (tl::trim (tt));
+void ACConverter::from_string(const std::string &tt,
+                              lay::angle_constraint_type &m) {
+  std::string t(tl::trim(tt));
   if (t == "any") {
     m = lay::AC_Any;
   } else if (t == "diagonal") {
@@ -70,9 +65,7 @@ ACConverter::from_string (const std::string &tt, lay::angle_constraint_type &m)
   }
 }
 
-std::string 
-StyleConverter::to_string (ant::Object::style_type s)
-{
+std::string StyleConverter::to_string(ant::Object::style_type s) {
   if (s == ant::Object::STY_ruler) {
     return "ruler";
   } else if (s == ant::Object::STY_arrow_end) {
@@ -94,10 +87,9 @@ StyleConverter::to_string (ant::Object::style_type s)
   }
 }
 
-void  
-StyleConverter::from_string (const std::string &tt, ant::Object::style_type &s)
-{
-  std::string t (tl::trim (tt));
+void StyleConverter::from_string(const std::string &tt,
+                                 ant::Object::style_type &s) {
+  std::string t(tl::trim(tt));
   if (t == "ruler") {
     s = ant::Object::STY_ruler;
   } else if (t == "arrow_end") {
@@ -119,9 +111,7 @@ StyleConverter::from_string (const std::string &tt, ant::Object::style_type &s)
   }
 }
 
-std::string  
-OutlineConverter::to_string (ant::Object::outline_type o)
-{
+std::string OutlineConverter::to_string(ant::Object::outline_type o) {
   if (o == ant::Object::OL_diag) {
     return "diag";
   } else if (o == ant::Object::OL_xy) {
@@ -145,10 +135,9 @@ OutlineConverter::to_string (ant::Object::outline_type o)
   }
 }
 
-void   
-OutlineConverter::from_string (const std::string &s, ant::Object::outline_type &o)
-{
-  std::string t (tl::trim (s));
+void OutlineConverter::from_string(const std::string &s,
+                                   ant::Object::outline_type &o) {
+  std::string t(tl::trim(s));
   if (t == "diag") {
     o = ant::Object::OL_diag;
   } else if (t == "xy") {
@@ -172,9 +161,7 @@ OutlineConverter::from_string (const std::string &s, ant::Object::outline_type &
   }
 }
 
-std::string
-PositionConverter::to_string (ant::Object::position_type p)
-{
+std::string PositionConverter::to_string(ant::Object::position_type p) {
   if (p == ant::Object::POS_auto) {
     return "auto";
   } else if (p == ant::Object::POS_p1) {
@@ -188,10 +175,9 @@ PositionConverter::to_string (ant::Object::position_type p)
   }
 }
 
-void
-PositionConverter::from_string (const std::string &s, ant::Object::position_type &p)
-{
-  std::string t (tl::trim (s));
+void PositionConverter::from_string(const std::string &s,
+                                    ant::Object::position_type &p) {
+  std::string t(tl::trim(s));
   if (t == "auto") {
     p = ant::Object::POS_auto;
   } else if (t == "p1") {
@@ -205,9 +191,7 @@ PositionConverter::from_string (const std::string &s, ant::Object::position_type
   }
 }
 
-std::string
-AlignmentConverter::to_string (ant::Object::alignment_type a)
-{
+std::string AlignmentConverter::to_string(ant::Object::alignment_type a) {
   if (a == ant::Object::AL_auto) {
     return "auto";
   } else if (a == ant::Object::AL_center) {
@@ -221,10 +205,9 @@ AlignmentConverter::to_string (ant::Object::alignment_type a)
   }
 }
 
-void
-AlignmentConverter::from_string (const std::string &s, ant::Object::alignment_type &a)
-{
-  std::string t (tl::trim (s));
+void AlignmentConverter::from_string(const std::string &s,
+                                     ant::Object::alignment_type &a) {
+  std::string t(tl::trim(s));
   if (t == "auto") {
     a = ant::Object::AL_auto;
   } else if (t == "center") {
@@ -238,9 +221,7 @@ AlignmentConverter::from_string (const std::string &s, ant::Object::alignment_ty
   }
 }
 
-std::string
-RulerModeConverter::to_string (ant::Template::ruler_mode_type m)
-{
+std::string RulerModeConverter::to_string(ant::Template::ruler_mode_type m) {
   if (m == ant::Template::RulerNormal) {
     return "normal";
   } else if (m == ant::Template::RulerSingleClick) {
@@ -256,10 +237,9 @@ RulerModeConverter::to_string (ant::Template::ruler_mode_type m)
   }
 }
 
-void
-RulerModeConverter::from_string (const std::string &s, ant::Template::ruler_mode_type &a)
-{
-  std::string t (tl::trim (s));
+void RulerModeConverter::from_string(const std::string &s,
+                                     ant::Template::ruler_mode_type &a) {
+  std::string t(tl::trim(s));
   if (t == "normal") {
     a = ant::Template::RulerNormal;
   } else if (t == "single_click") {
@@ -275,31 +255,27 @@ RulerModeConverter::from_string (const std::string &s, ant::Template::ruler_mode
   }
 }
 
-std::string
-TemplatesConverter::to_string (const std::vector <ant::Template> &t)
-{
-  return ant::Template::to_string (t);
+std::string TemplatesConverter::to_string(const std::vector<ant::Template> &t) {
+  return ant::Template::to_string(t);
 }
 
-void 
-TemplatesConverter::from_string (const std::string &s, std::vector <ant::Template> &t)
-{
-  t = ant::Template::from_string (s);
+void TemplatesConverter::from_string(const std::string &s,
+                                     std::vector<ant::Template> &t) {
+  t = ant::Template::from_string(s);
 }
 
 // ------------------------------------------------------------
 //  Declaration of the configuration options
 
-const std::string cfg_max_number_of_rulers ("rulers");
-const std::string cfg_ruler_snap_range ("ruler-snap-range");
-const std::string cfg_ruler_color ("ruler-color");
-const std::string cfg_ruler_halo ("ruler-halo");
-const std::string cfg_ruler_snap_mode ("ruler-snap-mode");
-const std::string cfg_ruler_obj_snap ("ruler-obj-snap");
-const std::string cfg_ruler_grid_snap ("ruler-grid-snap");
-const std::string cfg_ruler_grid_micron ("grid-micron");
-const std::string cfg_ruler_templates ("ruler-templates-v2");
-const std::string cfg_current_ruler_template ("current-ruler-template");
+const std::string cfg_max_number_of_rulers("rulers");
+const std::string cfg_ruler_snap_range("ruler-snap-range");
+const std::string cfg_ruler_color("ruler-color");
+const std::string cfg_ruler_halo("ruler-halo");
+const std::string cfg_ruler_snap_mode("ruler-snap-mode");
+const std::string cfg_ruler_obj_snap("ruler-obj-snap");
+const std::string cfg_ruler_grid_snap("ruler-grid-snap");
+const std::string cfg_ruler_grid_micron("grid-micron");
+const std::string cfg_ruler_templates("ruler-templates-v2");
+const std::string cfg_current_ruler_template("current-ruler-template");
 
 } // namespace ant
-

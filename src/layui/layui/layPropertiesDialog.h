@@ -29,11 +29,11 @@
 
 #include <vector>
 
-#include <QMutex>
 #include <QDialog>
 #include <QLabel>
-#include <QStatusBar>
 #include <QMessageBox>
+#include <QMutex>
+#include <QStatusBar>
 
 #include <dbManager.h>
 
@@ -42,13 +42,11 @@
 class QStackedLayout;
 class QModelIndex;
 
-namespace Ui
-{
-  class PropertiesDialog;
+namespace Ui {
+class PropertiesDialog;
 }
 
-namespace lay
-{
+namespace lay {
 
 class Editable;
 class Editables;
@@ -64,21 +62,20 @@ class PropertiesTreeModel;
  *  objects from a set of editables.
  */
 
-class LAYUI_PUBLIC PropertiesDialog
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC PropertiesDialog : public QDialog {
+  Q_OBJECT
 
 public:
   /**
    *  @brief Constructor
    */
-  PropertiesDialog (QWidget *parent, db::Manager *manager, lay::Editables *editables);
+  PropertiesDialog(QWidget *parent, db::Manager *manager,
+                   lay::Editables *editables);
 
   /**
    *  @brief The Destructor
    */
-  ~PropertiesDialog ();
+  ~PropertiesDialog();
 
 private:
   friend class PropertiesTreeModel;
@@ -97,32 +94,35 @@ private:
   PropertiesTreeModel *mp_tree_model;
   bool m_signals_enabled;
 
-  const std::vector<lay::PropertiesPage *> &properties_pages () { return mp_properties_pages; }
-  void disconnect ();
-  bool any_prev () const;
-  bool any_next () const;
-  void update_title ();
-  void update_controls ();
+  const std::vector<lay::PropertiesPage *> &properties_pages() {
+    return mp_properties_pages;
+  }
+  void disconnect();
+  bool any_prev() const;
+  bool any_next() const;
+  void update_title();
+  void update_controls();
 
 public slots:
-  void apply ();
-  void next_pressed ();
-  void prev_pressed ();
-  void cancel_pressed ();
-  void ok_pressed ();
-  void apply_to_all_pressed ();
-  void current_index_changed (const QModelIndex &index, const QModelIndex &previous);
-  void selection_changed ();
+  void apply();
+  void next_pressed();
+  void prev_pressed();
+  void cancel_pressed();
+  void ok_pressed();
+  void apply_to_all_pressed();
+  void current_index_changed(const QModelIndex &index,
+                             const QModelIndex &previous);
+  void selection_changed();
 
 protected:
-  void reject ();
+  void reject();
 
 private:
   Ui::PropertiesDialog *mp_ui;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

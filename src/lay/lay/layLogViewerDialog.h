@@ -20,55 +20,50 @@
 
 */
 
-
 #ifndef HDR_layLogViewerDialog
 #define HDR_layLogViewerDialog
 
-#include "ui_LogViewerDialog.h"
+#include "layCommon.h"
 #include "tlLog.h"
 #include "tlTimer.h"
-#include "layCommon.h"
+#include "ui_LogViewerDialog.h"
 
-#include <QTimer>
-#include <QMutex>
-#include <QDialog>
 #include <QAbstractListModel>
+#include <QDialog>
+#include <QMutex>
+#include <QTimer>
 #include <QToolButton>
 
 #include <deque>
 #include <string>
 
-namespace lay
-{
+namespace lay {
 
 class LogFile;
 
 /**
  *  @brief A helper class describing one log entry
  */
-class LogFileEntry
-{
+class LogFileEntry {
 public:
-  enum mode_type { Warning, WarningContinued, Error, ErrorContinued, Info, InfoContinued, Separator };
+  enum mode_type {
+    Warning,
+    WarningContinued,
+    Error,
+    ErrorContinued,
+    Info,
+    InfoContinued,
+    Separator
+  };
 
-  LogFileEntry (mode_type mode, const std::string &s, bool cont)
-    : m_mode (mode), m_text (s), m_continued (cont)
-  { }
+  LogFileEntry(mode_type mode, const std::string &s, bool cont)
+      : m_mode(mode), m_text(s), m_continued(cont) {}
 
-  const std::string &text () const
-  {
-    return m_text;
-  }
+  const std::string &text() const { return m_text; }
 
-  mode_type mode () const
-  {
-    return m_mode;
-  }
+  mode_type mode() const { return m_mode; }
 
-  bool continued () const
-  {
-    return m_continued;
-  }
+  bool continued() const { return m_continued; }
 
 private:
   mode_type m_mode;
@@ -77,20 +72,20 @@ private:
 };
 
 /**
- *  @brief The log receiver abstraction that connects a channel with the LogFile object
+ *  @brief The log receiver abstraction that connects a channel with the LogFile
+ * object
  */
-class LAY_PUBLIC LogReceiver
-  : public tl::Channel 
-{
+class LAY_PUBLIC LogReceiver : public tl::Channel {
 public:
-  LogReceiver (LogFile *file, int verbosity, void (LogFile::*method)(const std::string &, bool));
+  LogReceiver(LogFile *file, int verbosity,
+              void (LogFile::*method)(const std::string &, bool));
 
 protected:
-  virtual void puts (const char *s);
-  virtual void endl ();
-  virtual void end ();
-  virtual void begin ();
-  virtual void yield ();
+  virtual void puts(const char *s);
+  virtual void endl();
+  virtual void end();
+  virtual void begin();
+  virtual void yield();
 
 private:
   LogFile *mp_file;
@@ -111,19 +106,17 @@ private:
  *  global receiver that will collect the global log
  *  messages.
  */
-class LAY_PUBLIC LogFile
-  : public QAbstractListModel
-{
-Q_OBJECT
+class LAY_PUBLIC LogFile : public QAbstractListModel {
+  Q_OBJECT
 
 public:
   /**
    *  @brief Constructs a log file receiver
-   *  If "register_global" is true, the receiver will register itself as a global log receiver.
-   *  Otherwise it's a private one that can be used with the "error", "warn" and "info" channels
-   *  provided by the respective methods.
+   *  If "register_global" is true, the receiver will register itself as a
+   * global log receiver. Otherwise it's a private one that can be used with the
+   * "error", "warn" and "info" channels provided by the respective methods.
    */
-  LogFile (size_t max_entries, bool register_global = true);
+  LogFile(size_t max_entries, bool register_global = true);
 
   /**
    *  @brief Implementation of the QAbstractItemModel interface
@@ -138,87 +131,75 @@ public:
   /**
    *  @brief Gets a value indicating whether errors are present
    */
-  bool has_errors () const;
+  bool has_errors() const;
 
   /**
    *  @brief Gets a value indicating whether warnings are present
    */
-  bool has_warnings () const;
+  bool has_warnings() const;
 
 public slots:
   /**
    *  @brief Clears the log
    */
-  void clear ();
+  void clear();
 
   /**
    *  @brief Adds a separator
    */
-  void separator ();
+  void separator();
 
   /**
    *  @brief copies the contents to the clipboard
    */
-  void copy ();
+  void copy();
 
   /**
    *  @brief Gets the error channel
    */
-  tl::Channel &error ()
-  {
-    return m_error_receiver;
-  }
+  tl::Channel &error() { return m_error_receiver; }
 
   /**
    *  @brief Gets the warning channel
    */
-  tl::Channel &warn ()
-  {
-    return m_warn_receiver;
-  }
+  tl::Channel &warn() { return m_warn_receiver; }
 
   /**
    *  @brief Gets the info channel
    */
-  tl::Channel &info ()
-  {
-    return m_info_receiver;
-  }
+  tl::Channel &info() { return m_info_receiver; }
 
   /**
    *  @brief Gets the log channel
    */
-  tl::Channel &log ()
-  {
-    return m_log_receiver;
-  }
+  tl::Channel &log() { return m_log_receiver; }
 
   /**
    *  @brief Implementation of post-log action
    */
-  void yield ();
+  void yield();
 
   /**
    *  @brief Sets the maximum number of entries to show
    *
    *  Setting this value to 0 basically disables the log collection
    */
-  void set_max_entries (size_t n);
+  void set_max_entries(size_t n);
 
   /**
    *  @brief Gets the maximum number of entries to show
    */
-  size_t max_entries () const;
+  size_t max_entries() const;
 
 private slots:
-  void timeout ();
+  void timeout();
 
 signals:
   /**
    *  @brief This signal is emitted if the log's attention state has changed
    *  Attention state is "true" if either errors or warnings are present.
    */
-  void attention_changed (bool f);
+  void attention_changed(bool f);
 
 private:
   tl::Clock m_last_yield;
@@ -238,41 +219,39 @@ private:
   /**
    *  @brief Adds an error
    */
-  void add_error (const std::string &msg, bool continued)
-  {
-    add (continued ? LogFileEntry::ErrorContinued : LogFileEntry::Error, msg, continued);
+  void add_error(const std::string &msg, bool continued) {
+    add(continued ? LogFileEntry::ErrorContinued : LogFileEntry::Error, msg,
+        continued);
   }
 
   /**
    *  @brief Adds a info message
    */
-  void add_info (const std::string &msg, bool continued)
-  {
-    add (continued ? LogFileEntry::InfoContinued : LogFileEntry::Info, msg, continued);
+  void add_info(const std::string &msg, bool continued) {
+    add(continued ? LogFileEntry::InfoContinued : LogFileEntry::Info, msg,
+        continued);
   }
 
   /**
    *  @brief Adds a warning
    */
-  void add_warn (const std::string &msg, bool continued)
-  {
-    add (continued ? LogFileEntry::WarningContinued : LogFileEntry::Warning, msg, continued);
+  void add_warn(const std::string &msg, bool continued) {
+    add(continued ? LogFileEntry::WarningContinued : LogFileEntry::Warning, msg,
+        continued);
   }
 
   /**
    *  @brief Adds anything
    */
-  void add (LogFileEntry::mode_type mode, const std::string &msg, bool continued);
+  void add(LogFileEntry::mode_type mode, const std::string &msg,
+           bool continued);
 };
 
 /**
  *  @brief A dialog presenting the log file
  */
-class LAY_PUBLIC LogViewerDialog
-  : public QDialog, 
-    public Ui::LogViewerDialog
-{
-Q_OBJECT
+class LAY_PUBLIC LogViewerDialog : public QDialog, public Ui::LogViewerDialog {
+  Q_OBJECT
 
 public:
   /**
@@ -280,110 +259,83 @@ public:
    *  If "register_global" is true, the log is registered globally
    *  and will receiver global log messages.
    */
-  LogViewerDialog (QWidget *parent, bool register_global = true, bool interactive = true);
+  LogViewerDialog(QWidget *parent, bool register_global = true,
+                  bool interactive = true);
 
   /**
    *  @brief Gets the log file object
    */
-  LogFile &file ()
-  {
-    return m_file;
-  }
+  LogFile &file() { return m_file; }
 
 public slots:
-  void verbosity_changed (int l);
-  
+  void verbosity_changed(int l);
+
 private:
   LogFile m_file;
 };
 
 /**
- *  @brief A tool button that collects logs and makes itself visible once attention is required
+ *  @brief A tool button that collects logs and makes itself visible once
+ * attention is required
  */
-class LAY_PUBLIC AlertLogButton
-  : public QToolButton
-{
-Q_OBJECT
+class LAY_PUBLIC AlertLogButton : public QToolButton {
+  Q_OBJECT
 
 public:
   /**
    *  @brief Constructor
    */
-  AlertLogButton (QWidget *parent);
+  AlertLogButton(QWidget *parent);
 
   /**
    *  @brief Gets the error channel
    */
-  tl::Channel &error () const
-  {
-    return mp_logger->file ().error ();
-  }
+  tl::Channel &error() const { return mp_logger->file().error(); }
 
   /**
    *  @brief Gets the warn channel
    */
-  tl::Channel &warn () const
-  {
-    return mp_logger->file ().warn ();
-  }
+  tl::Channel &warn() const { return mp_logger->file().warn(); }
 
   /**
    *  @brief Gets the info channel
    */
-  tl::Channel &info () const
-  {
-    return mp_logger->file ().info ();
-  }
+  tl::Channel &info() const { return mp_logger->file().info(); }
 
   /**
    *  @brief Gets the log channel
    */
-  tl::Channel &log () const
-  {
-    return mp_logger->file ().log ();
-  }
+  tl::Channel &log() const { return mp_logger->file().log(); }
 
   /**
    *  @brief Gets the error status of the log
    */
-  bool has_errors () const
-  {
-    return mp_logger->file ().has_errors ();
-  }
+  bool has_errors() const { return mp_logger->file().has_errors(); }
 
   /**
    *  @brief Gets the warning status of the log
    */
-  bool has_warnings () const
-  {
-    return mp_logger->file ().has_warnings ();
-  }
+  bool has_warnings() const { return mp_logger->file().has_warnings(); }
 
   /**
    *  @brief Gets the attention status of the log
    *  (either warnings or errors are present)
    */
-  bool needs_attention () const
-  {
-    return has_errors () || has_warnings ();
-  }
+  bool needs_attention() const { return has_errors() || has_warnings(); }
 
 public slots:
   /**
    *  @brief Clears the log (and makes the button invisible)
    */
-  void clear ()
-  {
-    mp_logger->file ().clear ();
-  }
+  void clear() { mp_logger->file().clear(); }
 
 private slots:
-  void attention_changed (bool);
+  void attention_changed(bool);
 
 private:
   LogViewerDialog *mp_logger;
 };
 
-}
+} // namespace lay
 
 #endif

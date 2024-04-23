@@ -22,11 +22,6 @@
 
 #include "iconsForceLink.h"
 
-namespace icons
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace icons {
+int _force_link_f() { return 0; }
+} // namespace icons

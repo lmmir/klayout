@@ -26,52 +26,53 @@
 #define HDR_layLayerTreeModel
 
 #include "dbBox.h"
-#include "layuiCommon.h"
 #include "layDitherPattern.h"
+#include "layuiCommon.h"
 
-#include <vector>
 #include <set>
+#include <vector>
 
 #include <QAbstractItemModel>
-#include <QFont>
 #include <QColor>
+#include <QFont>
 
-namespace db
-{
-  class Layout;
+namespace db {
+class Layout;
 }
 
-namespace tl
-{
-  class GlobPattern;
+namespace tl {
+class GlobPattern;
 }
 
-namespace lay
-{
+namespace lay {
 
 class LayoutViewBase;
 class LayerPropertiesConstIterator;
 class LayerPropertiesIterator;
 
 /**
- *  @brief A helper class implementing a cache for the "test shapes in view" feature
+ *  @brief A helper class implementing a cache for the "test shapes in view"
+ * feature
  */
 
-class EmptyWithinViewCache
-{
+class EmptyWithinViewCache {
 public:
   EmptyWithinViewCache();
 
   void clear();
-  bool is_empty_within_view(const db::Layout *layout, unsigned int cell_index, const db::Box &box, unsigned int layer);
+  bool is_empty_within_view(const db::Layout *layout, unsigned int cell_index,
+                            const db::Box &box, unsigned int layer);
 
 private:
-  typedef std::pair<std::pair<const db::Layout *, unsigned int>, db::Box> cache_key_t;
-  typedef std::map<cache_key_t, std::set<unsigned int> > cache_t;
+  typedef std::pair<std::pair<const db::Layout *, unsigned int>, db::Box>
+      cache_key_t;
+  typedef std::map<cache_key_t, std::set<unsigned int>> cache_t;
   cache_t m_cache;
   std::vector<bool> m_cells_done;
 
-  void determine_empty_layers(const db::Layout *layout, unsigned int cell_index, const db::Box &box, std::vector<unsigned int> &layers);
+  void determine_empty_layers(const db::Layout *layout, unsigned int cell_index,
+                              const db::Box &box,
+                              std::vector<unsigned int> &layers);
 };
 
 /**
@@ -81,193 +82,194 @@ private:
  *  representation or a hierarchical one.
  */
 
-class LAYUI_PUBLIC LayerTreeModel
-  : public QAbstractItemModel
-{
-Q_OBJECT
+class LAYUI_PUBLIC LayerTreeModel : public QAbstractItemModel {
+  Q_OBJECT
 
 public:
   /**
    *  @brief Constructor
    *
-   *  The LayoutView reference is required to obtain hidden cell state and current state flags.
+   *  The LayoutView reference is required to obtain hidden cell state and
+   * current state flags.
    */
-  LayerTreeModel (QWidget *parent, lay::LayoutViewBase *view);
+  LayerTreeModel(QWidget *parent, lay::LayoutViewBase *view);
 
   /**
    *  @brief Dtor
    */
-  ~LayerTreeModel ();
+  ~LayerTreeModel();
 
-  //  Implementation of the QAbstractItemModel interface 
-  virtual Qt::ItemFlags flags (const QModelIndex &index) const;
-  virtual int columnCount (const QModelIndex &) const;
-  virtual QVariant data (const QModelIndex &index, int role) const;
-  virtual QVariant headerData (int /*section*/, Qt::Orientation /*orientation*/, int /*role*/) const;
-  virtual int rowCount (const QModelIndex &parent) const;
-  virtual QModelIndex index (int row, int column, const QModelIndex &parent) const;
-  virtual QModelIndex parent (const QModelIndex &index) const;
+  //  Implementation of the QAbstractItemModel interface
+  virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+  virtual int columnCount(const QModelIndex &) const;
+  virtual QVariant data(const QModelIndex &index, int role) const;
+  virtual QVariant headerData(int /*section*/, Qt::Orientation /*orientation*/,
+                              int /*role*/) const;
+  virtual int rowCount(const QModelIndex &parent) const;
+  virtual QModelIndex index(int row, int column,
+                            const QModelIndex &parent) const;
+  virtual QModelIndex parent(const QModelIndex &index) const;
 
   /**
    *  @brief Sets the expanded state for a given model index
    */
-  void set_expanded (const QModelIndex &index, bool ex);
+  void set_expanded(const QModelIndex &index, bool ex);
 
   /**
    *  @brief Gets the expanded state for a given model index
    */
-  bool expanded (const QModelIndex &index) const;
+  bool expanded(const QModelIndex &index) const;
 
   /**
    *  @brief Provides an icon for a given layer style
    */
-  static QIcon icon_for_layer (const lay::LayerPropertiesConstIterator &iter, lay::LayoutViewBase *view, unsigned int w, unsigned int h, double dpr, unsigned int di_offset, bool no_state = false);
+  static QIcon icon_for_layer(const lay::LayerPropertiesConstIterator &iter,
+                              lay::LayoutViewBase *view, unsigned int w,
+                              unsigned int h, double dpr,
+                              unsigned int di_offset, bool no_state = false);
 
   /**
    *  @brief Gets the preferred icon size
    */
-  QSize icon_size () const;
+  QSize icon_size() const;
 
   /**
    *  @brief Convert a lay::LayerPropertiesConstIterator to a QModelIndex
    */
-  QModelIndex index (lay::LayerPropertiesConstIterator iter, int column) const;
+  QModelIndex index(lay::LayerPropertiesConstIterator iter, int column) const;
 
   /**
    *  @brief Converts a QModelIndex to an iterator
    */
-  lay::LayerPropertiesConstIterator iterator (const QModelIndex &index) const;
+  lay::LayerPropertiesConstIterator iterator(const QModelIndex &index) const;
 
   /**
    *  @brief Converts a QModelIndex to an iterator (non-const)
    */
-  lay::LayerPropertiesIterator iterator_nc (const QModelIndex &index);
+  lay::LayerPropertiesIterator iterator_nc(const QModelIndex &index);
 
   /**
    *  @brief Gets a flag indicating that an entry is hidden
    */
-  bool is_hidden (const QModelIndex &index) const;
+  bool is_hidden(const QModelIndex &index) const;
 
   /**
    *  @brief Sets the animation phase
    */
-  void set_phase (unsigned int ph);
+  void set_phase(unsigned int ph);
 
   /**
    *  @brief Obtain the upperLeft index
    */
-  QModelIndex upperLeft () const;
+  QModelIndex upperLeft() const;
 
   /**
    *  @brief Obtain the lowerRight index
    */
-  QModelIndex bottomRight () const;
+  QModelIndex bottomRight() const;
 
   /**
    *  @brief Set the font to use for text display
    */
-  void set_font (const QFont &font);
+  void set_font(const QFont &font);
 
   /**
    *  @brief Set the font to use for text display (without emitting a signal)
    */
-  void set_font_no_signal (const QFont &font);
+  void set_font_no_signal(const QFont &font);
 
   /**
    *  @brief Set the text color to use for text display
    */
-  void set_text_color (QColor color);
+  void set_text_color(QColor color);
 
   /**
    *  @brief Set the background color to use for text display
    */
-  void set_background_color (QColor background);
+  void set_background_color(QColor background);
 
   /**
    *  @brief emit a dataChanged signal
    */
-  void signal_data_changed ();
+  void signal_data_changed();
 
   /**
    *  @brief Locate an index by name (at least closest)
    *
-   *  If top_only is set, only top-level items are searched. An invalid model index is returned if
-   *  no corresponding item could be found.
+   *  If top_only is set, only top-level items are searched. An invalid model
+   * index is returned if no corresponding item could be found.
    */
-  QModelIndex locate (const char *name, bool glob_pattern = false, bool case_sensitive = true, bool top_only = true);
+  QModelIndex locate(const char *name, bool glob_pattern = false,
+                     bool case_sensitive = true, bool top_only = true);
 
   /**
    *  @brief Locate the next index (after the first locate)
    */
-  QModelIndex locate_next ();
+  QModelIndex locate_next();
 
   /**
    *  @brief Locate the previous index (after the first locate)
    */
-  QModelIndex locate_prev ();
+  QModelIndex locate_prev();
 
   /**
    *  @brief Clears the locate flags
    */
-  void clear_locate ();
+  void clear_locate();
 
   /**
-   *  @brief Sets a flag indicating whether to test shapes in view for highlighting non-empty layers
+   *  @brief Sets a flag indicating whether to test shapes in view for
+   * highlighting non-empty layers
    */
-  void set_test_shapes_in_view (bool f);
+  void set_test_shapes_in_view(bool f);
 
   /**
-   *  @brief Gets a flag indicating whether to test shapes in view for highlighting non-empty layers
+   *  @brief Gets a flag indicating whether to test shapes in view for
+   * highlighting non-empty layers
    */
-  bool get_test_shapes_in_view ()
-  {
-    return m_test_shapes_in_view;
-  }
+  bool get_test_shapes_in_view() { return m_test_shapes_in_view; }
 
   /**
    *  @brief Sets the flag indicating whether to hide empty layers
    */
-  void set_hide_empty_layers (bool f);
+  void set_hide_empty_layers(bool f);
 
   /**
    *  @brief Gets the flag indicating whether to hide empty layers
    */
-  bool get_hide_empty_layers () const
-  {
-    return m_hide_empty_layers;
-  }
+  bool get_hide_empty_layers() const { return m_hide_empty_layers; }
 
   /**
-   *  @brief Sets a flag indicating whether selected indexes are filtered or highlighted
+   *  @brief Sets a flag indicating whether selected indexes are filtered or
+   * highlighted
    */
-  void set_filter_mode (bool f);
+  void set_filter_mode(bool f);
 
   /**
-   *  @brief Gets a flag indicating whether selected indexes are filtered or highlighted
+   *  @brief Gets a flag indicating whether selected indexes are filtered or
+   * highlighted
    */
-  bool get_filter_mode () const
-  {
-    return m_filter_mode;
-  }
+  bool get_filter_mode() const { return m_filter_mode; }
 
   /**
    *  @brief emit a layoutAboutToBeChanged signal
    */
-  void signal_begin_layer_changed ();
+  void signal_begin_layer_changed();
 
   /**
    *  @brief emit a layoutChanged signal
    */
-  void signal_layers_changed ();
+  void signal_layers_changed();
 
 signals:
   /**
-   *  @brief This signal is emitted to indicate the hidden flags need update by the client
-   *  Note this is neither done by the view nor the model. It needs to be implemented elsewhere.
+   *  @brief This signal is emitted to indicate the hidden flags need update by
+   * the client Note this is neither done by the view nor the model. It needs to
+   * be implemented elsewhere.
    */
-  void hidden_flags_need_update ();
+  void hidden_flags_need_update();
 
-private: 
+private:
   QWidget *mp_parent;
   lay::LayoutViewBase *mp_view;
   bool m_filter_mode;
@@ -278,26 +280,27 @@ private:
   QFont m_font;
   QColor m_text_color, m_background_color;
   mutable EmptyWithinViewCache m_test_shapes_cache;
-  std::set <size_t> m_selected_ids;
-  std::vector <QModelIndex> m_selected_indexes;
-  std::vector <QModelIndex>::const_iterator m_current_index;
+  std::set<size_t> m_selected_ids;
+  std::vector<QModelIndex> m_selected_indexes;
+  std::vector<QModelIndex>::const_iterator m_current_index;
 
   /**
    *  @brief Get a flag indicating that a layer is empty
    */
-  bool empty_predicate (const QModelIndex &index) const;
+  bool empty_predicate(const QModelIndex &index) const;
 
   /**
-   *  @brief Get a flag indicating that a layer does not have shapes within the shown area
+   *  @brief Get a flag indicating that a layer does not have shapes within the
+   * shown area
    */
-  bool empty_within_view_predicate (const QModelIndex &index) const;
+  bool empty_within_view_predicate(const QModelIndex &index) const;
 
-  void search_children (const tl::GlobPattern &pattern, const QModelIndex &parent, bool recurse);
+  void search_children(const tl::GlobPattern &pattern,
+                       const QModelIndex &parent, bool recurse);
 };
 
-}
-
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

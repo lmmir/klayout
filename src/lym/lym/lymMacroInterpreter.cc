@@ -20,78 +20,73 @@
 
 */
 
-
 #include "lymMacroInterpreter.h"
 #include "lymMacro.h"
 
-#include "tlInternational.h"
-#include "tlException.h"
 #include "tlClassRegistry.h"
+#include "tlException.h"
 #include "tlInclude.h"
+#include "tlInternational.h"
 
 #include <cstring>
 
-namespace lym
-{
+namespace lym {
 
-tl::Executable *
-MacroInterpreter::executable (const lym::Macro *) const
-{
-  throw tl::Exception (tl::to_string (tr ("executable() implementation missing for DSL interpreter")));
+tl::Executable *MacroInterpreter::executable(const lym::Macro *) const {
+  throw tl::Exception(tl::to_string(
+      tr("executable() implementation missing for DSL interpreter")));
 }
 
-bool 
-MacroInterpreter::can_run (const lym::Macro *macro)
-{
-  for (tl::Registrar<lym::MacroInterpreter>::iterator cls = tl::Registrar<lym::MacroInterpreter>::begin (); cls != tl::Registrar<lym::MacroInterpreter>::end (); ++cls) {
-    if (cls.current_name () == macro->dsl_interpreter ()) {
+bool MacroInterpreter::can_run(const lym::Macro *macro) {
+  for (tl::Registrar<lym::MacroInterpreter>::iterator cls =
+           tl::Registrar<lym::MacroInterpreter>::begin();
+       cls != tl::Registrar<lym::MacroInterpreter>::end(); ++cls) {
+    if (cls.current_name() == macro->dsl_interpreter()) {
       return true;
     }
   }
   return false;
 }
 
-namespace
-{
+namespace {
 
-class MacroIncludeFileResolver
-  : public tl::IncludeFileResolver
-{
+class MacroIncludeFileResolver : public tl::IncludeFileResolver {
 public:
-  MacroIncludeFileResolver () { }
+  MacroIncludeFileResolver() {}
 
-  std::string get_text (const std::string &path) const
-  {
+  std::string get_text(const std::string &path) const {
     //  Use lym::Macro to resolve texts - this strips the XML envelope.
     //  Intentionally not compatibility check is made to allow using any
     //  type of input and specifically any extension.
     lym::Macro macro;
-    macro.load_from (path);
-    return macro.text ();
+    macro.load_from(path);
+    return macro.text();
   }
 };
 
-}
+} // namespace
 
 std::pair<std::string, std::string>
-MacroInterpreter::include_expansion (const lym::Macro *macro)
-{
+MacroInterpreter::include_expansion(const lym::Macro *macro) {
   MacroIncludeFileResolver include_file_resolver;
 
   std::pair<std::string, std::string> res;
-  res.first = tl::IncludeExpander::expand (macro->path (), macro->text (), res.second, &include_file_resolver).to_string ();
+  res.first = tl::IncludeExpander::expand(macro->path(), macro->text(),
+                                          res.second, &include_file_resolver)
+                  .to_string();
 
-  if (res.first != macro->path ()) {
+  if (res.first != macro->path()) {
 
-    //  Fix the macro's text such that include expansion does not spoil __FILE__ or __LINE__ variables
-    //  NOTE: this will modify the column for syntax errors. Let's hope this tiny error is acceptable.
+    //  Fix the macro's text such that include expansion does not spoil __FILE__
+    //  or __LINE__ variables NOTE: this will modify the column for syntax
+    //  errors. Let's hope this tiny error is acceptable.
     //  TODO: this substitution may be somewhat naive ...
 
-    Macro::Interpreter ip = macro->interpreter ();
-    if (macro->interpreter () == Macro::DSLInterpreter) {
-      if (syntax_scheme () == "ruby") {
+    Macro::Interpreter ip = macro->interpreter();
+    if (macro->interpreter() == Macro::DSLInterpreter) {
+      if (syntax_scheme() == "ruby") {
         ip = Macro::Ruby;
-      } else if (syntax_scheme () == "python") {
+      } else if (syntax_scheme() == "python") {
         ip = Macro::Python;
       }
     }
@@ -99,69 +94,70 @@ MacroInterpreter::include_expansion (const lym::Macro *macro)
     if (ip == Macro::Ruby) {
 
       std::string subst;
-      const std::string file_const ("__FILE__");
-      const std::string line_const ("__LINE__");
+      const std::string file_const("__FILE__");
+      const std::string line_const("__LINE__");
 
-      for (const char *cp = res.second.c_str (); *cp; ) {
-        if (strncmp (cp, file_const.c_str (), file_const.size ()) == 0 && !isalnum (cp[file_const.size ()]) && cp[file_const.size ()] != '_') {
+      for (const char *cp = res.second.c_str(); *cp;) {
+        if (strncmp(cp, file_const.c_str(), file_const.size()) == 0 &&
+            !isalnum(cp[file_const.size()]) && cp[file_const.size()] != '_') {
           subst += "RBA::Macro::real_path(__FILE__, __LINE__)";
-          cp += file_const.size ();
-        } else if (strncmp (cp, line_const.c_str (), line_const.size ()) == 0 && !isalnum (cp[line_const.size ()]) && cp[line_const.size ()] != '_') {
+          cp += file_const.size();
+        } else if (strncmp(cp, line_const.c_str(), line_const.size()) == 0 &&
+                   !isalnum(cp[line_const.size()]) &&
+                   cp[line_const.size()] != '_') {
           subst += "RBA::Macro::real_line(__FILE__, __LINE__)";
-          cp += line_const.size ();
+          cp += line_const.size();
         } else {
           subst += *cp++;
         }
       }
 
       res.second = subst;
-
     }
-
   }
 
   return res;
 }
 
-void 
-MacroInterpreter::execute_macro (const lym::Macro *macro)
-{
-  for (tl::Registrar<lym::MacroInterpreter>::iterator cls = tl::Registrar<lym::MacroInterpreter>::begin (); cls != tl::Registrar<lym::MacroInterpreter>::end (); ++cls) {
+void MacroInterpreter::execute_macro(const lym::Macro *macro) {
+  for (tl::Registrar<lym::MacroInterpreter>::iterator cls =
+           tl::Registrar<lym::MacroInterpreter>::begin();
+       cls != tl::Registrar<lym::MacroInterpreter>::end(); ++cls) {
 
-    if (cls.current_name () == macro->dsl_interpreter ()) {
+    if (cls.current_name() == macro->dsl_interpreter()) {
 
-      std::unique_ptr<tl::Executable> eo (cls->executable (macro));
-      if (eo.get ()) {
-        eo->do_execute ();
+      std::unique_ptr<tl::Executable> eo(cls->executable(macro));
+      if (eo.get()) {
+        eo->do_execute();
       }
 
       return;
-
-    }
-
-  }
-
-  throw tl::Exception (tl::to_string (tr ("No interpreter registered for DSL type '")) + macro->dsl_interpreter () + "'");
-}
-
-std::string 
-MacroInterpreter::syntax_scheme (const std::string &dsl_name)
-{
-  for (tl::Registrar<lym::MacroInterpreter>::iterator cls = tl::Registrar<lym::MacroInterpreter>::begin (); cls != tl::Registrar<lym::MacroInterpreter>::end (); ++cls) {
-    if (cls.current_name () == dsl_name) {
-      return cls->syntax_scheme ();
     }
   }
 
-  return std::string ();
+  throw tl::Exception(
+      tl::to_string(tr("No interpreter registered for DSL type '")) +
+      macro->dsl_interpreter() + "'");
 }
 
-Macro::Format
-MacroInterpreter::storage_scheme (const std::string &dsl_name)
-{
-  for (tl::Registrar<lym::MacroInterpreter>::iterator cls = tl::Registrar<lym::MacroInterpreter>::begin (); cls != tl::Registrar<lym::MacroInterpreter>::end (); ++cls) {
-    if (cls.current_name () == dsl_name) {
-      return cls->storage_scheme ();
+std::string MacroInterpreter::syntax_scheme(const std::string &dsl_name) {
+  for (tl::Registrar<lym::MacroInterpreter>::iterator cls =
+           tl::Registrar<lym::MacroInterpreter>::begin();
+       cls != tl::Registrar<lym::MacroInterpreter>::end(); ++cls) {
+    if (cls.current_name() == dsl_name) {
+      return cls->syntax_scheme();
+    }
+  }
+
+  return std::string();
+}
+
+Macro::Format MacroInterpreter::storage_scheme(const std::string &dsl_name) {
+  for (tl::Registrar<lym::MacroInterpreter>::iterator cls =
+           tl::Registrar<lym::MacroInterpreter>::begin();
+       cls != tl::Registrar<lym::MacroInterpreter>::end(); ++cls) {
+    if (cls.current_name() == dsl_name) {
+      return cls->storage_scheme();
     }
   }
 
@@ -169,39 +165,40 @@ MacroInterpreter::storage_scheme (const std::string &dsl_name)
 }
 
 Macro::Interpreter
-MacroInterpreter::debugger_scheme (const std::string &dsl_name)
-{
-  for (tl::Registrar<lym::MacroInterpreter>::iterator cls = tl::Registrar<lym::MacroInterpreter>::begin (); cls != tl::Registrar<lym::MacroInterpreter>::end (); ++cls) {
-    if (cls.current_name () == dsl_name) {
-      return cls->debugger_scheme ();
+MacroInterpreter::debugger_scheme(const std::string &dsl_name) {
+  for (tl::Registrar<lym::MacroInterpreter>::iterator cls =
+           tl::Registrar<lym::MacroInterpreter>::begin();
+       cls != tl::Registrar<lym::MacroInterpreter>::end(); ++cls) {
+    if (cls.current_name() == dsl_name) {
+      return cls->debugger_scheme();
     }
   }
 
   return Macro::Ruby;
 }
 
-std::string 
-MacroInterpreter::description (const std::string &dsl_name)
-{
-  for (tl::Registrar<lym::MacroInterpreter>::iterator cls = tl::Registrar<lym::MacroInterpreter>::begin (); cls != tl::Registrar<lym::MacroInterpreter>::end (); ++cls) {
-    if (cls.current_name () == dsl_name) {
-      return cls->description ();
+std::string MacroInterpreter::description(const std::string &dsl_name) {
+  for (tl::Registrar<lym::MacroInterpreter>::iterator cls =
+           tl::Registrar<lym::MacroInterpreter>::begin();
+       cls != tl::Registrar<lym::MacroInterpreter>::end(); ++cls) {
+    if (cls.current_name() == dsl_name) {
+      return cls->description();
     }
   }
 
-  return std::string ();
+  return std::string();
 }
 
-std::string 
-MacroInterpreter::suffix (const std::string &dsl_name)
-{
-  for (tl::Registrar<lym::MacroInterpreter>::iterator cls = tl::Registrar<lym::MacroInterpreter>::begin (); cls != tl::Registrar<lym::MacroInterpreter>::end (); ++cls) {
-    if (cls.current_name () == dsl_name) {
-      return cls->suffix ();
+std::string MacroInterpreter::suffix(const std::string &dsl_name) {
+  for (tl::Registrar<lym::MacroInterpreter>::iterator cls =
+           tl::Registrar<lym::MacroInterpreter>::begin();
+       cls != tl::Registrar<lym::MacroInterpreter>::end(); ++cls) {
+    if (cls.current_name() == dsl_name) {
+      return cls->suffix();
     }
   }
 
-  return std::string ();
+  return std::string();
 }
 
-}
+} // namespace lym

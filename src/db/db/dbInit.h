@@ -20,30 +20,26 @@
 
 */
 
-
 #ifndef HDR_dbInit
 #define HDR_dbInit
 
 #include "dbCommon.h"
 
-#include <string>
 #include <list>
+#include <string>
 #include <vector>
 
-namespace db
-{
+namespace db {
 
 /**
  *  @brief A tiny structure describing a db plugin
  */
-struct PluginDescriptor
-{
+struct PluginDescriptor {
   std::string version;
   std::string path;
   std::string description;
 
-  PluginDescriptor ()
-  { }
+  PluginDescriptor() {}
 };
 
 /**
@@ -52,13 +48,14 @@ struct PluginDescriptor
  *  module. It will load the plugins and perform initialization of all
  *  of them.
  */
-DB_PUBLIC void init (const std::vector<std::string> &paths = std::vector<std::string> ());
+DB_PUBLIC void
+init(const std::vector<std::string> &paths = std::vector<std::string>());
 
 /**
  *  @brief Gets a list of all plugins registered
  */
-DB_PUBLIC const std::list<db::PluginDescriptor> &plugins ();
+DB_PUBLIC const std::list<db::PluginDescriptor> &plugins();
 
-}
+} // namespace db
 
 #endif

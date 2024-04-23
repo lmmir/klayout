@@ -23,27 +23,26 @@
 #ifndef HDR_laySignalHandler
 #define HDR_laySignalHandler
 
-#include <QString>
 #include "layCommon.h"
+#include <QString>
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief Installs global signal handlers for SIGSEGV and similar
  */
-void install_signal_handlers ();
+void install_signal_handlers();
 
 /**
  *  @brief For debugging purposes: get the symbol name from a memory address
  */
-QString get_symbol_name_from_address (const QString &mod_name, size_t addr);
+QString get_symbol_name_from_address(const QString &mod_name, size_t addr);
 
 /**
  *  @brief Enables GUI support for signal handlers
  */
-void LAY_PUBLIC enable_signal_handler_gui (bool en);
+void LAY_PUBLIC enable_signal_handler_gui(bool en);
 
-}
+} // namespace lay
 
 #endif

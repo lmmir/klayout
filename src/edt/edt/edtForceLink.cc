@@ -22,11 +22,6 @@
 
 #include "edtForceLink.h"
 
-namespace edt
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace edt {
+int _force_link_f() { return 0; }
+} // namespace edt

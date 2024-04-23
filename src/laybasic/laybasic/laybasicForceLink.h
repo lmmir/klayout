@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_laybasicForceLink
 #define HDR_laybasicForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the laybasic module
  */
 
-namespace laybasic
-{
-  LAYBASIC_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace laybasic {
+LAYBASIC_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace laybasic
 
 #endif
-

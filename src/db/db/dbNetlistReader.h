@@ -28,28 +28,25 @@
 
 #include <string>
 
-namespace tl
-{
-  class InputStream;
+namespace tl {
+class InputStream;
 }
 
-namespace db
-{
+namespace db {
 
 class Netlist;
 
 /**
  *  @brief A common base class for netlist writers
  */
-class DB_PUBLIC NetlistReader
-{
+class DB_PUBLIC NetlistReader {
 public:
-  NetlistReader () { }
-  virtual ~NetlistReader () { }
+  NetlistReader() {}
+  virtual ~NetlistReader() {}
 
-  virtual void read (tl::InputStream &stream, db::Netlist &netlist) = 0;
+  virtual void read(tl::InputStream &stream, db::Netlist &netlist) = 0;
 };
 
-}
+} // namespace db
 
 #endif

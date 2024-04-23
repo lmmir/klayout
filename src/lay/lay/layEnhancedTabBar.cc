@@ -20,7 +20,6 @@
 
 */
 
-
 #include "layEnhancedTabBar.h"
 
 #include <QAction>
@@ -29,75 +28,65 @@
 #include <QString>
 #include <QToolButton>
 
-namespace lay
-{
+namespace lay {
 
 // ---------------------------------------------------------------------------------------------
 //  EnhancedTabWidget implementation
 
-EnhancedTabBar::EnhancedTabBar (QWidget *parent)
-  : QTabBar (parent)
-{
-  mp_list_tool_button = new QToolButton (this);
-  mp_list_tool_button->setAutoRaise (true);
-  mp_list_tool_button->hide ();
-  mp_list_tool_button->setIcon (QIcon (QString::fromUtf8 (":/menu_24px.png")));
-  mp_list_tool_button->setIconSize (QSize (24, 24));
-  mp_list_tool_button->setMenu (new QMenu (this));
-  mp_list_tool_button->setPopupMode (QToolButton::InstantPopup);
-  mp_list_tool_button->setToolButtonStyle (Qt::ToolButtonIconOnly);
-  mp_list_tool_button->setToolTip (tr ("List of all opened views"));
+EnhancedTabBar::EnhancedTabBar(QWidget *parent) : QTabBar(parent) {
+  mp_list_tool_button = new QToolButton(this);
+  mp_list_tool_button->setAutoRaise(true);
+  mp_list_tool_button->hide();
+  mp_list_tool_button->setIcon(QIcon(QString::fromUtf8(":/menu_24px.png")));
+  mp_list_tool_button->setIconSize(QSize(24, 24));
+  mp_list_tool_button->setMenu(new QMenu(this));
+  mp_list_tool_button->setPopupMode(QToolButton::InstantPopup);
+  mp_list_tool_button->setToolButtonStyle(Qt::ToolButtonIconOnly);
+  mp_list_tool_button->setToolTip(tr("List of all opened views"));
 
-  connect (mp_list_tool_button->menu (), SIGNAL (aboutToShow()),
-           this, SLOT (list_tool_button_menu_about_to_show()));
+  connect(mp_list_tool_button->menu(), SIGNAL(aboutToShow()), this,
+          SLOT(list_tool_button_menu_about_to_show()));
 
-  mp_list_action_group = new QActionGroup (this);
-  mp_list_action_group->setExclusive (true);
+  mp_list_action_group = new QActionGroup(this);
+  mp_list_action_group->setExclusive(true);
 
-  connect (mp_list_action_group, SIGNAL (triggered(QAction *)),
-           this, SLOT (list_action_group_triggered(QAction *)));
+  connect(mp_list_action_group, SIGNAL(triggered(QAction *)), this,
+          SLOT(list_action_group_triggered(QAction *)));
 }
 
-EnhancedTabBar::~EnhancedTabBar ()
-{
+EnhancedTabBar::~EnhancedTabBar() {
   //  .. nothing yet ..
 }
 
-void EnhancedTabBar::tabInserted (int index)
-{
-  QTabBar::tabInserted (index);
-  update_list_button_visibility ();
+void EnhancedTabBar::tabInserted(int index) {
+  QTabBar::tabInserted(index);
+  update_list_button_visibility();
 }
 
-void EnhancedTabBar::tabRemoved (int index)
-{
-  QTabBar::tabRemoved (index);
-  update_list_button_visibility ();
+void EnhancedTabBar::tabRemoved(int index) {
+  QTabBar::tabRemoved(index);
+  update_list_button_visibility();
 }
 
-void EnhancedTabBar::list_action_group_triggered (QAction *action)
-{
-  setCurrentIndex (action->data ().toInt ());
+void EnhancedTabBar::list_action_group_triggered(QAction *action) {
+  setCurrentIndex(action->data().toInt());
 }
 
-void EnhancedTabBar::list_tool_button_menu_about_to_show ()
-{
-  mp_list_tool_button->menu ()->clear ();
-  if (count () > 1) {
-    for (int i = 0; i < count (); ++i) {
-      QAction *action = mp_list_tool_button->menu ()->addAction (tabText (i));
-      action->setCheckable (true);
-      action->setData (QVariant (i));
-      mp_list_action_group->addAction (action);
+void EnhancedTabBar::list_tool_button_menu_about_to_show() {
+  mp_list_tool_button->menu()->clear();
+  if (count() > 1) {
+    for (int i = 0; i < count(); ++i) {
+      QAction *action = mp_list_tool_button->menu()->addAction(tabText(i));
+      action->setCheckable(true);
+      action->setData(QVariant(i));
+      mp_list_action_group->addAction(action);
     }
-    mp_list_action_group->actions ().at (currentIndex ())->setChecked (true);
+    mp_list_action_group->actions().at(currentIndex())->setChecked(true);
   }
 }
 
-void EnhancedTabBar::update_list_button_visibility()
-{
-  mp_list_tool_button->setVisible (count () > 1);
+void EnhancedTabBar::update_list_button_visibility() {
+  mp_list_tool_button->setVisible(count() > 1);
 }
 
-}
-
+} // namespace lay

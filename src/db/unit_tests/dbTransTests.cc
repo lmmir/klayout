@@ -45,8 +45,12 @@ TEST(2) {
   db::Trans t1(1, false, db::Vector(0, 100));
   EXPECT_EQ(t1 * p, db::Point(-200, 200));
   db::Trans t2(1, true, db::Vector(200, 100));
-  EXPECT_EQ(t2 * p, db::Point(400, 200)); //对点p(100,200)进行X轴镜像p'(100,-200)，然后逆时针转90度(200,100),然后进行偏移计算(400,
-                                          //200)
+  EXPECT_EQ(
+      t2 * p,
+      db::Point(
+          400,
+          200)); //对点p(100,200)进行X轴镜像p'(100,-200)，然后逆时针转90度(200,100),然后进行偏移计算(400,
+                 // 200)
   EXPECT_EQ((t1 * t2) * p, t1 * (t2 * p));
   EXPECT_EQ((t2 * t2) * p, t2 * (t2 * p));
   EXPECT_EQ((t1 * t1) * p, t1 * (t1 * p));

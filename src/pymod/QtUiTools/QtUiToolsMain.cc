@@ -26,8 +26,7 @@
 #include "../../gsiqt/qtbasic/gsiQtCoreExternals.h"
 FORCE_LINK_GSI_QTCORE
 
-#  include "../../gsiqt/qtbasic/gsiQtUiToolsExternals.h"
+#include "../../gsiqt/qtbasic/gsiQtUiToolsExternals.h"
 FORCE_LINK_GSI_QTUITOOLS
 
 DEFINE_PYMOD(QtUiTools, "QtUiTools", "KLayout/Qt module 'QtUiTools'")
-

@@ -20,85 +20,74 @@
 
 */
 
-
 #ifndef HDR_tlTimer
 #define HDR_tlTimer
 
 #include "tlCommon.h"
 
-#include <string>
 #include <stdint.h>
+#include <string>
 #include <time.h>
 
 class QDateTime;
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief clock_gettime is not implemented in Mac OS X 10.11 and lower
- *  From: https://gist.githubusercontent.com/jbenet/1087739/raw/638b37f76cdd9dc46d617443cab27eac297e2ee3/current_utc_time.c
+ *  From:
+ * https://gist.githubusercontent.com/jbenet/1087739/raw/638b37f76cdd9dc46d617443cab27eac297e2ee3/current_utc_time.c
  */
-TL_PUBLIC void current_utc_time (struct timespec *ts);
+TL_PUBLIC void current_utc_time(struct timespec *ts);
 
 /**
  *  @brief A basic timer class
  *
- *  Measure the time between start() and stop() and 
+ *  Measure the time between start() and stop() and
  *  report the time through several methods
  */
 
-class TL_PUBLIC Timer
-{
+class TL_PUBLIC Timer {
 public:
   typedef int64_t timer_t;
 
-  Timer ();
-  
-  /** 
+  Timer();
+
+  /**
    *  @brief Starts the timer
    */
-  void start ();
+  void start();
 
-  /** 
+  /**
    *  @brief Stops the timer
    *  Only after stop or take, the time can be read with sec_user etc.
    */
-  void stop ();
+  void stop();
 
   /**
    *  @brief Takes the time, but does not stop
    */
-  void take ();
+  void take();
 
   /**
    *  @brief Reports the time spent between start() and stop() in user space
    */
-  double sec_user () const
-  { 
-    return (double (m_user_ms_res) * 0.001); 
-  }
+  double sec_user() const { return (double(m_user_ms_res) * 0.001); }
 
-  /** 
+  /**
    *  @brief Reports the time spent between start() and stop() in system space
    */
-  double sec_sys () const
-  { 
-    return (double (m_sys_ms_res) * 0.001); 
-  }
+  double sec_sys() const { return (double(m_sys_ms_res) * 0.001); }
 
   /**
    *  @brief Reports the real time spent between start() and stop()
    */
-  double sec_wall () const
-  {
-    return (double (m_wall_ms_res) * 0.001);
-  }
+  double sec_wall() const { return (double(m_wall_ms_res) * 0.001); }
 
   /**
    *  @brief Reports the current memory usage
    */
-  static size_t memory_size ();
+  static size_t memory_size();
 
 private:
   timer_t m_user_ms, m_sys_ms, m_wall_ms;
@@ -106,52 +95,47 @@ private:
 };
 
 /**
- *  @brief A self-timing class 
+ *  @brief A self-timing class
  *
  *  Starts the timer upon construction of the object and
  *  reports the object's lifetime upon destruction
  */
 
-class TL_PUBLIC SelfTimer
-  : public Timer 
-{
+class TL_PUBLIC SelfTimer : public Timer {
 public:
   /**
-   *  @brief Instantiate the timer and start 
+   *  @brief Instantiate the timer and start
    */
-  SelfTimer (const std::string &desc) : Timer (), m_desc (desc)
-  {
+  SelfTimer(const std::string &desc) : Timer(), m_desc(desc) {
     m_enabled = true;
-    start ();
-    start_report ();
+    start();
+    start_report();
   }
 
   /**
    *  @brief Instantiate the timer and start if the first parameter is true
    *
-   *  This constructor is useful in conjunction with the verbosity level: 
+   *  This constructor is useful in conjunction with the verbosity level:
    *  SelfTimer (tl::verbosity () >= 30, ...).
    */
-  SelfTimer (bool enabled, const std::string &desc) : Timer (), m_desc (desc)
-  {
+  SelfTimer(bool enabled, const std::string &desc) : Timer(), m_desc(desc) {
     m_enabled = enabled;
     if (enabled) {
-      start ();
-      start_report ();
+      start();
+      start_report();
     }
   }
 
-  ~SelfTimer ()
-  {  
+  ~SelfTimer() {
     if (m_enabled) {
-      stop ();
-      report ();
+      stop();
+      report();
     }
   }
 
 private:
-  void report () const;
-  void start_report () const;
+  void report() const;
+  void start_report() const;
 
   std::string m_desc;
   bool m_enabled;
@@ -159,8 +143,8 @@ private:
 
 /**
  *  @brief An abstraction for a time measurement feature
- *  
- *  This class can be used to take the current time and 
+ *
+ *  This class can be used to take the current time and
  *  compute time differences. The clock represents real
  *  time and can be used to time user interface actions.
  *
@@ -172,73 +156,59 @@ private:
  *  }
  *  @/code
  */
-class TL_PUBLIC Clock 
-{
+class TL_PUBLIC Clock {
 public:
   typedef int64_t timer_t;
 
   typedef unsigned long clock_value;
 
   /**
-   *  @brief Default constructor: construct a clock object pointing to an arbitrary value
+   *  @brief Default constructor: construct a clock object pointing to an
+   * arbitrary value
    */
-  Clock () : m_clock_ms (0)
-  {
+  Clock() : m_clock_ms(0) {
     // .. nothing yet ..
   }
 
   /**
    *  @brief Create a clock value corresponding to a certain number of seconds
    */
-  Clock (double s);
+  Clock(double s);
 
   /**
    *  @brief Copy constructor
    */
-  Clock (const Clock &d)
-    : m_clock_ms (d.m_clock_ms)
-  {
+  Clock(const Clock &d) : m_clock_ms(d.m_clock_ms) {
     //  .. nothing yet ..
   }
 
   /**
-   *  @brief Assignment 
+   *  @brief Assignment
    */
-  Clock &operator= (Clock d)
-  {
+  Clock &operator=(Clock d) {
     m_clock_ms = d.m_clock_ms;
     return *this;
   }
 
   /**
-   *  @brief Equality 
+   *  @brief Equality
    */
-  bool operator== (Clock d) const
-  {
-    return m_clock_ms == d.m_clock_ms;
-  }
+  bool operator==(Clock d) const { return m_clock_ms == d.m_clock_ms; }
 
   /**
-   *  @brief Inequality 
+   *  @brief Inequality
    */
-  bool operator!= (Clock d) const
-  {
-    return ! operator== (d);
-  }
+  bool operator!=(Clock d) const { return !operator==(d); }
 
   /**
-   *  @brief Comparison 
+   *  @brief Comparison
    */
-  bool operator< (Clock d) const
-  {
-    return m_clock_ms < d.m_clock_ms;
-  }
+  bool operator<(Clock d) const { return m_clock_ms < d.m_clock_ms; }
 
   /**
    *  @brief Difference (in place)
    */
-  Clock &operator-= (Clock d)
-  {
+  Clock &operator-=(Clock d) {
     m_clock_ms -= d.m_clock_ms;
     return *this;
   }
@@ -246,9 +216,8 @@ public:
   /**
    *  @brief Difference
    */
-  Clock operator- (Clock d) const
-  {
-    Clock c (*this);
+  Clock operator-(Clock d) const {
+    Clock c(*this);
     c -= d;
     return c;
   }
@@ -256,12 +225,12 @@ public:
   /**
    *  @brief Convert into seconds
    */
-  double seconds () const;
+  double seconds() const;
 
   /**
    *  @brief Current time (user time from start of process)
    */
-  static Clock current ();
+  static Clock current();
 
 private:
   timer_t m_clock_ms;
@@ -270,4 +239,3 @@ private:
 } // namespace tl
 
 #endif
-

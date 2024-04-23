@@ -20,62 +20,52 @@
 
 */
 
-
 #ifndef HDR_utTestConsole
 #define HDR_utTestConsole
 
-#include "tlLog.h"
 #include "gsiInterpreter.h"
+#include "tlLog.h"
 
 #include <cstdio>
 #include <sstream>
 
-namespace ut
-{
+namespace ut {
 
 extern tl::LogTee ctrl;
 extern tl::LogTee noctrl;
 
 /**
- *  @brief Redirects the interpreter output and serves as a general output device
+ *  @brief Redirects the interpreter output and serves as a general output
+ * device
  */
-class TestConsole
-  : public gsi::Console
-{
+class TestConsole : public gsi::Console {
 public:
-  static TestConsole *instance ()
-  {
-    tl_assert (ms_instance != 0);
+  static TestConsole *instance() {
+    tl_assert(ms_instance != 0);
     return ms_instance;
   }
 
-  TestConsole (FILE *file);
-  ~TestConsole ();
+  TestConsole(FILE *file);
+  ~TestConsole();
 
-  void send_to (FILE *file);
+  void send_to(FILE *file);
 
-  void write_str (const char *text, output_stream os);
-  void raw_write (const char *text);
-  virtual void flush ();
+  void write_str(const char *text, output_stream os);
+  void raw_write(const char *text);
+  virtual void flush();
 
-  virtual bool is_tty ();
-  virtual int columns ();
+  virtual bool is_tty();
+  virtual int columns();
 
-  virtual int rows ()
-  {
-    return m_rows;
-  }
+  virtual int rows() { return m_rows; }
 
-  int real_columns ()
-  {
-    return m_columns;
-  }
+  int real_columns() { return m_columns; }
 
-  void begin_error ();
-  void begin_info ();
-  void begin_warn ();
-  void end ();
-  void basic_write (const char *s);
+  void begin_error();
+  void begin_info();
+  void begin_warn();
+  void end();
+  void basic_write(const char *s);
 
 private:
   FILE *m_file;
@@ -85,11 +75,11 @@ private:
   bool m_file_is_tty;
   static TestConsole *ms_instance;
 
-  void redirect ();
-  void restore ();
-  void prepare_file ();
+  void redirect();
+  void restore();
+  void prepare_file();
 };
 
-}
+} // namespace ut
 
 #endif

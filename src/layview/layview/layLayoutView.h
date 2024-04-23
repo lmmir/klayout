@@ -20,14 +20,13 @@
 
 */
 
-
 #ifndef HDR_layLayoutView
 #define HDR_layLayoutView
 
 #if defined(HAVE_QT)
-#  include "layLayoutView_qt.h"
+#include "layLayoutView_qt.h"
 #else
-#  include "layLayoutView_noqt.h"
+#include "layLayoutView_noqt.h"
 #endif
 
 #endif

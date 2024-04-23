@@ -25,54 +25,51 @@
 #ifndef HDR_antPropertiesPage
 #define HDR_antPropertiesPage
 
+#include "antService.h"
 #include "layPlugin.h"
 #include "layProperties.h"
-#include "antService.h"
 #include "ui_RulerPropertiesPage.h"
 
-namespace ant
-{
+namespace ant {
 
-class PropertiesPage
-  : public lay::PropertiesPage,
-    public Ui::RulerPropertiesPage
-{
-Q_OBJECT
+class PropertiesPage : public lay::PropertiesPage,
+                       public Ui::RulerPropertiesPage {
+  Q_OBJECT
 
 public:
-  PropertiesPage (ant::Service *rulers, db::Manager *manager, QWidget *parent);
-  ~PropertiesPage ();
+  PropertiesPage(ant::Service *rulers, db::Manager *manager, QWidget *parent);
+  ~PropertiesPage();
 
-  virtual size_t count () const;
-  virtual void select_entries (const std::vector<size_t> &entries);
-  virtual std::string description (size_t entry) const;
-  virtual std::string description () const;
-  virtual void update ();
-  virtual void leave ();
-  virtual bool readonly ();
-  virtual void apply ();
+  virtual size_t count() const;
+  virtual void select_entries(const std::vector<size_t> &entries);
+  virtual std::string description(size_t entry) const;
+  virtual std::string description() const;
+  virtual void update();
+  virtual void leave();
+  virtual bool readonly();
+  virtual void apply();
 
 private slots:
-  void swap_points_clicked ();
-  void snap_to_layout_clicked ();
-  void something_changed ();
+  void swap_points_clicked();
+  void snap_to_layout_clicked();
+  void something_changed();
 
 private:
-  std::vector <ant::Service::obj_iterator> m_selection;
+  std::vector<ant::Service::obj_iterator> m_selection;
   size_t m_index;
   ant::Service *mp_rulers;
   bool m_enable_cb_callback;
   bool m_in_something_changed;
 
-  const ant::Object &current () const;
-  void get_points (db::DPoint &p1, db::DPoint &p2);
-  void get_point (db::DPoint &p);
-  void get_points (ant::Object::point_list &points);
-  void update_with (const ant::Object &obj);
-  void get_object (ant::Object &obj);
+  const ant::Object &current() const;
+  void get_points(db::DPoint &p1, db::DPoint &p2);
+  void get_point(db::DPoint &p);
+  void get_points(ant::Object::point_list &points);
+  void update_with(const ant::Object &obj);
+  void get_object(ant::Object &obj);
 };
 
-}
+} // namespace ant
 
 #endif
 

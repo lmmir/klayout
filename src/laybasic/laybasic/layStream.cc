@@ -23,33 +23,32 @@
 #if defined(HAVE_QT)
 
 #include "layStream.h"
-#include "layPlugin.h"
-#include "laybasicConfig.h"
-#include "dbStream.h"
 #include "dbLoadLayoutOptions.h"
 #include "dbSaveLayoutOptions.h"
+#include "dbStream.h"
+#include "layPlugin.h"
+#include "laybasicConfig.h"
 #include "tlAssert.h"
 #include "tlString.h"
 
-namespace lay
-{
+namespace lay {
 
 // ------------------------------------------------------------------
 //  StreamPluginDeclarationBase implementation
 
-db::StreamFormatDeclaration &
-StreamPluginDeclarationBase::stream_fmt () 
-{
-  if (! mp_stream_fmt) {
-    for (tl::Registrar<db::StreamFormatDeclaration>::iterator fmt = tl::Registrar<db::StreamFormatDeclaration>::begin (); fmt != tl::Registrar<db::StreamFormatDeclaration>::end (); ++fmt) {
-      if (fmt->format_name () == m_format_name) {
-        mp_stream_fmt = const_cast <db::StreamFormatDeclaration *> (&*fmt);
+db::StreamFormatDeclaration &StreamPluginDeclarationBase::stream_fmt() {
+  if (!mp_stream_fmt) {
+    for (tl::Registrar<db::StreamFormatDeclaration>::iterator fmt =
+             tl::Registrar<db::StreamFormatDeclaration>::begin();
+         fmt != tl::Registrar<db::StreamFormatDeclaration>::end(); ++fmt) {
+      if (fmt->format_name() == m_format_name) {
+        mp_stream_fmt = const_cast<db::StreamFormatDeclaration *>(&*fmt);
         break;
       }
     }
   }
 
-  tl_assert (mp_stream_fmt);
+  tl_assert(mp_stream_fmt);
 
   return *mp_stream_fmt;
 }
@@ -57,11 +56,15 @@ StreamPluginDeclarationBase::stream_fmt ()
 // ------------------------------------------------------------------
 //  StreamReaderPluginDeclaration implementation
 
-const StreamReaderPluginDeclaration *StreamReaderPluginDeclaration::plugin_for_format (const std::string &format_name)
-{
-  for (tl::Registrar<lay::PluginDeclaration>::iterator cls = tl::Registrar<lay::PluginDeclaration>::begin (); cls != tl::Registrar<lay::PluginDeclaration>::end (); ++cls) {
-    const StreamReaderPluginDeclaration *decl = dynamic_cast <const StreamReaderPluginDeclaration *> (&*cls);
-    if (decl && decl->format_name () == format_name) {
+const StreamReaderPluginDeclaration *
+StreamReaderPluginDeclaration::plugin_for_format(
+    const std::string &format_name) {
+  for (tl::Registrar<lay::PluginDeclaration>::iterator cls =
+           tl::Registrar<lay::PluginDeclaration>::begin();
+       cls != tl::Registrar<lay::PluginDeclaration>::end(); ++cls) {
+    const StreamReaderPluginDeclaration *decl =
+        dynamic_cast<const StreamReaderPluginDeclaration *>(&*cls);
+    if (decl && decl->format_name() == format_name) {
       return decl;
     }
   }
@@ -71,17 +74,21 @@ const StreamReaderPluginDeclaration *StreamReaderPluginDeclaration::plugin_for_f
 // ------------------------------------------------------------------
 //  StreamWriterPluginDeclaration implementation
 
-const StreamWriterPluginDeclaration *StreamWriterPluginDeclaration::plugin_for_format (const std::string &format_name)
-{
-  for (tl::Registrar<lay::PluginDeclaration>::iterator cls = tl::Registrar<lay::PluginDeclaration>::begin (); cls != tl::Registrar<lay::PluginDeclaration>::end (); ++cls) {
-    const StreamWriterPluginDeclaration *decl = dynamic_cast <const StreamWriterPluginDeclaration *> (&*cls);
-    if (decl && decl->format_name () == format_name) {
+const StreamWriterPluginDeclaration *
+StreamWriterPluginDeclaration::plugin_for_format(
+    const std::string &format_name) {
+  for (tl::Registrar<lay::PluginDeclaration>::iterator cls =
+           tl::Registrar<lay::PluginDeclaration>::begin();
+       cls != tl::Registrar<lay::PluginDeclaration>::end(); ++cls) {
+    const StreamWriterPluginDeclaration *decl =
+        dynamic_cast<const StreamWriterPluginDeclaration *>(&*cls);
+    if (decl && decl->format_name() == format_name) {
       return decl;
     }
   }
   return 0;
 }
 
-}
+} // namespace lay
 
 #endif

@@ -23,31 +23,33 @@
 #ifndef _HDR_dbLayoutToNetlistEnums
 #define _HDR_dbLayoutToNetlistEnums
 
-namespace db
-{
+namespace db {
 
 /**
- *  @brief An enum describing the way how net information is attached to shapes as properties in "build_nets"
+ *  @brief An enum describing the way how net information is attached to shapes
+ * as properties in "build_nets"
  */
-enum NetPropertyMode
-{
+enum NetPropertyMode {
   /**
    *  @brief Do no generate properties
    */
   NPM_NoProperties,
 
   /**
-   *  @brief Attach all net properties plus the net name (if a "netname_prop" is specified to "build_nets")
+   *  @brief Attach all net properties plus the net name (if a "netname_prop" is
+   * specified to "build_nets")
    */
   NPM_AllProperties,
 
   /**
-   *  @brief Attach net name only (if a "netname_prop" is specified to "build_nets")
+   *  @brief Attach net name only (if a "netname_prop" is specified to
+   * "build_nets")
    */
   NPM_NetNameOnly,
 
   /**
-   *  @brief Like NetNameOnly, but use a unique net ID (db::Net address actually) instead of name
+   *  @brief Like NetNameOnly, but use a unique net ID (db::Net address
+   * actually) instead of name
    */
   NPM_NetIDOnly,
 
@@ -60,11 +62,11 @@ enum NetPropertyMode
 /**
  *  @brief An enum describing the way the net hierarchy is mapped
  */
-enum BuildNetHierarchyMode
-{
+enum BuildNetHierarchyMode {
   /**
    *  @brief Flatten the net
-   *  Collects all shapes of a net and puts that into the net cell or circuit cell
+   *  Collects all shapes of a net and puts that into the net cell or circuit
+   * cell
    */
   BNH_Flatten = 0,
   /**
@@ -80,6 +82,6 @@ enum BuildNetHierarchyMode
   BNH_Disconnected = 2
 };
 
-}
+} // namespace db
 
 #endif

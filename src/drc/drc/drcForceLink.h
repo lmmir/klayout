@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_drcForceLink
 #define HDR_drcForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the drc module
  */
 
-namespace drc
-{
-  DRC_PUBLIC int _force_link_f ();
-  int _force_link_target = _force_link_f ();
-}
+namespace drc {
+DRC_PUBLIC int _force_link_f();
+int _force_link_target = _force_link_f();
+} // namespace drc
 
 #endif
-

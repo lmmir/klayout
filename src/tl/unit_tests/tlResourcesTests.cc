@@ -20,50 +20,46 @@
 
 */
 
-
-#include "tlUnitTest.h"
 #include "tlResources.h"
+#include "tlUnitTest.h"
 
 #include <memory>
 
 //  uncompressed resources
 
-TEST(1)
-{
+TEST(1) {
   unsigned char hw[] = "hello, world!\n";
 
   const char *name;
   std::unique_ptr<tl::InputStream> s;
 
   name = "__test_resource1";
-  tl::resource_id_type id = tl::register_resource (name, false, hw, sizeof (hw));
+  tl::resource_id_type id = tl::register_resource(name, false, hw, sizeof(hw));
 
-  s.reset (tl::get_resource ("__doesnotexist"));
-  EXPECT_EQ (s.get () == 0, true);
+  s.reset(tl::get_resource("__doesnotexist"));
+  EXPECT_EQ(s.get() == 0, true);
 
-  s.reset (tl::get_resource (name));
-  EXPECT_EQ (s.get () == 0, false);
+  s.reset(tl::get_resource(name));
+  EXPECT_EQ(s.get() == 0, false);
   if (s) {
-    std::string data = s->read_all ();
-    EXPECT_EQ (data.size (), strlen ((const char *) hw) + 1);
-    EXPECT_EQ (data, std::string ((const char *) hw, sizeof (hw)));
+    std::string data = s->read_all();
+    EXPECT_EQ(data.size(), strlen((const char *)hw) + 1);
+    EXPECT_EQ(data, std::string((const char *)hw, sizeof(hw)));
   }
 
-  tl::unregister_resource (id);
-  s.reset (tl::get_resource (name));
-  EXPECT_EQ (s.get () == 0, true);
+  tl::unregister_resource(id);
+  s.reset(tl::get_resource(name));
+  EXPECT_EQ(s.get() == 0, true);
 }
 
 //  compressed resources
 
-TEST(2)
-{
+TEST(2) {
   const unsigned char hw[] = {
-    0x78,0x9c, //  zlib header
-    //  data:
-    0xcb,0x48,0xcd,0xc9,0xc9,0xd7,0x51,0x28,0xcf,0x2f,0xca,0x49,0x51,0xe4,
-    0x02,0x00,
-    0x26,0xb2,0x04,0xb4,  //  zlib CRC
+      0x78, 0x9c, //  zlib header
+      //  data:
+      0xcb, 0x48, 0xcd, 0xc9, 0xc9, 0xd7, 0x51, 0x28, 0xcf, 0x2f, 0xca, 0x49,
+      0x51, 0xe4, 0x02, 0x00, 0x26, 0xb2, 0x04, 0xb4, //  zlib CRC
   };
   unsigned char hw_decoded[] = "hello, world!\n";
 
@@ -71,21 +67,21 @@ TEST(2)
   std::unique_ptr<tl::InputStream> s;
 
   name = "__test_resource2";
-  tl::resource_id_type id = tl::register_resource (name, true, hw, sizeof (hw));
+  tl::resource_id_type id = tl::register_resource(name, true, hw, sizeof(hw));
 
-  s.reset (tl::get_resource ("__doesnotexist"));
-  EXPECT_EQ (s.get () == 0, true);
+  s.reset(tl::get_resource("__doesnotexist"));
+  EXPECT_EQ(s.get() == 0, true);
 
-  s.reset (tl::get_resource (name));
-  EXPECT_EQ (s.get () == 0, false);
+  s.reset(tl::get_resource(name));
+  EXPECT_EQ(s.get() == 0, false);
   if (s) {
-    std::string data = s->read_all ();
-    EXPECT_EQ (data.size (), strlen ((const char *) hw_decoded));
-    EXPECT_EQ (data, std::string ((const char *) hw_decoded, sizeof (hw_decoded) - 1));
+    std::string data = s->read_all();
+    EXPECT_EQ(data.size(), strlen((const char *)hw_decoded));
+    EXPECT_EQ(data,
+              std::string((const char *)hw_decoded, sizeof(hw_decoded) - 1));
   }
 
-  tl::unregister_resource (id);
-  s.reset (tl::get_resource (name));
-  EXPECT_EQ (s.get () == 0, true);
+  tl::unregister_resource(id);
+  s.reset(tl::get_resource(name));
+  EXPECT_EQ(s.get() == 0, true);
 }
-

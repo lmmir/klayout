@@ -28,24 +28,22 @@
 #include "layPluginConfigPage.h"
 
 namespace Ui {
-  class GridNetConfigPage;
+class GridNetConfigPage;
 }
 
 namespace lay {
 
 class ColorButton;
 
-class GridNetConfigPage
-  : public lay::ConfigPage
-{
-Q_OBJECT
+class GridNetConfigPage : public lay::ConfigPage {
+  Q_OBJECT
 
 public:
-  GridNetConfigPage (QWidget *parent);
-  ~GridNetConfigPage ();
+  GridNetConfigPage(QWidget *parent);
+  ~GridNetConfigPage();
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 private:
   Ui::GridNetConfigPage *mp_ui;
@@ -55,8 +53,8 @@ private:
   lay::ColorButton *mp_grid_ruler_color_cbtn;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

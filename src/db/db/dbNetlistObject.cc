@@ -22,93 +22,83 @@
 
 #include "dbNetlistObject.h"
 
-namespace db
-{
+namespace db {
 
-NetlistObject::NetlistObject ()
-  : tl::Object (), mp_properties (0)
-{
+NetlistObject::NetlistObject() : tl::Object(), mp_properties(0) {
   //  .. nothing yet ..
 }
 
-NetlistObject::NetlistObject (const db::NetlistObject &other)
-  : tl::Object (other), mp_properties (0)
-{
+NetlistObject::NetlistObject(const db::NetlistObject &other)
+    : tl::Object(other), mp_properties(0) {
   if (other.mp_properties) {
-    mp_properties = new std::map<tl::Variant, tl::Variant> (*other.mp_properties);
+    mp_properties =
+        new std::map<tl::Variant, tl::Variant>(*other.mp_properties);
   }
 }
 
-NetlistObject::~NetlistObject ()
-{
+NetlistObject::~NetlistObject() {
   delete mp_properties;
   mp_properties = 0;
 }
 
-NetlistObject &NetlistObject::operator= (const NetlistObject &other)
-{
+NetlistObject &NetlistObject::operator=(const NetlistObject &other) {
   if (this != &other) {
 
-    tl::Object::operator= (other);
+    tl::Object::operator=(other);
 
     delete mp_properties;
     mp_properties = 0;
 
     if (other.mp_properties) {
-      mp_properties = new std::map<tl::Variant, tl::Variant> (*other.mp_properties);
+      mp_properties =
+          new std::map<tl::Variant, tl::Variant>(*other.mp_properties);
     }
-
   }
   return *this;
 }
 
-tl::Variant NetlistObject::property (const tl::Variant &key) const
-{
-  if (! mp_properties) {
-    return tl::Variant ();
+tl::Variant NetlistObject::property(const tl::Variant &key) const {
+  if (!mp_properties) {
+    return tl::Variant();
   }
 
-  std::map<tl::Variant, tl::Variant>::const_iterator i = mp_properties->find (key);
-  if (i == mp_properties->end ()) {
-    return tl::Variant ();
+  std::map<tl::Variant, tl::Variant>::const_iterator i =
+      mp_properties->find(key);
+  if (i == mp_properties->end()) {
+    return tl::Variant();
   } else {
     return i->second;
   }
 }
 
-void
-NetlistObject::set_property (const tl::Variant &key, const tl::Variant &value)
-{
-  if (value.is_nil ()) {
+void NetlistObject::set_property(const tl::Variant &key,
+                                 const tl::Variant &value) {
+  if (value.is_nil()) {
 
     if (mp_properties) {
-      mp_properties->erase (key);
-      if (mp_properties->empty ()) {
+      mp_properties->erase(key);
+      if (mp_properties->empty()) {
         delete mp_properties;
         mp_properties = 0;
       }
     }
 
   } else {
-    if (! mp_properties) {
-      mp_properties = new std::map<tl::Variant, tl::Variant> ();
+    if (!mp_properties) {
+      mp_properties = new std::map<tl::Variant, tl::Variant>();
     }
-    (*mp_properties) [key] = value;
+    (*mp_properties)[key] = value;
   }
 }
 
 static NetlistObject::property_table empty_properties;
 
-NetlistObject::property_iterator
-NetlistObject::begin_properties () const
-{
-  return mp_properties ? mp_properties->begin () : empty_properties.begin ();
+NetlistObject::property_iterator NetlistObject::begin_properties() const {
+  return mp_properties ? mp_properties->begin() : empty_properties.begin();
 }
 
-NetlistObject::property_iterator
-NetlistObject::end_properties () const
-{
-  return mp_properties ? mp_properties->end () : empty_properties.end ();
+NetlistObject::property_iterator NetlistObject::end_properties() const {
+  return mp_properties ? mp_properties->end() : empty_properties.end();
 }
 
-}
+} // namespace db

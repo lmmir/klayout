@@ -22,11 +22,6 @@
 
 #include "docForceLink.h"
 
-namespace doc
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace doc {
+int _force_link_f() { return 0; }
+} // namespace doc

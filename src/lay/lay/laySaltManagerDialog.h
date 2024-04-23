@@ -23,159 +23,158 @@
 #ifndef HDR_laySaltManagerDialog
 #define HDR_laySaltManagerDialog
 
-#include "ui_SaltManagerDialog.h"
 #include "laySalt.h"
 #include "tlDeferredExecution.h"
-#include "tlHttpStream.h"
 #include "tlException.h"
+#include "tlHttpStream.h"
+#include "ui_SaltManagerDialog.h"
 
 #include <QDialog>
 #include <memory>
 #include <vector>
 
-namespace lay
-{
+namespace lay {
 
 class SaltGrainPropertiesDialog;
 
 /**
  *  @brief The dialog for managing the Salt ("Packages")
  */
-class SaltManagerDialog
-  : public QDialog, private Ui::SaltManagerDialog, public tl::Object
-{
-Q_OBJECT
+class SaltManagerDialog : public QDialog,
+                          private Ui::SaltManagerDialog,
+                          public tl::Object {
+  Q_OBJECT
 
 public:
   /**
    *  @brief Constructor
    */
-  SaltManagerDialog (QWidget *parent, lay::Salt *salt, const std::string &salt_mine_url);
+  SaltManagerDialog(QWidget *parent, lay::Salt *salt,
+                    const std::string &salt_mine_url);
 
   /**
    *  @brief Gets the URL for the package index
    */
-  const std::string &salt_mine_url () const
-  {
-    return m_salt_mine_url;
-  }
+  const std::string &salt_mine_url() const { return m_salt_mine_url; }
 
 private:
   /**
    *  @brief Called when data is available from the grain downloader
    */
-  void data_ready ();
+  void data_ready();
 
   /**
    *  @brief Called when data is available from the salt mine downloader
    */
-  void salt_mine_data_ready ();
+  void salt_mine_data_ready();
 
 private slots:
   /**
    *  @brief Called when the list of packages (grains) is about to change
    */
-  void salt_about_to_change ();
+  void salt_about_to_change();
 
   /**
    *  @brief Called when the list of packages (grains) has changed
    */
-  void salt_changed ();
+  void salt_changed();
 
   /**
    *  @brief Called when the repository (salt mine) is about to change
    */
-  void salt_mine_about_to_change ();
+  void salt_mine_about_to_change();
 
   /**
    *  @brief Called when the repository (salt mine) has changed
    */
-  void salt_mine_changed ();
+  void salt_mine_changed();
 
   /**
    *  @brief Called when the currently selected package (grain) has changed
    */
-  void selected_changed ();
+  void selected_changed();
 
   /**
-   *  @brief Called when the currently selected package from the update page has changed
+   *  @brief Called when the currently selected package from the update page has
+   * changed
    */
-  void mine_update_selected_changed ();
+  void mine_update_selected_changed();
 
   /**
-   *  @brief Called when the currently selected package from the new installation page has changed
+   *  @brief Called when the currently selected package from the new
+   * installation page has changed
    */
-  void mine_new_selected_changed ();
+  void mine_new_selected_changed();
 
   /**
    *  @brief Called when the "edit" button is pressed
    */
-  void edit_properties ();
+  void edit_properties();
 
   /**
    *  @brief Called when the "mark" button is pressed
    */
-  void mark_clicked ();
+  void mark_clicked();
 
   /**
    *  @brief Called when the "edit" button is pressed
    */
-  void create_grain ();
+  void create_grain();
 
   /**
    *  @brief Called when the "delete" button is pressed
    */
-  void delete_grain ();
+  void delete_grain();
 
   /**
    *  @brief Called when the mode tab changed
    */
-  void mode_changed ();
+  void mode_changed();
 
   /**
    *  @brief Called when the "apply" button is clicked
    */
-  void apply ();
+  void apply();
 
   /**
    *  @brief Called when one search text changed
    */
-  void search_text_changed (const QString &text);
+  void search_text_changed(const QString &text);
 
   /**
    *  @brief Called to show the marked items only (new packages tab)
    */
-  void show_marked_only_new ();
+  void show_marked_only_new();
 
   /**
    *  @brief Called to unmark all items (new packages tab)
    */
-  void unmark_all_new ();
+  void unmark_all_new();
 
   /**
    *  @brief Called to mark all items (new packages tab)
    */
-  void mark_all_new ();
+  void mark_all_new();
 
   /**
    *  @brief Called to show the marked items only (update packages tab)
    */
-  void show_marked_only_update ();
+  void show_marked_only_update();
 
   /**
    *  @brief Called to unmark all items (update packages tab)
    */
-  void unmark_all_update ();
+  void unmark_all_update();
 
   /**
    *  @brief Called to mark all items (update packages tab)
    */
-  void mark_all_update ();
+  void mark_all_update();
 
   /**
    *  @brief Reloads the salt mine
    */
-  void refresh ();
+  void refresh();
 
 private:
   Salt *mp_salt;
@@ -189,18 +188,19 @@ private:
   SaltGrainDetailsTextWidget *mp_downloaded_target;
   std::unique_ptr<tl::InputStream> m_salt_mine_reader;
 
-  SaltGrain *current_grain ();
-  std::vector<lay::SaltGrain *> current_grains ();
-  void set_current_grain_by_name (const std::string &current);
-  void update_models ();
-  void update_apply_state ();
-  void get_remote_grain_info (lay::SaltGrain *g, SaltGrainDetailsTextWidget *details);
-  void consolidate_salt_mine_entries ();
-  void show_error (tl::Exception &ex);
-  void salt_mine_download_started ();
-  void salt_mine_download_finished ();
+  SaltGrain *current_grain();
+  std::vector<lay::SaltGrain *> current_grains();
+  void set_current_grain_by_name(const std::string &current);
+  void update_models();
+  void update_apply_state();
+  void get_remote_grain_info(lay::SaltGrain *g,
+                             SaltGrainDetailsTextWidget *details);
+  void consolidate_salt_mine_entries();
+  void show_error(tl::Exception &ex);
+  void salt_mine_download_started();
+  void salt_mine_download_finished();
 };
 
-}
+} // namespace lay
 
 #endif

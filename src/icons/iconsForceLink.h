@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_iconsForceLink
 #define HDR_iconsForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the icons module
  */
 
-namespace icons
-{
-  ICONS_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace icons {
+ICONS_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace icons
 
 #endif
-

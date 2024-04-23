@@ -20,14 +20,13 @@
 
 */
 
-
 #ifndef HDR_layNavigator
 #define HDR_layNavigator
 
 #include <QFrame>
 
-#include "tlDeferredExecution.h"
 #include "layLayerProperties.h"
+#include "tlDeferredExecution.h"
 
 #include <map>
 
@@ -36,8 +35,7 @@ class QShowEvent;
 class QFrame;
 class QLabel;
 
-namespace lay
-{
+namespace lay {
 
 class MainWindow;
 class LayoutView;
@@ -49,17 +47,14 @@ class NavigatorService;
 /**
  *  @brief A structure containing all the frozen view information
  */
-struct NavigatorFrozenViewInfo
-{
-  NavigatorFrozenViewInfo (const LayerPropertiesList &lp, std::pair<int, int> hier)
-    : layer_properties (lp), hierarchy_levels (hier)
-  {
+struct NavigatorFrozenViewInfo {
+  NavigatorFrozenViewInfo(const LayerPropertiesList &lp,
+                          std::pair<int, int> hier)
+      : layer_properties(lp), hierarchy_levels(hier) {
     // .. nothing yet ..
   }
 
-  NavigatorFrozenViewInfo ()
-    : layer_properties (), hierarchy_levels (0, 0)
-  {
+  NavigatorFrozenViewInfo() : layer_properties(), hierarchy_levels(0, 0) {
     // .. nothing yet ..
   }
 
@@ -68,39 +63,36 @@ struct NavigatorFrozenViewInfo
 };
 
 /**
- *  @brief The navigator window 
+ *  @brief The navigator window
  */
-class Navigator 
-  : public QFrame,
-    public tl::Object
-{
-Q_OBJECT
+class Navigator : public QFrame, public tl::Object {
+  Q_OBJECT
 
 public:
-  Navigator (MainWindow *main_window);
-  ~Navigator ();
+  Navigator(MainWindow *main_window);
+  ~Navigator();
 
-  void update ();
-  void freeze_clicked (); 
-  void all_hier_levels (bool f);
-  void show_images (bool f);
+  void update();
+  void freeze_clicked();
+  void all_hier_levels(bool f);
+  void show_images(bool f);
 
 protected:
-  virtual void closeEvent (QCloseEvent *event);
-  virtual void showEvent (QShowEvent *event);
-  virtual void resizeEvent (QResizeEvent *event);
+  virtual void closeEvent(QCloseEvent *event);
+  virtual void showEvent(QShowEvent *event);
+  virtual void resizeEvent(QResizeEvent *event);
 
 private slots:
-  void menu_changed ();
+  void menu_changed();
 
 private:
   bool m_show_all_hier_levels;
   bool m_show_images;
   bool m_update_layers_needed;
   bool m_update_needed;
-  MainWindow *mp_main_window;  
+  MainWindow *mp_main_window;
   LayoutViewWidget *mp_view;
-  QLabel *mp_placeholder_label;  
+  QLabel *mp_placeholder_label;
   QFrame *mp_menu_bar;
   LayoutView *mp_source_view;
   NavigatorService *mp_service;
@@ -108,27 +100,23 @@ private:
   tl::DeferredMethod<Navigator> m_do_layers_changed;
   tl::DeferredMethod<Navigator> m_do_content_changed;
   tl::DeferredMethod<Navigator> m_do_update_menu_dm;
-  std::map <lay::LayoutView *, NavigatorFrozenViewInfo> m_frozen_list;
+  std::map<lay::LayoutView *, NavigatorFrozenViewInfo> m_frozen_list;
 
-  void attach_view (LayoutView *);
-  void attach_view ();
-  void view_closed (int);
-  void update_layers ();
-  void do_update_menu ();
-  void view_changed ();
-  void content_changed ();
-  void layers_changed (int);
-  void viewport_changed ();
-  void hier_levels_changed ();
-  void update_background_color ();
+  void attach_view(LayoutView *);
+  void attach_view();
+  void view_closed(int);
+  void update_layers();
+  void do_update_menu();
+  void view_changed();
+  void content_changed();
+  void layers_changed(int);
+  void viewport_changed();
+  void hier_levels_changed();
+  void update_background_color();
 
-  void content_changed_with_int (int)
-  {
-    content_changed ();
-  }
+  void content_changed_with_int(int) { content_changed(); }
 };
 
-}
+} // namespace lay
 
 #endif
-

@@ -20,12 +20,11 @@
 
 */
 
-
 #ifndef HDR_gtfUiDialog
 #define HDR_gtfUiDialog
 
-#include <QMainWindow>
 #include <QFrame>
+#include <QMainWindow>
 
 #include <gtf.h>
 
@@ -34,22 +33,19 @@ class QTreeView;
 class QTreeWidgetItem;
 class QModelIndex;
 
-namespace gtf
-{
+namespace gtf {
 
-class UiDialog 
-  : public QMainWindow
-{
-Q_OBJECT
+class UiDialog : public QMainWindow {
+  Q_OBJECT
 
 public:
-  UiDialog ();
-  ~UiDialog ();
+  UiDialog();
+  ~UiDialog();
 
-  void open_files (const std::string &fn_au, const std::string &fn_current);
+  void open_files(const std::string &fn_au, const std::string &fn_current);
 
 public slots:
-  void item_selected (QTreeWidgetItem *current, QTreeWidgetItem *previous);
+  void item_selected(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
 private:
   Ui_GtfUiDialog *mp_ui;
@@ -59,28 +55,24 @@ private:
   gtf::EventList m_current_events;
 };
 
-class StripedBar 
-  : public QFrame
-{
-Q_OBJECT
+class StripedBar : public QFrame {
+  Q_OBJECT
 
 public:
-  StripedBar (QWidget *parent);
+  StripedBar(QWidget *parent);
 
-  void paintEvent (QPaintEvent *event);
+  void paintEvent(QPaintEvent *event);
 
-  void set_treeview (QTreeView *tv);
+  void set_treeview(QTreeView *tv);
 
 public slots:
-  void force_update (int);
-  void force_update (const QModelIndex &);
+  void force_update(int);
+  void force_update(const QModelIndex &);
 
 private:
   QTreeView *mp_tv;
 };
 
-}
+} // namespace gtf
 
 #endif
-
-

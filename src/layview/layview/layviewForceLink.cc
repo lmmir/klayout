@@ -22,11 +22,6 @@
 
 #include "layviewForceLink.h"
 
-namespace layview
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace layview {
+int _force_link_f() { return 0; }
+} // namespace layview

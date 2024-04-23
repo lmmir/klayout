@@ -21,11 +21,11 @@
 */
 
 #if !defined(HAVE_QT_UITOOLS)
-#  define FORCE_LINK_GSI_QTUITOOLS
+#define FORCE_LINK_GSI_QTUITOOLS
 #elif QT_VERSION >= 0x060000
-#  include "../qt6/QtUiTools/gsiQtExternals.h"
+#include "../qt6/QtUiTools/gsiQtExternals.h"
 #elif QT_VERSION >= 0x050000
-#  include "../qt5/QtUiTools/gsiQtExternals.h"
+#include "../qt5/QtUiTools/gsiQtExternals.h"
 #else
-#  include "../qt4/QtUiTools/gsiQtExternals.h"
+#include "../qt4/QtUiTools/gsiQtExternals.h"
 #endif

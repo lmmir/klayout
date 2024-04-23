@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layConverters
 #define HDR_layConverters
 
@@ -28,26 +27,24 @@
 #include "tlColor.h"
 
 #if defined(HAVE_QT)
-#  include <QColor>
+#include <QColor>
 #endif
 
-namespace lay
-{
+namespace lay {
 
 /**
- *  @brief A color converter class for converting colors to strings and vice versa
+ *  @brief A color converter class for converting colors to strings and vice
+ * versa
  */
-struct LAYBASIC_PUBLIC ColorConverter 
-{
+struct LAYBASIC_PUBLIC ColorConverter {
 #if defined(HAVE_QT)
-  std::string to_string (const QColor &c) const;
-  void from_string (const std::string &s, QColor &c) const;
+  std::string to_string(const QColor &c) const;
+  void from_string(const std::string &s, QColor &c) const;
 #endif
-  std::string to_string (const tl::Color &c) const;
-  void from_string (const std::string &s, tl::Color &c) const;
+  std::string to_string(const tl::Color &c) const;
+  void from_string(const std::string &s, tl::Color &c) const;
 };
 
-}
+} // namespace lay
 
 #endif
-

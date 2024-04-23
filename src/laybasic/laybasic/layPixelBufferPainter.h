@@ -25,12 +25,11 @@
 
 #include "laybasicCommon.h"
 
-#include "tlColor.h"
 #include "dbPoint.h"
+#include "tlColor.h"
 
-namespace tl
-{
-  class PixelBuffer;
+namespace tl {
+class PixelBuffer;
 }
 
 namespace lay {
@@ -41,16 +40,17 @@ namespace lay {
  *  This painter supports very few primitives currently and is used to paint the
  *  background grid for example.
  */
-class LAYBASIC_PUBLIC PixelBufferPainter
-{
+class LAYBASIC_PUBLIC PixelBufferPainter {
 public:
-  PixelBufferPainter (tl::PixelBuffer &img, unsigned int width, unsigned int height, double resolution);
+  PixelBufferPainter(tl::PixelBuffer &img, unsigned int width,
+                     unsigned int height, double resolution);
 
-  void set (const db::Point &p, tl::Color c);
-  void draw_line (const db::Point &p1, const db::Point &p2, tl::Color c);
-  void fill_rect (const db::Point &p1, const db::Point &p2, tl::Color c);
-  void draw_rect (const db::Point &p1, const db::Point &p2, tl::Color c);
-  void draw_text (const char *t, const db::Point &p, tl::Color c, int halign, int valign);
+  void set(const db::Point &p, tl::Color c);
+  void draw_line(const db::Point &p1, const db::Point &p2, tl::Color c);
+  void fill_rect(const db::Point &p1, const db::Point &p2, tl::Color c);
+  void draw_rect(const db::Point &p1, const db::Point &p2, tl::Color c);
+  void draw_text(const char *t, const db::Point &p, tl::Color c, int halign,
+                 int valign);
 
 private:
   tl::PixelBuffer *mp_img;
@@ -58,7 +58,6 @@ private:
   int m_width, m_height;
 };
 
-}
+} // namespace lay
 
 #endif
-

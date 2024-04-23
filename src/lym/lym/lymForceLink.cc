@@ -22,11 +22,6 @@
 
 #include "lymForceLink.h"
 
-namespace lym
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace lym {
+int _force_link_f() { return 0; }
+} // namespace lym

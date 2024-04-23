@@ -20,30 +20,27 @@
 
 */
 
-
 #ifndef HDR_layMacroController
 #define HDR_layMacroController
 
 #include "layCommon.h"
 #include "layPlugin.h"
 #include "lymMacroCollection.h"
-#include "tlObject.h"
 #include "tlDeferredExecution.h"
 #include "tlFileSystemWatcher.h"
+#include "tlObject.h"
 
-#include <string>
 #include <map>
 #include <set>
+#include <string>
 
 #include <QObject>
 
-namespace db
-{
-  class Technology;
+namespace db {
+class Technology;
 }
 
-namespace lay
-{
+namespace lay {
 
 class MacroEditorDialog;
 class MainWindow;
@@ -63,18 +60,15 @@ class Action;
  *  By making the controller a PluginDeclaration it will receive
  *  initialization and configuration calls.
  */
-class MacroController
-  : public lay::PluginDeclaration, public tl::Object
-{
-Q_OBJECT
+class MacroController : public lay::PluginDeclaration, public tl::Object {
+  Q_OBJECT
 
 public:
   /**
    *  @brief A structure describing a macro category
    */
-  struct MacroCategory
-  {
-    MacroCategory () { }
+  struct MacroCategory {
+    MacroCategory() {}
 
     std::string name;
     std::string description;
@@ -84,22 +78,22 @@ public:
   /**
    *  @brief Default constructor
    */
-  MacroController ();
+  MacroController();
 
   /**
    *  @brief Reimplementation of the PluginDeclaration interface
    */
-  virtual void initialized (lay::Dispatcher *root);
+  virtual void initialized(lay::Dispatcher *root);
 
   /**
    *  @brief Reimplementation of the PluginDeclaration interface
    */
-  virtual void uninitialize (lay::Dispatcher *root);
+  virtual void uninitialize(lay::Dispatcher *root);
 
   /**
    *  @brief Reimplementation of the PluginDeclaration interface
    */
-  virtual bool configure (const std::string &key, const std::string &value);
+  virtual bool configure(const std::string &key, const std::string &value);
 
   /**
    *  @brief Reimplementation of the PluginDeclaration interface
@@ -109,25 +103,26 @@ public:
   /**
    *  @brief Reimplementation of the PluginDeclaration interface
    */
-  virtual bool can_exit (lay::Dispatcher *root) const;
+  virtual bool can_exit(lay::Dispatcher *root) const;
 
   /**
-   *  @brief Gets a value indicating whether the plugin will accept a dropped file with the given URL or path
+   *  @brief Gets a value indicating whether the plugin will accept a dropped
+   * file with the given URL or path
    */
-  virtual bool accepts_drop (const std::string &path_or_url) const;
+  virtual bool accepts_drop(const std::string &path_or_url) const;
 
   /**
    *  @brief Gets called when a file or URL is dropped on the plugin
    */
-  virtual void drop_url (const std::string &path_or_url);
+  virtual void drop_url(const std::string &path_or_url);
 
   /**
    *  @brief Enables or disables implicit macros
-   *  If implicit macros are enabled, the macro tree contains the macros defined within the technologies
-   *  and other implicit sources.
-   *  This flag needs to be set initially and before the technology tree is updated.
+   *  If implicit macros are enabled, the macro tree contains the macros defined
+   * within the technologies and other implicit sources. This flag needs to be
+   * set initially and before the technology tree is updated.
    */
-  void enable_implicit_macros (bool enable);
+  void enable_implicit_macros(bool enable);
 
   /**
    *  @brief Shows the macro editor
@@ -136,26 +131,30 @@ public:
    *  If "force_add" is true, a new macro will be created, otherwise only
    *  if none exists yet.
    */
-  void show_editor (const std::string &cat = std::string (), bool force_add = false);
+  void show_editor(const std::string &cat = std::string(),
+                   bool force_add = false);
 
   /**
    *  @brief Adds a search path to the macros
-   *  After adding the paths, "finish" needs to be called to actually load the macros and establish the
-   *  library search paths..
+   *  After adding the paths, "finish" needs to be called to actually load the
+   * macros and establish the library search paths..
    */
-  void add_path (const std::string &path, const std::string &description, const std::string &category, bool readonly);
+  void add_path(const std::string &path, const std::string &description,
+                const std::string &category, bool readonly);
 
   /**
-   *  @brief Loads the macros from the predefined paths and establishes the search paths
-   *  This method can be called multiple times.
+   *  @brief Loads the macros from the predefined paths and establishes the
+   * search paths This method can be called multiple times.
    */
-  void finish ();
+  void finish();
 
   /**
    *  @brief Adds a new macro category
    *  finish() needs to be called after adding a new category.
    */
-  void add_macro_category (const std::string &name, const std::string &description, const std::vector<std::string> &folders);
+  void add_macro_category(const std::string &name,
+                          const std::string &description,
+                          const std::vector<std::string> &folders);
 
   /**
    *  @brief Adds a temporary macro
@@ -166,47 +165,50 @@ public:
    *  menu building. Hence they are stored temporarily.
    *  The MainWindow object will become owner of the macro object.
    */
-  void add_temp_macro (lym::Macro *m);
+  void add_temp_macro(lym::Macro *m);
 
   /**
    *  @brief Obtain the list of macro categories
    */
-  const std::vector<MacroCategory> &macro_categories () const
-  {
+  const std::vector<MacroCategory> &macro_categories() const {
     return m_macro_categories;
   }
 
   /**
    *  @brief Gets the singleton instance for this object
    */
-  static MacroController *instance ();
+  static MacroController *instance();
 
 public slots:
   /**
    *  @brief Updates the menu with macros bound to a menu
    */
-  void macro_collection_changed ();
+  void macro_collection_changed();
 
   /**
    *  @brief Called when the technologies or the salt got changed
    */
-  void sync_with_external_sources ();
+  void sync_with_external_sources();
 
 private slots:
   /**
    *  @brief Called when the file watcher detects a change in the file system
    */
-  void file_watcher_triggered ();
+  void file_watcher_triggered();
 
 private:
   /**
    *  @brief A structure describing an external macro location
    */
-  struct ExternalPathDescriptor
-  {
-    ExternalPathDescriptor (const std::string &_path, const std::string &_description, const std::string &_cat, lym::MacroCollection::FolderType _type, bool _readonly, const std::string &_version = std::string ())
-      : path (_path), description (_description), cat (_cat), type (_type), version (_version), readonly (_readonly)
-    {
+  struct ExternalPathDescriptor {
+    ExternalPathDescriptor(const std::string &_path,
+                           const std::string &_description,
+                           const std::string &_cat,
+                           lym::MacroCollection::FolderType _type,
+                           bool _readonly,
+                           const std::string &_version = std::string())
+        : path(_path), description(_description), cat(_cat), type(_type),
+          version(_version), readonly(_readonly) {
       //  .. nothing yet ..
     }
 
@@ -221,11 +223,12 @@ private:
   /**
    *  @brief A structure describing an internal macro location
    */
-  struct InternalPathDescriptor
-  {
-    InternalPathDescriptor (const std::string &_path, const std::string &_description, const std::string &_cat, bool _readonly)
-      : path (_path), description (_description), cat (_cat), readonly (_readonly)
-    {
+  struct InternalPathDescriptor {
+    InternalPathDescriptor(const std::string &_path,
+                           const std::string &_description,
+                           const std::string &_cat, bool _readonly)
+        : path(_path), description(_description), cat(_cat),
+          readonly(_readonly) {
       //  .. nothing yet ..
     }
 
@@ -249,20 +252,22 @@ private:
   tl::DeferredMethod<MacroController> dm_do_sync_with_external_sources;
   tl::DeferredMethod<MacroController> dm_sync_file_watcher;
   tl::DeferredMethod<MacroController> dm_sync_files;
-  std::vector<std::pair<std::string, std::string> > m_key_bindings;
-  std::vector<std::pair<std::string, bool> > m_menu_items_hidden;
+  std::vector<std::pair<std::string, std::string>> m_key_bindings;
+  std::vector<std::pair<std::string, bool>> m_menu_items_hidden;
 
-  void sync_implicit_macros (bool ask_before_autorun);
-  void add_macro_items_to_menu (lym::MacroCollection &collection, std::set<std::string> &used_names, std::set<std::string> &groups, const db::Technology *tech);
-  void do_update_menu_with_macros ();
-  void do_sync_with_external_sources ();
-  void sync_file_watcher ();
-  void sync_files ();
-  void sync_package_paths ();
-  void sync_macro_sources ();
+  void sync_implicit_macros(bool ask_before_autorun);
+  void add_macro_items_to_menu(lym::MacroCollection &collection,
+                               std::set<std::string> &used_names,
+                               std::set<std::string> &groups,
+                               const db::Technology *tech);
+  void do_update_menu_with_macros();
+  void do_sync_with_external_sources();
+  void sync_file_watcher();
+  void sync_files();
+  void sync_package_paths();
+  void sync_macro_sources();
 };
 
-}
+} // namespace lay
 
 #endif
-

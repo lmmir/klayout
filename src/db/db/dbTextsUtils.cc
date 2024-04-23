@@ -23,9 +23,8 @@
 #include "dbTextsUtils.h"
 #include "dbRegion.h"
 
-namespace db
-{
+namespace db {
 
-  //  .. nothing yet ..
+//  .. nothing yet ..
 
 }

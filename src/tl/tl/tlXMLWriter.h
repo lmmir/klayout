@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_tlXMLWriter
 #define HDR_tlXMLWriter
 
@@ -28,25 +27,23 @@
 
 #include <iostream>
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief A preliminary class for writing XML files
  */
 
-class TL_PUBLIC XMLWriter 
-{
+class TL_PUBLIC XMLWriter {
 public:
-  XMLWriter (std::ostream &os);
+  XMLWriter(std::ostream &os);
 
-  void start_document ();
-  void start_document (const std::string &header);
-  void start_element (const std::string &name);
-  void write_attribute (const std::string &name, const std::string &value);
-  void cdata (const std::string &text);
-  void end_element (const std::string &name);
-  void end_document ();
+  void start_document();
+  void start_document(const std::string &header);
+  void start_element(const std::string &name);
+  void write_attribute(const std::string &name, const std::string &value);
+  void cdata(const std::string &text);
+  void end_element(const std::string &name);
+  void end_document();
 
 private:
   int m_indent;
@@ -54,11 +51,10 @@ private:
   bool m_open;
   bool m_has_children;
 
-  void write_indent ();
-  void write_string (const std::string &s);
+  void write_indent();
+  void write_string(const std::string &s);
 };
 
-}
+} // namespace tl
 
 #endif
-

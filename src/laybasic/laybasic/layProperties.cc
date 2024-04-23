@@ -24,22 +24,20 @@
 
 #include "layProperties.h"
 
-namespace lay
-{
+namespace lay {
 
-PropertiesPage::PropertiesPage (QWidget *parent, db::Manager *manager, lay::Editable *editable)
-  : QFrame (parent), mp_manager (manager), mp_editable (editable)
-{
+PropertiesPage::PropertiesPage(QWidget *parent, db::Manager *manager,
+                               lay::Editable *editable)
+    : QFrame(parent), mp_manager(manager), mp_editable(editable) {
   //  .. nothing else ..
 }
 
-PropertiesPage::~PropertiesPage ()
-{
+PropertiesPage::~PropertiesPage() {
   if (mp_editable) {
-    mp_editable->properties_page_deleted ();
+    mp_editable->properties_page_deleted();
   }
 }
 
-}
+} // namespace lay
 
 #endif

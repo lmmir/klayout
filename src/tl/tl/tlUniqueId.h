@@ -20,15 +20,13 @@
 
 */
 
-
 #ifndef HDR_tlUniqueId
 #define HDR_tlUniqueId
 
 #include "tlCommon.h"
 #include <cstdint>
 
-namespace tl
-{
+namespace tl {
 
 typedef uint64_t id_type;
 
@@ -48,19 +46,18 @@ typedef uint64_t id_type;
  *
  *  The type of the ID is tl::id_type.
  */
-class TL_PUBLIC UniqueId
-{
+class TL_PUBLIC UniqueId {
 public:
   /**
    *  @brief @brief Creates a new object with a new ID
    */
-  UniqueId ();
+  UniqueId();
 
-  UniqueId (const UniqueId &) { }
-  UniqueId &operator= (const UniqueId &) { return *this; }
+  UniqueId(const UniqueId &) {}
+  UniqueId &operator=(const UniqueId &) { return *this; }
 
 private:
-  friend id_type id_of (const UniqueId *);
+  friend id_type id_of(const UniqueId *);
 
   id_type m_id;
 };
@@ -70,12 +67,8 @@ private:
  *
  *  Returns 0 in a null pointer and only then.
  */
-inline id_type id_of (const UniqueId *o)
-{
-  return o ? o->m_id : 0;
-}
+inline id_type id_of(const UniqueId *o) { return o ? o->m_id : 0; }
 
 } // namespace tl
 
 #endif
-

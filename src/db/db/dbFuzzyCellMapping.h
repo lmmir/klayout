@@ -20,90 +20,88 @@
 
 */
 
-
 #ifndef HDR_dbFuzzyCellMapping
 #define HDR_dbFuzzyCellMapping
-
 #include "dbCommon.h"
-
 #include "dbTypes.h"
-
 #include <map>
-
-namespace db
-{
+#include <vector>
+namespace db {
 
 class Layout;
 
-class DB_PUBLIC FuzzyCellMapping
-{
+class DB_PUBLIC FuzzyCellMapping {
 public:
-  typedef std::map <db::cell_index_type, db::cell_index_type>::const_iterator iterator;
+  typedef std::map<db::cell_index_type, db::cell_index_type>::const_iterator
+      iterator;
 
   /**
    *  @brief Constructor - creates an empty mapping
    */
-  FuzzyCellMapping ();
+  FuzzyCellMapping();
 
   /**
    *  @brief Clear the mapping
    */
-  void clear ();
+  void clear();
 
   /**
-   *  @brief Create a mapping for layout_b (with initial/top cell cell_index_b) to layout_a (with initial/top cell cell_index_a)
+   *  @brief Create a mapping for layout_b (with initial/top cell cell_index_b)
+   * to layout_a (with initial/top cell cell_index_a)
    */
-  void create (const db::Layout &layout_a, db::cell_index_type cell_index_a, const db::Layout &layout_b, db::cell_index_type cell_index_b);
+  void create(const db::Layout &layout_a, db::cell_index_type cell_index_a,
+              const db::Layout &layout_b, db::cell_index_type cell_index_b);
 
   /**
-   *  @brief Determine cell mapping to a layout_b cell to the corresponding layout_a cell.
+   *  @brief Determine cell mapping to a layout_b cell to the corresponding
+   * layout_a cell.
    *
-   *  @param cell_index_b The index of the cell in layout_b whose mapping is requested.
-   *  @return First: true, if a unique mapping is given, Second: the cell index in layout_a.
+   *  @param cell_index_b The index of the cell in layout_b whose mapping is
+   * requested.
+   *  @return First: true, if a unique mapping is given, Second: the cell index
+   * in layout_a.
    */
-  std::pair<bool, db::cell_index_type> cell_mapping_pair (db::cell_index_type cell_index_b) const;
+  std::pair<bool, db::cell_index_type>
+  cell_mapping_pair(db::cell_index_type cell_index_b) const;
 
   /**
    *  @brief Determine if a cell layout_b has a mapping to a layout_a cell.
    *
-   *  @param cell_index_b The index of the cell in layout_b whose mapping is requested.
+   *  @param cell_index_b The index of the cell in layout_b whose mapping is
+   * requested.
    *  @return true, if the cell has a mapping
    */
-  bool has_mapping (db::cell_index_type cell_index_b) const;
+  bool has_mapping(db::cell_index_type cell_index_b) const;
 
   /**
-   *  @brief Determine cell mapping to a layout_b cell to the corresponding layout_a cell.
+   *  @brief Determine cell mapping to a layout_b cell to the corresponding
+   * layout_a cell.
    *
-   *  @param cell_index_b The index of the cell in layout_b whose mapping is requested.
+   *  @param cell_index_b The index of the cell in layout_b whose mapping is
+   * requested.
    *  @return the cell index in layout_a.
    */
-  db::cell_index_type cell_mapping (db::cell_index_type cell_index_b) const;
+  db::cell_index_type cell_mapping(db::cell_index_type cell_index_b) const;
 
   /**
    *  @brief Begin iterator for the b to a cell mapping
    */
-  iterator begin () const
-  {
-    return m_b2a_mapping.begin ();
-  }
+  iterator begin() const { return m_b2a_mapping.begin(); }
 
   /**
    *  @brief End iterator for the b to a cell mapping
    */
-  iterator end () const
-  {
-    return m_b2a_mapping.end ();
-  }
+  iterator end() const { return m_b2a_mapping.end(); }
 
 private:
-  void dump_mapping (const std::map <db::cell_index_type, std::vector<db::cell_index_type> > &candidates, 
-                     const db::Layout &layout_a, const db::Layout &layout_b);
+  void dump_mapping(
+      const std::map<db::cell_index_type, std::vector<db::cell_index_type>>
+          &candidates,
+      const db::Layout &layout_a, const db::Layout &layout_b);
 
-  std::map <db::cell_index_type, db::cell_index_type> m_b2a_mapping;
+  std::map<db::cell_index_type, db::cell_index_type> m_b2a_mapping;
 };
 
-}
+} // namespace db
 
 #endif
-
-

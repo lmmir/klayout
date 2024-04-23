@@ -25,109 +25,99 @@
 #ifndef HDR_antConfigPage
 #define HDR_antConfigPage
 
+#include "antTemplate.h"
 #include "layPlugin.h"
 #include "layPluginConfigPage.h"
-#include "antTemplate.h"
 
 class QListWidgetItem;
 
-namespace Ui
-{
-  class RulerConfigPage;
-  class RulerConfigPage2;
-  class RulerConfigPage3;
-  class RulerConfigPage4;
-}
+namespace Ui {
+class RulerConfigPage;
+class RulerConfigPage2;
+class RulerConfigPage3;
+class RulerConfigPage4;
+} // namespace Ui
 
-namespace ant 
-{
+namespace ant {
 
-class ConfigPage
-  : public lay::ConfigPage
-{
-  Q_OBJECT 
+class ConfigPage : public lay::ConfigPage {
+  Q_OBJECT
 
 public:
-  ConfigPage (QWidget *parent);
-  ~ConfigPage ();
+  ConfigPage(QWidget *parent);
+  ~ConfigPage();
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 private:
   Ui::RulerConfigPage *mp_ui;
-  
-  void show ();
-  void commit ();
+
+  void show();
+  void commit();
 };
 
-class ConfigPage2
-  : public lay::ConfigPage
-{
-  Q_OBJECT 
+class ConfigPage2 : public lay::ConfigPage {
+  Q_OBJECT
 
 public:
-  ConfigPage2 (QWidget *parent);
-  ~ConfigPage2 ();
+  ConfigPage2(QWidget *parent);
+  ~ConfigPage2();
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 private:
   Ui::RulerConfigPage2 *mp_ui;
-  
-  void show ();
-  void commit ();
+
+  void show();
+  void commit();
 };
 
-class ConfigPage3
-  : public lay::ConfigPage
-{
-  Q_OBJECT 
+class ConfigPage3 : public lay::ConfigPage {
+  Q_OBJECT
 
 public:
-  ConfigPage3 (QWidget *parent);
-  ~ConfigPage3 ();
+  ConfigPage3(QWidget *parent);
+  ~ConfigPage3();
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 private:
   Ui::RulerConfigPage3 *mp_ui;
-  
-  void show ();
-  void commit ();
+
+  void show();
+  void commit();
 };
 
-class ConfigPage4
-  : public lay::ConfigPage
-{
-  Q_OBJECT 
+class ConfigPage4 : public lay::ConfigPage {
+  Q_OBJECT
 
 public:
-  ConfigPage4 (QWidget *parent);
-  ~ConfigPage4 ();
+  ConfigPage4(QWidget *parent);
+  ~ConfigPage4();
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 public slots:
-  void add_clicked ();
-  void del_clicked ();
-  void up_clicked ();
-  void down_clicked ();
-  void current_template_changed (int index);
-  void double_clicked (QListWidgetItem *);
-  
+  void add_clicked();
+  void del_clicked();
+  void up_clicked();
+  void down_clicked();
+  void current_template_changed(int index);
+  void double_clicked(QListWidgetItem *);
+
 private:
   Ui::RulerConfigPage4 *mp_ui;
   std::vector<ant::Template> m_ruler_templates;
   int m_current_template;
   bool m_current_changed_enabled;
-  
-  void show ();
-  void commit ();
-  void update_list ();
+
+  void show();
+  void commit();
+  void update_list();
 };
 
 } // namespace ant
@@ -135,4 +125,3 @@ private:
 #endif
 
 #endif
-

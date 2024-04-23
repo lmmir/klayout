@@ -20,28 +20,20 @@
 
 */
 
-
-#include "tlUnitTest.h"
 #include "dbSaveLayoutOptions.h"
 #include "gsiDecl.h"
+#include "tlUnitTest.h"
 
-class MyWriterOptions
-  : public db::FormatSpecificWriterOptions
-{
+class MyWriterOptions : public db::FormatSpecificWriterOptions {
 public:
-  MyWriterOptions ()
-    : db::FormatSpecificWriterOptions ()
-  {
+  MyWriterOptions() : db::FormatSpecificWriterOptions() {}
+
+  virtual FormatSpecificWriterOptions *clone() const {
+    return new MyWriterOptions(*this);
   }
 
-  virtual FormatSpecificWriterOptions *clone () const
-  {
-    return new MyWriterOptions (*this);
-  }
-
-  virtual const std::string &format_name () const
-  {
-    static std::string fmt ("myformat");
+  virtual const std::string &format_name() const {
+    static std::string fmt("myformat");
     return fmt;
   }
 
@@ -49,56 +41,51 @@ public:
   db::LayerMap lm;
 };
 
-static std::string get_mywriter_value (const db::SaveLayoutOptions *options)
-{
-  return options->get_options<MyWriterOptions> ().value;
+static std::string get_mywriter_value(const db::SaveLayoutOptions *options) {
+  return options->get_options<MyWriterOptions>().value;
 }
 
-static void set_mywriter_value (db::SaveLayoutOptions *options, const std::string &v)
-{
-  options->get_options<MyWriterOptions> ().value = v;
+static void set_mywriter_value(db::SaveLayoutOptions *options,
+                               const std::string &v) {
+  options->get_options<MyWriterOptions>().value = v;
 }
 
-static db::LayerMap get_mywriter_lm (const db::SaveLayoutOptions *options)
-{
-  return options->get_options<MyWriterOptions> ().lm;
+static db::LayerMap get_mywriter_lm(const db::SaveLayoutOptions *options) {
+  return options->get_options<MyWriterOptions>().lm;
 }
 
-static void set_mywriter_lm (db::SaveLayoutOptions *options, const db::LayerMap &lm)
-{
-  options->get_options<MyWriterOptions> ().lm = lm;
+static void set_mywriter_lm(db::SaveLayoutOptions *options,
+                            const db::LayerMap &lm) {
+  options->get_options<MyWriterOptions>().lm = lm;
 }
 
+static gsi::ClassExt<db::SaveLayoutOptions> mywriteroptions_cls(
+    gsi::method_ext("mywriter_value", &get_mywriter_value) +
+        gsi::method_ext("mywriter_value=", &set_mywriter_value) +
+        gsi::method_ext("mywriter_lm", &get_mywriter_lm) +
+        gsi::method_ext("mywriter_lm=", &set_mywriter_lm),
+    "@hide");
 
-static
-gsi::ClassExt<db::SaveLayoutOptions> mywriteroptions_cls (
-  gsi::method_ext ("mywriter_value", &get_mywriter_value) +
-  gsi::method_ext ("mywriter_value=", &set_mywriter_value) +
-  gsi::method_ext ("mywriter_lm", &get_mywriter_lm) +
-  gsi::method_ext ("mywriter_lm=", &set_mywriter_lm),
-  "@hide");
-
-
-TEST(1)
-{
+TEST(1) {
   db::SaveLayoutOptions opt;
   MyWriterOptions myopt;
   myopt.value = "42";
-  opt.set_options (myopt);
+  opt.set_options(myopt);
 
-  EXPECT_EQ (opt.get_options<MyWriterOptions> ().value, "42");
-  EXPECT_EQ (opt.get_option_by_name ("mywriter_value").to_string (), "42");
-  opt.set_option_by_name ("mywriter_value", tl::Variant ("abc"));
-  EXPECT_EQ (opt.get_option_by_name ("mywriter_value").to_string (), "abc");
+  EXPECT_EQ(opt.get_options<MyWriterOptions>().value, "42");
+  EXPECT_EQ(opt.get_option_by_name("mywriter_value").to_string(), "42");
+  opt.set_option_by_name("mywriter_value", tl::Variant("abc"));
+  EXPECT_EQ(opt.get_option_by_name("mywriter_value").to_string(), "abc");
 
-  db::LayerMap lm = db::LayerMap::from_string_file_format ("1/0:2\n10/0");
-  EXPECT_EQ (lm.to_string (), "layer_map('1/0 : 2/0';'10/0')");
-  opt.set_option_by_name ("mywriter_lm", tl::Variant::make_variant (lm));
-  EXPECT_EQ (opt.get_option_by_name ("mywriter_lm").to_user<db::LayerMap> ().to_string (), "layer_map('1/0 : 2/0';'10/0')");
+  db::LayerMap lm = db::LayerMap::from_string_file_format("1/0:2\n10/0");
+  EXPECT_EQ(lm.to_string(), "layer_map('1/0 : 2/0';'10/0')");
+  opt.set_option_by_name("mywriter_lm", tl::Variant::make_variant(lm));
+  EXPECT_EQ(
+      opt.get_option_by_name("mywriter_lm").to_user<db::LayerMap>().to_string(),
+      "layer_map('1/0 : 2/0';'10/0')");
 
   myopt.value = "17";
-  opt.set_options (myopt);
-  EXPECT_EQ (opt.get_options<MyWriterOptions> ().value, "17");
-  EXPECT_EQ (opt.get_option_by_name ("mywriter_value").to_string (), "17");
+  opt.set_options(myopt);
+  EXPECT_EQ(opt.get_options<MyWriterOptions>().value, "17");
+  EXPECT_EQ(opt.get_option_by_name("mywriter_value").to_string(), "17");
 }
-

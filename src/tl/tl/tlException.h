@@ -20,8 +20,6 @@
 
 */
 
-
-
 #ifndef HDR_tlException
 #define HDR_tlException
 
@@ -30,8 +28,7 @@
 #include "tlInternational.h"
 #include "tlVariant.h"
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief The unspecific exception class
@@ -42,89 +39,89 @@ namespace tl
  *  constructor methods.
  */
 
-class TL_PUBLIC Exception
-{
+class TL_PUBLIC Exception {
 public:
-  Exception (const std::string &msg)
-    : m_msg (msg), m_first_chance (true)
-  { }
+  Exception(const std::string &msg) : m_msg(msg), m_first_chance(true) {}
 
-  Exception (const std::string &fmt, const std::vector<tl::Variant> &a)
-  {
-    init (fmt, a);
+  Exception(const std::string &fmt, const std::vector<tl::Variant> &a) {
+    init(fmt, a);
   }
 
-  Exception (const std::string &fmt, const tl::Variant &a1)
-  {
+  Exception(const std::string &fmt, const tl::Variant &a1) {
     std::vector<tl::Variant> a;
-    a.push_back (a1);
-    init (fmt, a);
+    a.push_back(a1);
+    init(fmt, a);
   }
 
-  Exception (const std::string &fmt, const tl::Variant &a1, const tl::Variant &a2)
-  {
+  Exception(const std::string &fmt, const tl::Variant &a1,
+            const tl::Variant &a2) {
     std::vector<tl::Variant> a;
-    a.push_back (a1);
-    a.push_back (a2);
-    init (fmt, a);
+    a.push_back(a1);
+    a.push_back(a2);
+    init(fmt, a);
   }
 
-  Exception (const std::string &fmt, const tl::Variant &a1, const tl::Variant &a2, const tl::Variant &a3)
-  {
+  Exception(const std::string &fmt, const tl::Variant &a1,
+            const tl::Variant &a2, const tl::Variant &a3) {
     std::vector<tl::Variant> a;
-    a.push_back (a1);
-    a.push_back (a2);
-    a.push_back (a3);
-    init (fmt, a);
+    a.push_back(a1);
+    a.push_back(a2);
+    a.push_back(a3);
+    init(fmt, a);
   }
 
-  Exception (const std::string &fmt, const tl::Variant &a1, const tl::Variant &a2, const tl::Variant &a3, const tl::Variant &a4)
-  {
+  Exception(const std::string &fmt, const tl::Variant &a1,
+            const tl::Variant &a2, const tl::Variant &a3,
+            const tl::Variant &a4) {
     std::vector<tl::Variant> a;
-    a.push_back (a1);
-    a.push_back (a2);
-    a.push_back (a3);
-    a.push_back (a4);
-    init (fmt, a);
+    a.push_back(a1);
+    a.push_back(a2);
+    a.push_back(a3);
+    a.push_back(a4);
+    init(fmt, a);
   }
 
-  Exception (const std::string &fmt, const tl::Variant &a1, const tl::Variant &a2, const tl::Variant &a3, const tl::Variant &a4, const tl::Variant &a5)
-  {
+  Exception(const std::string &fmt, const tl::Variant &a1,
+            const tl::Variant &a2, const tl::Variant &a3, const tl::Variant &a4,
+            const tl::Variant &a5) {
     std::vector<tl::Variant> a;
-    a.push_back (a1);
-    a.push_back (a2);
-    a.push_back (a3);
-    a.push_back (a4);
-    a.push_back (a5);
-    init (fmt, a);
+    a.push_back(a1);
+    a.push_back(a2);
+    a.push_back(a3);
+    a.push_back(a4);
+    a.push_back(a5);
+    init(fmt, a);
   }
 
-  Exception (const std::string &fmt, const tl::Variant &a1, const tl::Variant &a2, const tl::Variant &a3, const tl::Variant &a4, const tl::Variant &a5, const tl::Variant &a6)
-  {
+  Exception(const std::string &fmt, const tl::Variant &a1,
+            const tl::Variant &a2, const tl::Variant &a3, const tl::Variant &a4,
+            const tl::Variant &a5, const tl::Variant &a6) {
     std::vector<tl::Variant> a;
-    a.push_back (a1);
-    a.push_back (a2);
-    a.push_back (a3);
-    a.push_back (a4);
-    a.push_back (a5);
-    a.push_back (a6);
-    init (fmt, a);
+    a.push_back(a1);
+    a.push_back(a2);
+    a.push_back(a3);
+    a.push_back(a4);
+    a.push_back(a5);
+    a.push_back(a6);
+    init(fmt, a);
   }
 
-  Exception (const std::string &fmt, const tl::Variant &a1, const tl::Variant &a2, const tl::Variant &a3, const tl::Variant &a4, const tl::Variant &a5, const tl::Variant &a6, const tl::Variant &a7)
-  {
+  Exception(const std::string &fmt, const tl::Variant &a1,
+            const tl::Variant &a2, const tl::Variant &a3, const tl::Variant &a4,
+            const tl::Variant &a5, const tl::Variant &a6,
+            const tl::Variant &a7) {
     std::vector<tl::Variant> a;
-    a.push_back (a1);
-    a.push_back (a2);
-    a.push_back (a3);
-    a.push_back (a4);
-    a.push_back (a5);
-    a.push_back (a6);
-    a.push_back (a7);
-    init (fmt, a);
+    a.push_back(a1);
+    a.push_back(a2);
+    a.push_back(a3);
+    a.push_back(a4);
+    a.push_back(a5);
+    a.push_back(a6);
+    a.push_back(a7);
+    init(fmt, a);
   }
 
-  virtual ~Exception () { }
+  virtual ~Exception() {}
 
   /**
    *  @brief Gets the full message text
@@ -133,7 +130,7 @@ public:
    *  ignore the core message or modify the latter to build
    *  the full message.
    */
-  virtual std::string msg () const { return m_msg; }
+  virtual std::string msg() const { return m_msg; }
 
   /**
    *  @brief Gets the basic message
@@ -141,12 +138,12 @@ public:
    *  may decide to deliver a more elaborate version of the message
    *  through "msg".
    */
-  std::string basic_msg () const { return m_msg; }
+  std::string basic_msg() const { return m_msg; }
 
   /**
    *  @brief Exchanges the basic message
    */
-  void set_basic_msg (const std::string &msg) { m_msg = msg; }
+  void set_basic_msg(const std::string &msg) { m_msg = msg; }
 
   /**
    *  @brief Sets a flag indicating whether this exception is a first-chance one
@@ -156,51 +153,42 @@ public:
    *  By default the flag is true, indicating it has not been handled
    *  by the debugger.
    */
-  void set_first_chance (bool f) { m_first_chance = f; }
+  void set_first_chance(bool f) { m_first_chance = f; }
 
   /**
    *  @brief Gets a flag indicating that is this a first-chance exception
    */
-  bool first_chance () const { return m_first_chance; }
+  bool first_chance() const { return m_first_chance; }
 
 private:
   std::string m_msg;
   bool m_first_chance;
-  void init (const std::string &fmt, const std::vector<tl::Variant> &a);
+  void init(const std::string &fmt, const std::vector<tl::Variant> &a);
 };
 
 /**
  *  @brief An exception thrown when the wrong type is provided as argument.
  */
-struct TL_PUBLIC TypeError
-  : public Exception
-{
-  TypeError (const std::string &msg)
-    : Exception (msg)
-  { }
+struct TL_PUBLIC TypeError : public Exception {
+  TypeError(const std::string &msg) : Exception(msg) {}
 };
 
 /**
  *  @brief A "neutral" exception thrown to terminate some operation
  *  This exception is not shown.
  */
-struct TL_PUBLIC CancelException
-  : public Exception
-{
-  CancelException ()
-    : Exception (tl::to_string (tr ("Operation cancelled")))
-  { }
+struct TL_PUBLIC CancelException : public Exception {
+  CancelException() : Exception(tl::to_string(tr("Operation cancelled"))) {}
 };
 
 /**
  *  @brief A special "internal" exception class used by tl_assert
  */
-struct TL_PUBLIC InternalException
-  : public Exception
-{
-  InternalException (const char *file, int line, const char *cond)
-    : Exception (tl::to_string (tr ("Internal error: %s:%d %s was not true")).c_str (), file, line, cond)
-  { }
+struct TL_PUBLIC InternalException : public Exception {
+  InternalException(const char *file, int line, const char *cond)
+      : Exception(
+            tl::to_string(tr("Internal error: %s:%d %s was not true")).c_str(),
+            file, line, cond) {}
 };
 
 } // namespace tl

@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_tlBase64
 #define HDR_tlBase64
 
@@ -29,19 +28,18 @@
 #include <string>
 #include <vector>
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  Converts a base64-encoded string into binary data
  */
-TL_PUBLIC std::vector<unsigned char> from_base64 (const char *s);
+TL_PUBLIC std::vector<unsigned char> from_base64(const char *s);
 
 /**
  *  Converts binary data into a base64-encoded string
  */
-TL_PUBLIC std::string to_base64 (const unsigned char *data, size_t size);
+TL_PUBLIC std::string to_base64(const unsigned char *data, size_t size);
 
-}
+} // namespace tl
 
 #endif

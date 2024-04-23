@@ -28,46 +28,44 @@
 #include <QTextBrowser>
 #include <memory>
 
-namespace lay
-{
+namespace lay {
 
 class SaltGrain;
 
 /**
- *  @brief A specialization of QTextBrowser that displays the details of the salt grain
+ *  @brief A specialization of QTextBrowser that displays the details of the
+ * salt grain
  */
-class SaltGrainDetailsTextWidget
-  : public QTextBrowser
-{
-Q_OBJECT
+class SaltGrainDetailsTextWidget : public QTextBrowser {
+  Q_OBJECT
 
 public:
   /**
    *  @brief Constructor
    */
-  SaltGrainDetailsTextWidget (QWidget *w);
+  SaltGrainDetailsTextWidget(QWidget *w);
 
   /**
    *  @brief Sets the grain whose details are to be shown
    */
-  void set_grain (const SaltGrain *g);
+  void set_grain(const SaltGrain *g);
 
 protected:
-  virtual QVariant loadResource (int type, const QUrl &url);
+  virtual QVariant loadResource(int type, const QUrl &url);
 
 public slots:
-  void show_detailed_view (bool f);
+  void show_detailed_view(bool f);
 
 private slots:
-  void open_link (const QUrl &url);
+  void open_link(const QUrl &url);
 
 private:
   std::unique_ptr<lay::SaltGrain> mp_grain;
 
-  QString details_text ();
+  QString details_text();
   bool m_detailed_view;
 };
 
-}
+} // namespace lay
 
 #endif

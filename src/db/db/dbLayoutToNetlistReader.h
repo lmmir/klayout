@@ -23,12 +23,12 @@
 #ifndef HDR_dbLayoutToNetlistReader
 #define HDR_dbLayoutToNetlistReader
 
-#include "dbCommon.h"
-#include "dbPolygon.h"
 #include "dbCell.h"
+#include "dbCommon.h"
 #include "dbLayoutToNetlist.h"
-#include "tlStream.h"
+#include "dbPolygon.h"
 #include "tlProgress.h"
+#include "tlStream.h"
 
 namespace db {
 
@@ -36,26 +36,22 @@ class LayoutToNetlistStandardReader;
 
 namespace l2n_std_reader {
 
-  class Brace
-  {
-  public:
-    Brace (db::LayoutToNetlistStandardReader *reader);
+class Brace {
+public:
+  Brace(db::LayoutToNetlistStandardReader *reader);
 
-    operator bool ();
-    void done ();
+  operator bool();
+  void done();
 
-    bool has_brace () const
-    {
-      return m_has_brace;
-    }
+  bool has_brace() const { return m_has_brace; }
 
-  private:
-    db::LayoutToNetlistStandardReader *mp_reader;
-    bool m_checked;
-    bool m_has_brace;
-  };
+private:
+  db::LayoutToNetlistStandardReader *mp_reader;
+  bool m_checked;
+  bool m_has_brace;
+};
 
-}
+} // namespace l2n_std_reader
 
 class LayoutToNetlist;
 class Circuit;
@@ -68,89 +64,89 @@ class Region;
 /**
  *  @brief The base class for a LayoutToNetlist writer
  */
-class DB_PUBLIC LayoutToNetlistReaderBase
-{
+class DB_PUBLIC LayoutToNetlistReaderBase {
 public:
-  LayoutToNetlistReaderBase () { }
-  virtual ~LayoutToNetlistReaderBase () { }
+  LayoutToNetlistReaderBase() {}
+  virtual ~LayoutToNetlistReaderBase() {}
 
-  void read (db::LayoutToNetlist *l2n)
-  {
-    do_read (l2n);
-  }
+  void read(db::LayoutToNetlist *l2n) { do_read(l2n); }
 
 private:
-  virtual void do_read (db::LayoutToNetlist *l2n) = 0;
+  virtual void do_read(db::LayoutToNetlist *l2n) = 0;
 };
 
 /**
  *  @brief The standard writer
  */
 class DB_PUBLIC LayoutToNetlistStandardReader
-  : public LayoutToNetlistReaderBase
-{
+    : public LayoutToNetlistReaderBase {
 public:
-
-  struct ObjectMap
-  {
+  struct ObjectMap {
     std::map<unsigned int, db::Net *> id2net;
     std::map<unsigned int, db::Device *> id2device;
     std::map<unsigned int, db::SubCircuit *> id2subcircuit;
   };
 
-  LayoutToNetlistStandardReader (tl::InputStream &stream);
+  LayoutToNetlistStandardReader(tl::InputStream &stream);
 
-  void do_read (db::LayoutToNetlist *l2n);
+  void do_read(db::LayoutToNetlist *l2n);
 
 protected:
   friend class l2n_std_reader::Brace;
   typedef l2n_std_reader::Brace Brace;
 
-  void read_netlist (Netlist *netlist, db::LayoutToNetlist *l2n, Brace *nested = 0, std::map<const db::Circuit *, ObjectMap> *map_per_circuit = 0);
-  static size_t terminal_id (const db::DeviceClass *device_class, const std::string &tname);
-  static std::pair<db::DeviceAbstract *, const db::DeviceClass *> device_model_by_name (db::Netlist *netlist, const std::string &dmname);
+  void
+  read_netlist(Netlist *netlist, db::LayoutToNetlist *l2n, Brace *nested = 0,
+               std::map<const db::Circuit *, ObjectMap> *map_per_circuit = 0);
+  static size_t terminal_id(const db::DeviceClass *device_class,
+                            const std::string &tname);
+  static std::pair<db::DeviceAbstract *, const db::DeviceClass *>
+  device_model_by_name(db::Netlist *netlist, const std::string &dmname);
 
-  const std::string &path () const
-  {
-    return m_path;
-  }
+  const std::string &path() const { return m_path; }
 
-  tl::TextInputStream &stream ()
-  {
-    return m_stream;
-  }
+  tl::TextInputStream &stream() { return m_stream; }
 
-  struct Connections
-  {
-    Connections (size_t _from_cluster, size_t _to_cluster)
-      : from_cluster (_from_cluster), to_cluster (_to_cluster)
-    { }
+  struct Connections {
+    Connections(size_t _from_cluster, size_t _to_cluster)
+        : from_cluster(_from_cluster), to_cluster(_to_cluster) {}
 
     size_t from_cluster, to_cluster;
   };
 
-  bool test (const std::string &token);
-  void expect (const std::string &token);
-  void read_word_or_quoted (std::string &s);
-  int read_int ();
-  bool try_read_int (int &i);
-  db::Coord read_coord ();
-  double read_double ();
-  bool at_end ();
-  void skip ();
-  void skip_element ();
+  bool test(const std::string &token);
+  void expect(const std::string &token);
+  void read_word_or_quoted(std::string &s);
+  int read_int();
+  bool try_read_int(int &i);
+  db::Coord read_coord();
+  double read_double();
+  bool at_end();
+  void skip();
+  void skip_element();
 
-  void read_net (Netlist *netlist, db::LayoutToNetlist *l2n, db::Circuit *circuit, ObjectMap &map);
-  void read_pin (Netlist *netlist, db::LayoutToNetlist *l2n, db::Circuit *circuit, ObjectMap &map);
-  void read_device (Netlist *netlist, db::LayoutToNetlist *l2n, db::Circuit *circuit, ObjectMap &map, std::map<db::CellInstArray, std::list<Connections> > &connections);
-  void read_subcircuit (Netlist *netlist, db::LayoutToNetlist *l2n, db::Circuit *circuit, ObjectMap &map, std::map<db::CellInstArray, std::list<Connections> > &connections);
-  bool read_trans_part (db::DCplxTrans &tr);
-  void read_abstract_terminal (db::LayoutToNetlist *l2n, db::DeviceAbstract *dm, db::DeviceClass *dc);
-  void read_property (db::NetlistObject *obj);
-  db::Polygon read_polygon ();
-  db::Box read_rect ();
-  void read_geometries (db::NetlistObject *obj, Brace &br, db::LayoutToNetlist *l2n, db::local_cluster<NetShape> &lc, db::Cell &cell);
-  db::Point read_point ();
+  void read_net(Netlist *netlist, db::LayoutToNetlist *l2n,
+                db::Circuit *circuit, ObjectMap &map);
+  void read_pin(Netlist *netlist, db::LayoutToNetlist *l2n,
+                db::Circuit *circuit, ObjectMap &map);
+  void
+  read_device(Netlist *netlist, db::LayoutToNetlist *l2n, db::Circuit *circuit,
+              ObjectMap &map,
+              std::map<db::CellInstArray, std::list<Connections>> &connections);
+  void read_subcircuit(
+      Netlist *netlist, db::LayoutToNetlist *l2n, db::Circuit *circuit,
+      ObjectMap &map,
+      std::map<db::CellInstArray, std::list<Connections>> &connections);
+  bool read_trans_part(db::DCplxTrans &tr);
+  void read_abstract_terminal(db::LayoutToNetlist *l2n, db::DeviceAbstract *dm,
+                              db::DeviceClass *dc);
+  void read_property(db::NetlistObject *obj);
+  db::Polygon read_polygon();
+  db::Box read_rect();
+  void read_geometries(db::NetlistObject *obj, Brace &br,
+                       db::LayoutToNetlist *l2n,
+                       db::local_cluster<NetShape> &lc, db::Cell &cell);
+  db::Point read_point();
 
 private:
   tl::TextInputStream m_stream;
@@ -162,7 +158,6 @@ private:
   tl::AbsoluteProgress m_progress;
 };
 
-}
+} // namespace db
 
 #endif
-

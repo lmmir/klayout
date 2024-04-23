@@ -27,47 +27,42 @@
 
 #include <QDialog>
 
-#include "layuiCommon.h"
 #include "layLayoutViewBase.h"
+#include "layuiCommon.h"
 
 #include <set>
 
-namespace Ui
-{
-  class BookmarkManagementForm;
+namespace Ui {
+class BookmarkManagementForm;
 }
 
-namespace lay
-{
+namespace lay {
 
-class LAYUI_PUBLIC BookmarkManagementForm
-  : public QDialog
-{
-  Q_OBJECT 
+class LAYUI_PUBLIC BookmarkManagementForm : public QDialog {
+  Q_OBJECT
 
 public:
-  BookmarkManagementForm (QWidget *parent, const char *name, const lay::BookmarkList &bookmarks, const std::set<size_t> &selected);
+  BookmarkManagementForm(QWidget *parent, const char *name,
+                         const lay::BookmarkList &bookmarks,
+                         const std::set<size_t> &selected);
 
   /**
    *  @brief Obtain the bookmark list
    */
-  const lay::BookmarkList &bookmarks ()
-  {
-    return m_bookmarks;
-  }
+  const lay::BookmarkList &bookmarks() { return m_bookmarks; }
 
-  virtual void accept ();
+  virtual void accept();
 
 public slots:
-  void delete_pressed ();
+  void delete_pressed();
 
 private:
   Ui::BookmarkManagementForm *mp_ui;
   lay::BookmarkList m_bookmarks;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

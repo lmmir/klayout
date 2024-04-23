@@ -28,116 +28,100 @@
 
 #include "ui_SelectCellViewForm.h"
 
-
-namespace lay
-{
+namespace lay {
 
 // ------------------------------------------------------------
 
-SelectCellViewForm::SelectCellViewForm (QWidget *parent, lay::LayoutViewBase *view, const std::string &title, bool single)
-  : QDialog (parent)
-{
-  mp_ui = new Ui::SelectCellViewForm ();
+SelectCellViewForm::SelectCellViewForm(QWidget *parent,
+                                       lay::LayoutViewBase *view,
+                                       const std::string &title, bool single)
+    : QDialog(parent) {
+  mp_ui = new Ui::SelectCellViewForm();
 
-  setObjectName (QString::fromUtf8 ("select_cv"));
+  setObjectName(QString::fromUtf8("select_cv"));
 
-  mp_ui->setupUi (this);
+  mp_ui->setupUi(this);
 
   if (single) {
-    mp_ui->cvs_lb->setSelectionMode (QAbstractItemView::SingleSelection);
+    mp_ui->cvs_lb->setSelectionMode(QAbstractItemView::SingleSelection);
   }
 
   // signals and slots connections
-  connect (mp_ui->ok_button, SIGNAL( clicked() ), this, SLOT( accept() ));
-  connect (mp_ui->cancel_button, SIGNAL( clicked() ), this, SLOT( reject() ));
-  connect (mp_ui->select_all_pb, SIGNAL( clicked() ), this, SLOT( select_all() ));
+  connect(mp_ui->ok_button, SIGNAL(clicked()), this, SLOT(accept()));
+  connect(mp_ui->cancel_button, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(mp_ui->select_all_pb, SIGNAL(clicked()), this, SLOT(select_all()));
 
   if (single) {
-    mp_ui->select_all_pb->hide ();
+    mp_ui->select_all_pb->hide();
   }
 
-  for (unsigned int i = 0; i < view->cellviews (); ++i) {
-    tell_cellview (view->cellview (i));
+  for (unsigned int i = 0; i < view->cellviews(); ++i) {
+    tell_cellview(view->cellview(i));
   }
 
-  set_title (title);
+  set_title(title);
 }
 
-void 
-SelectCellViewForm::set_selection (int sel)
-{
-  for (int i = 0; i < int (mp_ui->cvs_lb->count ()); ++i) {
-    mp_ui->cvs_lb->item (i)->setSelected (false);
+void SelectCellViewForm::set_selection(int sel) {
+  for (int i = 0; i < int(mp_ui->cvs_lb->count()); ++i) {
+    mp_ui->cvs_lb->item(i)->setSelected(false);
   }
-  if (sel >= 0 && sel < int (mp_ui->cvs_lb->count ())) {
-    mp_ui->cvs_lb->setCurrentItem (mp_ui->cvs_lb->item (sel));
-    mp_ui->cvs_lb->item (sel)->setSelected (true);
+  if (sel >= 0 && sel < int(mp_ui->cvs_lb->count())) {
+    mp_ui->cvs_lb->setCurrentItem(mp_ui->cvs_lb->item(sel));
+    mp_ui->cvs_lb->item(sel)->setSelected(true);
   }
 }
 
-void 
-SelectCellViewForm::set_title (const std::string &title)
-{
-  mp_ui->title_lbl->setText (tl::to_qstring (title));
-}
-  
-void 
-SelectCellViewForm::set_caption (const std::string &caption)
-{
-  setWindowTitle (tl::to_qstring (caption));
-}
-  
-void 
-SelectCellViewForm::tell_cellview (const lay::CellView &cv)
-{
-  mp_ui->cvs_lb->addItem (tl::to_qstring (cv->name ()));
-  mp_ui->cvs_lb->setCurrentItem (0);
-  mp_ui->cvs_lb->item (0)->setSelected (true);
+void SelectCellViewForm::set_title(const std::string &title) {
+  mp_ui->title_lbl->setText(tl::to_qstring(title));
 }
 
-bool 
-SelectCellViewForm::all_selected () const
-{
-  for (int i = 0; i < int (mp_ui->cvs_lb->count ()); ++i) {
-    if (! mp_ui->cvs_lb->item (i)->isSelected ()) {
+void SelectCellViewForm::set_caption(const std::string &caption) {
+  setWindowTitle(tl::to_qstring(caption));
+}
+
+void SelectCellViewForm::tell_cellview(const lay::CellView &cv) {
+  mp_ui->cvs_lb->addItem(tl::to_qstring(cv->name()));
+  mp_ui->cvs_lb->setCurrentItem(0);
+  mp_ui->cvs_lb->item(0)->setSelected(true);
+}
+
+bool SelectCellViewForm::all_selected() const {
+  for (int i = 0; i < int(mp_ui->cvs_lb->count()); ++i) {
+    if (!mp_ui->cvs_lb->item(i)->isSelected()) {
       return false;
     }
   }
   return true;
 }
 
-std::vector <int> 
-SelectCellViewForm::selected_cellviews () const
-{
-  std::vector <int> res;
+std::vector<int> SelectCellViewForm::selected_cellviews() const {
+  std::vector<int> res;
 
-  for (int i = 0; i < int (mp_ui->cvs_lb->count ()); ++i) {
-    if (mp_ui->cvs_lb->item (i)->isSelected ()) {
-      res.push_back (i);
+  for (int i = 0; i < int(mp_ui->cvs_lb->count()); ++i) {
+    if (mp_ui->cvs_lb->item(i)->isSelected()) {
+      res.push_back(i);
     }
   }
 
   return res;
 }
 
-int 
-SelectCellViewForm::selected_cellview () const
-{
-  for (int i = 0; i < int (mp_ui->cvs_lb->count ()); ++i) {
-    if (mp_ui->cvs_lb->item (i)->isSelected ()) {
+int SelectCellViewForm::selected_cellview() const {
+  for (int i = 0; i < int(mp_ui->cvs_lb->count()); ++i) {
+    if (mp_ui->cvs_lb->item(i)->isSelected()) {
       return i;
     }
   }
   return -1;
 }
 
-void 
-SelectCellViewForm::select_all ()
-{
-  mp_ui->cvs_lb->clearSelection ();  //  without this, not all items may be selected in "selectAll"
-  mp_ui->cvs_lb->selectAll ();
+void SelectCellViewForm::select_all() {
+  mp_ui->cvs_lb->clearSelection(); //  without this, not all items may be
+                                   //  selected in "selectAll"
+  mp_ui->cvs_lb->selectAll();
 }
 
-}
-  
+} // namespace lay
+
 #endif

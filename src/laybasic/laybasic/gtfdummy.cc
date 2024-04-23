@@ -24,17 +24,15 @@
 
 #include "gtf.h"
 
-namespace gtf
-{
+namespace gtf {
 
 Recorder *Recorder::ms_instance = 0;
 
-void Recorder::errlog_begin () { }
-void Recorder::errlog_end () { }
-void Recorder::errlog_endl () { }
-void Recorder::errlog_puts (const char *s) { }
+void Recorder::errlog_begin() {}
+void Recorder::errlog_end() {}
+void Recorder::errlog_endl() {}
+void Recorder::errlog_puts(const char *s) {}
 
-}
+} // namespace gtf
 
 #endif
-

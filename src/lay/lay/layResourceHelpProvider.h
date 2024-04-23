@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layResourceHelpProvider
 #define HDR_layResourceHelpProvider
 
@@ -28,35 +27,25 @@
 
 #include <vector>
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief Implements a help provider for the generated documentation
  */
-class ResourceHelpProvider
-  : public HelpProvider
-{
+class ResourceHelpProvider : public HelpProvider {
 public:
-  ResourceHelpProvider (const char *folder, const std::string &title);
+  ResourceHelpProvider(const char *folder, const std::string &title);
 
-  std::string folder (lay::HelpSource * /*src*/) const
-  {
-    return m_folder;
-  }
+  std::string folder(lay::HelpSource * /*src*/) const { return m_folder; }
 
-  std::string title (lay::HelpSource * /*src*/) const
-  {
-    return m_title;
-  }
+  std::string title(lay::HelpSource * /*src*/) const { return m_title; }
 
-  virtual QDomDocument get (lay::HelpSource *src, const std::string &path) const;
+  virtual QDomDocument get(lay::HelpSource *src, const std::string &path) const;
 
 private:
   std::string m_folder, m_title;
 };
 
-}
+} // namespace lay
 
 #endif
-

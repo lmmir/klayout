@@ -20,26 +20,23 @@
 
 */
 
-
 #ifndef HDR_tlSleep
 #define HDR_tlSleep
 
 #include "tlCommon.h"
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief Sleeps the given number of microseconds
  */
-TL_PUBLIC void usleep (unsigned long us);
+TL_PUBLIC void usleep(unsigned long us);
 
 /**
  *  @brief Sleeps the given number of milliseconds
  */
-TL_PUBLIC void msleep (unsigned long ms);
+TL_PUBLIC void msleep(unsigned long ms);
 
 } // namespace tl
 
 #endif
-

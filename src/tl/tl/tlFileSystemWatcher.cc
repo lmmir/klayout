@@ -28,8 +28,7 @@
 #include <QTimer>
 #include <list>
 
-namespace tl
-{
+namespace tl {
 
 //  The global enable counter (<0: disable)
 static int s_global_enable = 0;
@@ -37,22 +36,18 @@ static int s_global_enable = 0;
 //  The maximum allowed processing time in seconds
 const double processing_time = 0.02;
 
-FileSystemWatcher::FileSystemWatcher (QObject *parent)
-  : QObject (parent)
-{
-  m_timer = new QTimer (this);
-  connect (m_timer, SIGNAL (timeout ()), this, SLOT (timeout ()));
-  m_timer->setSingleShot (false);
-  m_timer->setInterval (100);
-  m_timer->start ();
+FileSystemWatcher::FileSystemWatcher(QObject *parent) : QObject(parent) {
+  m_timer = new QTimer(this);
+  connect(m_timer, SIGNAL(timeout()), this, SLOT(timeout()));
+  m_timer->setSingleShot(false);
+  m_timer->setInterval(100);
+  m_timer->start();
   m_index = 0;
-  m_iter = m_files.end ();
+  m_iter = m_files.end();
   m_batch_size = 1000;
 }
 
-void
-FileSystemWatcher::global_enable (bool en)
-{
+void FileSystemWatcher::global_enable(bool en) {
   if (en) {
     ++s_global_enable;
   } else {
@@ -60,87 +55,73 @@ FileSystemWatcher::global_enable (bool en)
   }
 }
 
-void
-FileSystemWatcher::enable (bool en)
-{
+void FileSystemWatcher::enable(bool en) {
   if (en) {
-    m_timer->start ();
+    m_timer->start();
   } else {
-    m_timer->stop ();
+    m_timer->stop();
   }
 }
 
-void
-FileSystemWatcher::clear ()
-{
-  m_files.clear ();
-  m_iter = m_files.begin ();
+void FileSystemWatcher::clear() {
+  m_files.clear();
+  m_iter = m_files.begin();
   m_index = 0;
 }
 
-void
-FileSystemWatcher::set_batch_size( size_t n)
-{
-  m_batch_size = n;
-}
+void FileSystemWatcher::set_batch_size(size_t n) { m_batch_size = n; }
 
-void
-FileSystemWatcher::add_file (const std::string &path)
-{
-  if (path.empty ()) {
+void FileSystemWatcher::add_file(const std::string &path) {
+  if (path.empty()) {
     return;
   }
 
   size_t size = 0;
   QDateTime time;
 
-  QFileInfo fi (tl::to_qstring (path));
-  if (! fi.exists () || ! fi.isReadable ()) {
+  QFileInfo fi(tl::to_qstring(path));
+  if (!fi.exists() || !fi.isReadable()) {
     return;
   }
 
-  size = size_t (fi.size ());
-  time = fi.lastModified ();
+  size = size_t(fi.size());
+  time = fi.lastModified();
 
-  std::map<std::string, FileEntry>::iterator i = m_files.find (path);
-  if (i != m_files.end ()) {
+  std::map<std::string, FileEntry>::iterator i = m_files.find(path);
+  if (i != m_files.end()) {
     i->second.refcount += 1;
     i->second.size = size;
     i->second.time = time;
   } else {
-    m_files.insert (std::make_pair (path, FileEntry (1, size, time)));
+    m_files.insert(std::make_pair(path, FileEntry(1, size, time)));
   }
 
-  m_iter = m_files.begin ();
+  m_iter = m_files.begin();
   m_index = 0;
 }
 
-void
-FileSystemWatcher::remove_file (const std::string &path)
-{
-  if (path.empty ()) {
+void FileSystemWatcher::remove_file(const std::string &path) {
+  if (path.empty()) {
     return;
   }
 
-  std::map<std::string, FileEntry>::iterator i = m_files.find (path);
-  if (i != m_files.end () && --(i->second.refcount) <= 0) {
-    m_files.erase (i);
-    m_iter = m_files.begin ();
+  std::map<std::string, FileEntry>::iterator i = m_files.find(path);
+  if (i != m_files.end() && --(i->second.refcount) <= 0) {
+    m_files.erase(i);
+    m_iter = m_files.begin();
     m_index = 0;
   }
 }
 
-void
-FileSystemWatcher::timeout ()
-{
+void FileSystemWatcher::timeout() {
   if (s_global_enable < 0) {
     return;
   }
 
-  tl::Clock start = tl::Clock::current ();
+  tl::Clock start = tl::Clock::current();
 
-  if (m_iter == m_files.end ()) {
-    m_iter = m_files.begin ();
+  if (m_iter == m_files.end()) {
+    m_iter = m_files.begin();
     m_index = 0;
   }
 
@@ -148,45 +129,46 @@ FileSystemWatcher::timeout ()
 
   std::list<std::string> files_removed, files_changed;
 
-  while (m_index < i0 + m_batch_size && m_iter != m_files.end () && (tl::Clock::current () - start).seconds () < processing_time) {
+  while (m_index < i0 + m_batch_size && m_iter != m_files.end() &&
+         (tl::Clock::current() - start).seconds() < processing_time) {
 
-    QFileInfo fi (tl::to_qstring (m_iter->first));
-    if (! fi.exists ()) {
+    QFileInfo fi(tl::to_qstring(m_iter->first));
+    if (!fi.exists()) {
 
-      files_removed.push_back (m_iter->first);
+      files_removed.push_back(m_iter->first);
 
       std::map<std::string, FileEntry>::iterator i = m_iter;
       ++m_iter;
-      m_files.erase (i);
+      m_files.erase(i);
 
     } else {
 
-      size_t size = size_t (fi.size ());
-      QDateTime time = fi.lastModified ();
+      size_t size = size_t(fi.size());
+      QDateTime time = fi.lastModified();
 
       if (m_iter->second.size != size || m_iter->second.time != time) {
-        files_changed.push_back (m_iter->first);
+        files_changed.push_back(m_iter->first);
       }
 
       m_iter->second.size = size;
       m_iter->second.time = time;
 
       ++m_iter;
-
     }
 
     ++m_index;
-
   }
 
-  for (std::list<std::string>::const_iterator i = files_removed.begin (); i != files_removed.end (); ++i) {
-    file_removed (*i);
-    emit fileRemoved (tl::to_qstring (*i));
+  for (std::list<std::string>::const_iterator i = files_removed.begin();
+       i != files_removed.end(); ++i) {
+    file_removed(*i);
+    emit fileRemoved(tl::to_qstring(*i));
   }
-  for (std::list<std::string>::const_iterator i = files_changed.begin (); i != files_changed.end (); ++i) {
-    file_changed (*i);
-    emit fileChanged (tl::to_qstring (*i));
+  for (std::list<std::string>::const_iterator i = files_changed.begin();
+       i != files_changed.end(); ++i) {
+    file_changed(*i);
+    emit fileChanged(tl::to_qstring(*i));
   }
 }
 
-}
+} // namespace tl

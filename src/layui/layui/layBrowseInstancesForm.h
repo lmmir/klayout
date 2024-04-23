@@ -25,63 +25,58 @@
 #ifndef HDR_layBrowseInstancesForm
 #define HDR_layBrowseInstancesForm
 
-#include "ui_BrowseInstancesForm.h"
 #include "ui_BrowseInstancesConfigPage.h"
+#include "ui_BrowseInstancesForm.h"
 
+#include "layBrowser.h"
 #include "layLayoutViewBase.h"
 #include "layMargin.h"
-#include "layPluginConfigPage.h"
-#include "layBrowser.h"
 #include "layMarker.h"
+#include "layPluginConfigPage.h"
 
 class QTreeWidget;
 class QTreeWidgetItem;
 
-namespace lay
-{
+namespace lay {
 
-class BrowseInstancesConfigPage
-  : public lay::ConfigPage,
-    private Ui::BrowseInstancesConfigPage
-{
-  Q_OBJECT 
+class BrowseInstancesConfigPage : public lay::ConfigPage,
+                                  private Ui::BrowseInstancesConfigPage {
+  Q_OBJECT
 
 public:
-  BrowseInstancesConfigPage (QWidget *parent);
+  BrowseInstancesConfigPage(QWidget *parent);
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 public slots:
-  void context_changed (int);
-  void window_changed (int);
+  void context_changed(int);
+  void window_changed(int);
 };
 
-class BrowseInstancesForm
-  : public lay::Browser,
-    private Ui::BrowseInstancesForm
-{
-  Q_OBJECT 
+class BrowseInstancesForm : public lay::Browser,
+                            private Ui::BrowseInstancesForm {
+  Q_OBJECT
 
 public:
   enum mode_type { ToCellView = 0, AnyTop, Parent };
   enum window_type { DontChange = 0, FitCell, FitMarker, Center, CenterSize };
 
-  BrowseInstancesForm (lay::Dispatcher *root, lay::LayoutViewBase *view);
-  ~BrowseInstancesForm ();
+  BrowseInstancesForm(lay::Dispatcher *root, lay::LayoutViewBase *view);
+  ~BrowseInstancesForm();
 
-  bool eventFilter (QObject *watched, QEvent *event);
+  bool eventFilter(QObject *watched, QEvent *event);
 
 public slots:
-  void cell_changed (QTreeWidgetItem *, QTreeWidgetItem *);
-  void cell_inst_changed ();
-  void choose_cell_pressed ();
-  void next_cell ();
-  void prev_cell ();
-  void next_inst ();
-  void prev_inst ();
-  void configure ();
-  
+  void cell_changed(QTreeWidgetItem *, QTreeWidgetItem *);
+  void cell_inst_changed();
+  void choose_cell_pressed();
+  void next_cell();
+  void prev_cell();
+  void next_inst();
+  void prev_inst();
+  void configure();
+
 private:
   unsigned int m_cv_index;
   std::vector<db::DCplxTrans> m_global_trans;
@@ -91,7 +86,7 @@ private:
   bool m_cell_inst_changed_enabled;
   bool m_ef_enabled;
   QList<QTreeWidgetItem *> m_items;
-  
+
   std::vector<lay::Marker *> mp_markers;
 
   lay::CellView m_context_cv;
@@ -107,31 +102,34 @@ private:
 
   lay::DisplayState m_display_state;
 
-  bool fill_cell_instances (const db::ICplxTrans &t, const db::Layout &layout, const db::Cell *parent_sel, const db::Cell *from, const db::Cell *to, bool to_parent, const std::string &path, QList<QTreeWidgetItem *> &items);
+  bool fill_cell_instances(const db::ICplxTrans &t, const db::Layout &layout,
+                           const db::Cell *parent_sel, const db::Cell *from,
+                           const db::Cell *to, bool to_parent,
+                           const std::string &path,
+                           QList<QTreeWidgetItem *> &items);
 
-  void highlight_current ();
-  void remove_marker ();
+  void highlight_current();
+  void remove_marker();
 
-  bool adv_cell_inst (bool up);
-  bool adv_cell (bool up);
+  bool adv_cell_inst(bool up);
+  bool adv_cell(bool up);
 
   //  implementation of the lay::Plugin interface
-  virtual bool configure (const std::string &name, const std::string &value);
+  virtual bool configure(const std::string &name, const std::string &value);
 
   //  implementation of the lay::Browser interface
-  virtual void activated ();
-  virtual void deactivated ();
+  virtual void activated();
+  virtual void deactivated();
 
   //  implementation of the lay::Plugin interface
-  void menu_activated (const std::string &symbol);
+  void menu_activated(const std::string &symbol);
 
   //  change to the given cell in the given cellview
-  void change_cell (db::cell_index_type cell, int cv_index);
-
+  void change_cell(db::cell_index_type cell, int cv_index);
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

@@ -25,78 +25,71 @@
 #ifndef HDR_layNetlistBrowser
 #define HDR_layNetlistBrowser
 
+#include "layColorPalette.h"
 #include "layPlugin.h"
 #include "layPluginConfigPage.h"
-#include "layColorPalette.h"
 
 #include "dbTrans.h"
 
 #include <algorithm>
 
-namespace Ui
-{
-  class NetlistBrowserConfigPage;
-  class NetlistBrowserConfigPage2;
-}
+namespace Ui {
+class NetlistBrowserConfigPage;
+class NetlistBrowserConfigPage2;
+} // namespace Ui
 
-namespace lay
-{
+namespace lay {
 
-struct NetlistBrowserConfig
-{
+struct NetlistBrowserConfig {
   enum net_window_type { DontChange = 0, FitNet, Center, CenterSize };
 };
 
-class NetlistBrowserConfigPage
-  : public lay::ConfigPage
-{
+class NetlistBrowserConfigPage : public lay::ConfigPage {
   Q_OBJECT
 
 public:
-  NetlistBrowserConfigPage (QWidget *parent);
-  ~NetlistBrowserConfigPage ();
+  NetlistBrowserConfigPage(QWidget *parent);
+  ~NetlistBrowserConfigPage();
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 public slots:
-  void window_changed (int);
+  void window_changed(int);
 
 private:
   Ui::NetlistBrowserConfigPage *mp_ui;
 };
 
-class NetlistBrowserConfigPage2
-  : public lay::ConfigPage
-{
+class NetlistBrowserConfigPage2 : public lay::ConfigPage {
   Q_OBJECT
 
 public:
-  NetlistBrowserConfigPage2 (QWidget *parent);
-  ~NetlistBrowserConfigPage2 ();
+  NetlistBrowserConfigPage2(QWidget *parent);
+  ~NetlistBrowserConfigPage2();
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 public slots:
-  void color_button_clicked ();
+  void color_button_clicked();
 
 private:
-  void update_colors ();
+  void update_colors();
 
   Ui::NetlistBrowserConfigPage2 *mp_ui;
   lay::ColorPalette m_palette;
 };
 
-class NetlistBrowserWindowModeConverter
-{
+class NetlistBrowserWindowModeConverter {
 public:
-  void from_string (const std::string &value, lay::NetlistBrowserConfig::net_window_type &mode);
-  std::string to_string (lay::NetlistBrowserConfig::net_window_type mode);
+  void from_string(const std::string &value,
+                   lay::NetlistBrowserConfig::net_window_type &mode);
+  std::string to_string(lay::NetlistBrowserConfig::net_window_type mode);
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

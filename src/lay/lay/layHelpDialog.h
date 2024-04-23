@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layHelpDialog
 #define HDR_layHelpDialog
 
@@ -31,13 +30,11 @@
 #include <memory>
 #include <string>
 
-namespace Ui
-{
-  class HelpDialog;
+namespace Ui {
+class HelpDialog;
 }
 
-namespace lay
-{
+namespace lay {
 
 class HelpSource;
 class BrowserPanel;
@@ -45,22 +42,20 @@ class BrowserPanel;
 /**
  *  @brief The help dialog (aka assistant)
  */
-class HelpDialog 
-  : public QDialog 
-{
-Q_OBJECT 
+class HelpDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  HelpDialog (QWidget *parent, bool modal = false);
-  ~HelpDialog ();
+  HelpDialog(QWidget *parent, bool modal = false);
+  ~HelpDialog();
 
-  void search (const std::string &topic);
-  void load (const std::string &url);
-  void showEvent (QShowEvent *);
-  void hideEvent (QHideEvent *);
+  void search(const std::string &topic);
+  void load(const std::string &url);
+  void showEvent(QShowEvent *);
+  void hideEvent(QHideEvent *);
 
 protected slots:
-  void title_changed (const QString &t);
+  void title_changed(const QString &t);
 
 private:
   Ui::HelpDialog *mp_ui;
@@ -69,10 +64,9 @@ private:
   QString m_def_title;
   bool m_initialized;
 
-  void initialize ();
+  void initialize();
 };
 
-}
+} // namespace lay
 
 #endif
-

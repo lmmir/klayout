@@ -20,53 +20,47 @@
 
 */
 
-
 #include "dbPoint.h"
 #include "dbVector.h"
 #include "tlString.h"
 #include "tlUnitTest.h"
 
-TEST(1) 
-{
+TEST(1) {
   db::Point p;
-  EXPECT_EQ (p.x (), 0);
-  EXPECT_EQ (p.y (), 0);
-  db::Vector pp (100, 200);
-  EXPECT_EQ ((p + pp).x (), 100);
-  EXPECT_EQ ((p + pp).y (), 200);
+  EXPECT_EQ(p.x(), 0);
+  EXPECT_EQ(p.y(), 0);
+  db::Vector pp(100, 200);
+  EXPECT_EQ((p + pp).x(), 100);
+  EXPECT_EQ((p + pp).y(), 200);
   p += pp;
-  p += db::Vector (p) + pp;
-  EXPECT_EQ ((p - pp).x (), 200);
-  EXPECT_EQ ((p - pp).y (), 400);
-  EXPECT_EQ ((db::Point () - p).to_string (), "-300,-600");
+  p += db::Vector(p) + pp;
+  EXPECT_EQ((p - pp).x(), 200);
+  EXPECT_EQ((p - pp).y(), 400);
+  EXPECT_EQ((db::Point() - p).to_string(), "-300,-600");
 }
 
-TEST(2)
-{
-  db::DPoint p (12.5, -17.1);
-  EXPECT_EQ (p.to_string (), "12.5,-17.1");
+TEST(2) {
+  db::DPoint p(12.5, -17.1);
+  EXPECT_EQ(p.to_string(), "12.5,-17.1");
 
   db::DPoint pp;
-  tl::Extractor ex ("a");
-  EXPECT_EQ (ex.try_read (pp), false);
-  ex = tl::Extractor ("12.500, -171e-1   a");
-  EXPECT_EQ (ex.try_read (pp), true);
-  EXPECT_EQ (pp.to_string (), p.to_string ());
-  EXPECT_EQ (ex.test ("a"), true);
+  tl::Extractor ex("a");
+  EXPECT_EQ(ex.try_read(pp), false);
+  ex = tl::Extractor("12.500, -171e-1   a");
+  EXPECT_EQ(ex.try_read(pp), true);
+  EXPECT_EQ(pp.to_string(), p.to_string());
+  EXPECT_EQ(ex.test("a"), true);
 }
 
-TEST(3)
-{
-  db::Point p (125, -171);
-  EXPECT_EQ (p.to_string (), "125,-171");
+TEST(3) {
+  db::Point p(125, -171);
+  EXPECT_EQ(p.to_string(), "125,-171");
 
   db::Point pp;
-  tl::Extractor ex ("a");
-  EXPECT_EQ (ex.try_read (pp), false);
-  ex = tl::Extractor (" 125, -171 a");
-  EXPECT_EQ (ex.try_read (pp), true);
-  EXPECT_EQ (pp == p, true);
-  EXPECT_EQ (ex.test ("a"), true);
+  tl::Extractor ex("a");
+  EXPECT_EQ(ex.try_read(pp), false);
+  ex = tl::Extractor(" 125, -171 a");
+  EXPECT_EQ(ex.try_read(pp), true);
+  EXPECT_EQ(pp == p, true);
+  EXPECT_EQ(ex.test("a"), true);
 }
-
-

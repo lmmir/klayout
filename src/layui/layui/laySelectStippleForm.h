@@ -31,36 +31,30 @@
 
 class QListWidgetItem;
 
-namespace Ui
-{
-  class SelectStippleForm;
+namespace Ui {
+class SelectStippleForm;
 }
 
-namespace lay
-{
+namespace lay {
 
-class SelectStippleForm
-  : public QDialog
-{
-  Q_OBJECT 
+class SelectStippleForm : public QDialog {
+  Q_OBJECT
 
 public:
-  SelectStippleForm (QWidget *parent, const lay::DitherPattern &pattern, bool include_nil = false);
+  SelectStippleForm(QWidget *parent, const lay::DitherPattern &pattern,
+                    bool include_nil = false);
 
-  ~SelectStippleForm ();
+  ~SelectStippleForm();
 
-  int selected () const
-  {
-    return m_selected;
-  }
+  int selected() const { return m_selected; }
 
-  void set_selected (int selected);
-  
+  void set_selected(int selected);
+
 public slots:
-  void sel_changed (QListWidgetItem *current, QListWidgetItem *); 
+  void sel_changed(QListWidgetItem *current, QListWidgetItem *);
 
 protected:
-  void update ();
+  void update();
 
 private:
   Ui::SelectStippleForm *mp_ui;
@@ -69,8 +63,8 @@ private:
   bool m_include_nil;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

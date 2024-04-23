@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_laySearchReplaceConfigPage
 #define HDR_laySearchReplaceConfigPage
 
@@ -32,38 +31,34 @@
 
 #include <string>
 
-namespace lay
-{
+namespace lay {
 
 extern const std::string cfg_sr_window_state;
 extern const std::string cfg_sr_window_mode;
 extern const std::string cfg_sr_window_dim;
 extern const std::string cfg_sr_max_item_count;
 
-class SearchReplaceWindowModeConverter
-{
+class SearchReplaceWindowModeConverter {
 public:
-  void from_string (const std::string &value, SearchReplaceDialog::window_type &mode);
-  std::string to_string (SearchReplaceDialog::window_type mode);
+  void from_string(const std::string &value,
+                   SearchReplaceDialog::window_type &mode);
+  std::string to_string(SearchReplaceDialog::window_type mode);
 };
 
-class SearchReplaceConfigPage
-  : public lay::ConfigPage,
-    private Ui::SearchReplaceConfigPage
-{
-  Q_OBJECT 
+class SearchReplaceConfigPage : public lay::ConfigPage,
+                                private Ui::SearchReplaceConfigPage {
+  Q_OBJECT
 
 public:
-  SearchReplaceConfigPage (QWidget *parent);
+  SearchReplaceConfigPage(QWidget *parent);
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 public slots:
-  void window_changed (int);
+  void window_changed(int);
 };
 
-}
+} // namespace lay
 
 #endif
-

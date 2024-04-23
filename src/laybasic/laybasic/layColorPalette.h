@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layColorPalette
 #define HDR_layColorPalette
 
@@ -28,102 +27,96 @@
 
 #include "layViewOp.h"
 
-#include <vector>
 #include <string>
+#include <vector>
 
-namespace lay
-{
+namespace lay {
 
-class LAYBASIC_PUBLIC ColorPalette
-{
+class LAYBASIC_PUBLIC ColorPalette {
 public:
-
   /**
    *  @brief Default constructor
    *
    *  This initializes the palette with the standard colors.
    */
-  ColorPalette ();
+  ColorPalette();
 
   /**
-   *  @brief Constructor from the data 
+   *  @brief Constructor from the data
    *
    *  @param color The colors as a vector
    *  @param luminous_colors The list of indices of luminous colors as a vector
    */
-  ColorPalette (const std::vector<tl::color_t> &colors, const std::vector<unsigned int> &luminous_colors);
+  ColorPalette(const std::vector<tl::color_t> &colors,
+               const std::vector<unsigned int> &luminous_colors);
 
   /**
    *  @brief Copy constructor
    */
-  ColorPalette (const ColorPalette &d);
+  ColorPalette(const ColorPalette &d);
 
   /**
    *  @brief Assignment operator
    */
-  ColorPalette operator= (const ColorPalette &d);
+  ColorPalette operator=(const ColorPalette &d);
 
   /**
    *  @brief Equality operator
    */
-  bool operator== (const ColorPalette &d) const;
+  bool operator==(const ColorPalette &d) const;
 
   /**
    *  @brief Inequality operator
    */
-  bool operator!= (const ColorPalette &d) const
-  {
-    return ! operator== (d);
-  }
+  bool operator!=(const ColorPalette &d) const { return !operator==(d); }
 
   /**
    *  @brief Change a specific color
    */
-  void set_color (unsigned int n, tl::color_t c);
+  void set_color(unsigned int n, tl::color_t c);
 
   /**
    *  @brief Clear the colors list
    */
-  void clear_colors ();
+  void clear_colors();
 
   /**
    *  @brief Set a specific luminous color index
    */
-  void set_luminous_color_index (unsigned int n, unsigned int ci);
+  void set_luminous_color_index(unsigned int n, unsigned int ci);
 
   /**
    *  @brief Clear the luminous color list
    */
-  void clear_luminous_colors ();
+  void clear_luminous_colors();
 
-  /** 
+  /**
    *  @brief Retrieve the color by index
    */
-  tl::color_t color_by_index (unsigned int n) const;
+  tl::color_t color_by_index(unsigned int n) const;
 
   /**
    *  @brief Retrieve the number of colors in the palette
    *
    *  Warning: it is not guaranteed that this number is non-zero.
    */
-  unsigned int colors () const;
+  unsigned int colors() const;
 
-  /** 
+  /**
    *  @brief Retrieve the luminous color by index
    */
-  tl::color_t 
-  luminous_color_by_index (unsigned int n) const
-  {
-    return color_by_index (luminous_color_index_by_index (n));
+  tl::color_t luminous_color_by_index(unsigned int n) const {
+    return color_by_index(luminous_color_index_by_index(n));
   }
 
-  /** 
-   *  @brief Retrieve the luminous color index by index (0 to luminous_colors()-1)
+  /**
+   *  @brief Retrieve the luminous color index by index (0 to
+   * luminous_colors()-1)
    *
    *  The index returned is the index of the color referenced. The actual color
    *  can be obtained with color_by_index().
    */
-  unsigned int luminous_color_index_by_index (unsigned int n) const;
+  unsigned int luminous_color_index_by_index(unsigned int n) const;
 
   /**
    *  @brief Retrieve the number of luminous of colors in the palette
@@ -133,36 +126,34 @@ public:
    *  where lc is the number returned by this functions.
    *  Warning: it is not guaranteed that this number is non-zero.
    */
-  unsigned int luminous_colors () const;
+  unsigned int luminous_colors() const;
 
-  /** 
-   *  @brief Conversion to a string 
+  /**
+   *  @brief Conversion to a string
    */
-  std::string to_string () const;
+  std::string to_string() const;
 
   /**
    *  @brief Conversion from a string
    *
-   *  This method will throw an exception if the string does not have a valid format
-   *  like the one returned by the to_string method.
+   *  This method will throw an exception if the string does not have a valid
+   * format like the one returned by the to_string method.
    *
-   *  If simple is true, this method allows setting a palette without luminous colors
-   *  and without colors at all.
+   *  If simple is true, this method allows setting a palette without luminous
+   * colors and without colors at all.
    */
-  void from_string (const std::string &s, bool simple = false);
+  void from_string(const std::string &s, bool simple = false);
 
   /**
    *  @brief Deliver the default palette
    */
-  static ColorPalette default_palette (); 
+  static ColorPalette default_palette();
 
 private:
-  std::vector <tl::color_t> m_colors;
-  std::vector <unsigned int> m_luminous_color_indices;
-
+  std::vector<tl::color_t> m_colors;
+  std::vector<unsigned int> m_luminous_color_indices;
 };
 
-}
+} // namespace lay
 
 #endif
-

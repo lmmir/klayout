@@ -20,54 +20,47 @@
 
 */
 
-
 #ifndef HDR_dbCellHullGenerator
 #define HDR_dbCellHullGenerator
 
+#include "dbCommon.h"
 #include "dbLayout.h"
 #include "dbPolygon.h"
-#include "dbCommon.h"
 
 namespace db {
 
 /**
  *  @brief A cell hull generator
  *
- *  The purpose of this class is to create hulls (a set of minimum polygons enclosing the local cell's content)
+ *  The purpose of this class is to create hulls (a set of minimum polygons
+ * enclosing the local cell's content)
  *
  *  This class is used in the hierarchical processor
  */
-class DB_PUBLIC CellHullGenerator
-{
+class DB_PUBLIC CellHullGenerator {
 public:
-  CellHullGenerator (const db::Layout &layout);
+  CellHullGenerator(const db::Layout &layout);
 
-  CellHullGenerator (const db::Layout &layout, const std::vector <unsigned int> &layers);
+  CellHullGenerator(const db::Layout &layout,
+                    const std::vector<unsigned int> &layers);
 
-  void generate_hull (const db::Cell &cell, std::vector <db::Polygon> &hull);
+  void generate_hull(const db::Cell &cell, std::vector<db::Polygon> &hull);
 
-  void set_small_cell_size (db::Coord sms);
+  void set_small_cell_size(db::Coord sms);
 
-  db::Coord small_cell_size () const
-  {
-    return m_small_cell_size;
-  }
+  db::Coord small_cell_size() const { return m_small_cell_size; }
 
-  void set_complexity (size_t complexity);
+  void set_complexity(size_t complexity);
 
-  size_t complexity () const
-  {
-    return m_complexity;
-  }
+  size_t complexity() const { return m_complexity; }
 
 private:
-  std::vector <unsigned int> m_layers;
+  std::vector<unsigned int> m_layers;
   bool m_all_layers;
   db::Coord m_small_cell_size;
   size_t m_complexity;
 };
 
-}
+} // namespace db
 
 #endif
-

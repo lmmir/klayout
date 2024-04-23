@@ -26,4 +26,5 @@
 #include "../../gsiqt/qtbasic/gsiQtPrintSupportExternals.h"
 FORCE_LINK_GSI_QTPRINTSUPPORT
 
-DEFINE_PYMOD(QtPrintSupport, "QtPrintSupport", "KLayout/Qt module 'QtPrintSupport'")
+DEFINE_PYMOD(QtPrintSupport, "QtPrintSupport",
+             "KLayout/Qt module 'QtPrintSupport'")

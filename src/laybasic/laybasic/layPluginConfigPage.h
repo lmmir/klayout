@@ -29,8 +29,7 @@
 
 #include <QFrame>
 
-namespace lay
-{
+namespace lay {
 
 class Dispatcher;
 
@@ -40,13 +39,9 @@ class Dispatcher;
  *  This interface defines some services the configuration page
  *  must provide (i.e. setup, commit)
  */
-class LAYBASIC_PUBLIC ConfigPage 
-  : public QFrame
-{
+class LAYBASIC_PUBLIC ConfigPage : public QFrame {
 public:
-  ConfigPage (QWidget *parent) 
-    : QFrame (parent)
-  {
+  ConfigPage(QWidget *parent) : QFrame(parent) {
     // .. nothing else ..
   }
 
@@ -56,28 +51,24 @@ public:
    *  The implementation is supposed to fetch the configuration from the
    *  Plugin object provided and load the widgets accordingly.
    */
-  virtual void setup (Dispatcher * /*root*/)
-  {
+  virtual void setup(Dispatcher * /*root*/) {
     //  the default implementation does nothing.
   }
 
   /**
    *  @brief Commit the page
    *
-   *  The implementation is supposed to read the configuration (and 
+   *  The implementation is supposed to read the configuration (and
    *  throw exceptions if the configuration something is invalid)
-   *  and commit the changes through 
+   *  and commit the changes through
    */
-  virtual void commit (Dispatcher * /*root*/)
-  {
+  virtual void commit(Dispatcher * /*root*/) {
     //  the default implementation does nothing.
   }
-
 };
 
-}
+} // namespace lay
 
 #endif
 
-
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

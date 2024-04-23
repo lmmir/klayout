@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layProgressDialog
 #define HDR_layProgressDialog
 
@@ -31,31 +30,27 @@
 
 #include <QDialog>
 
-namespace lay
-{
+namespace lay {
 
 class ProgressReporter;
 class ProgressWidget;
 
-class ProgressDialog
-  : public QDialog,
-    public tl::Object
-{
+class ProgressDialog : public QDialog, public tl::Object {
 public:
-  ProgressDialog (QWidget *parent, lay::ProgressReporter *pr);
+  ProgressDialog(QWidget *parent, lay::ProgressReporter *pr);
 
-  void closeEvent (QCloseEvent * /*event*/);
+  void closeEvent(QCloseEvent * /*event*/);
 
-  void set_progress (tl::Progress *progress);
-  void add_widget (QWidget *widget);
-  void remove_widget ();
-  QWidget *get_widget () const;
+  void set_progress(tl::Progress *progress);
+  void add_widget(QWidget *widget);
+  void remove_widget();
+  QWidget *get_widget() const;
 
 private:
   lay::ProgressWidget *mp_progress_widget;
   lay::ProgressReporter *mp_pr;
 };
 
-}
+} // namespace lay
 
 #endif

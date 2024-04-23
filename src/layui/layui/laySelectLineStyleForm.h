@@ -31,36 +31,30 @@
 
 class QListWidgetItem;
 
-namespace Ui
-{
-  class SelectLineStyleForm;
+namespace Ui {
+class SelectLineStyleForm;
 }
 
-namespace lay
-{
+namespace lay {
 
-class SelectLineStyleForm
-  : public QDialog
-{
-  Q_OBJECT 
+class SelectLineStyleForm : public QDialog {
+  Q_OBJECT
 
 public:
-  SelectLineStyleForm (QWidget *parent, const lay::LineStyles &styles, bool include_nil = false);
+  SelectLineStyleForm(QWidget *parent, const lay::LineStyles &styles,
+                      bool include_nil = false);
 
-  ~SelectLineStyleForm ();
+  ~SelectLineStyleForm();
 
-  int selected () const
-  {
-    return m_selected;
-  }
+  int selected() const { return m_selected; }
 
-  void set_selected (int selected);
-  
+  void set_selected(int selected);
+
 public slots:
-  void sel_changed (QListWidgetItem *current, QListWidgetItem *); 
+  void sel_changed(QListWidgetItem *current, QListWidgetItem *);
 
 protected:
-  void update ();
+  void update();
 
 private:
   Ui::SelectLineStyleForm *mp_ui;
@@ -69,8 +63,8 @@ private:
   bool m_include_nil;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

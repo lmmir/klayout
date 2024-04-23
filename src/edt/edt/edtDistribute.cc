@@ -22,6 +22,4 @@
 
 #include "edtDistribute.h"
 
-
 //  .. nothing yet (all in header) ..
-

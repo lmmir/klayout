@@ -31,18 +31,15 @@
 
 #include <map>
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief The global salt (package manager) object
  *  This object can be configured to represent a couple of locations.
  *  It will provide a collection of grains for these locations.
  */
-class LAY_PUBLIC Salt
-  : public QObject
-{
-Q_OBJECT
+class LAY_PUBLIC Salt : public QObject {
+  Q_OBJECT
 
 public:
   typedef SaltGrains::collection_iterator iterator;
@@ -51,175 +48,160 @@ public:
   /**
    *  @brief Default constructor
    */
-  Salt ();
+  Salt();
 
   /**
    *  @brief Copy constructor
    */
-  Salt (const Salt &other);
+  Salt(const Salt &other);
 
   /**
    *  @brief assignment
    */
-  Salt &operator= (const Salt &other);
+  Salt &operator=(const Salt &other);
 
   /**
    *  @brief Adds the given location to the ones the package manager uses
    *  Adding a location will scan the folder and make the contents available
    *  as a new collection.
    */
-  void add_location (const std::string &path);
+  void add_location(const std::string &path);
 
   /**
    *  @brief Removes a given location
    *  This will remove the collection from the package locations.
    */
-  void remove_location (const std::string &path);
+  void remove_location(const std::string &path);
 
   /**
    *  @brief Refreshes the collections
    *  This method rescans all registered locations.
    */
-  void refresh ();
+  void refresh();
 
   /**
    *  @brief Iterates the collections (begin)
    */
-  iterator begin () const
-  {
-    return m_root.begin_collections ();
-  }
+  iterator begin() const { return m_root.begin_collections(); }
 
   /**
    *  @brief Iterates the collections (end)
    */
-  iterator end () const
-  {
-    return m_root.end_collections ();
-  }
+  iterator end() const { return m_root.end_collections(); }
 
   /**
    *  @brief Returns a value indicating whether the collection is empty
    */
-  bool is_empty () const
-  {
-    return m_root.is_empty ();
-  }
+  bool is_empty() const { return m_root.is_empty(); }
 
   /**
    *  @brief A flat iterator of (sorted) grains (begin)
    */
-  flat_iterator begin_flat ();
+  flat_iterator begin_flat();
 
   /**
    *  @brief A flat iterator of (sorted) grains (end)
    */
-  flat_iterator end_flat ();
+  flat_iterator end_flat();
 
   /**
    *  @brief Gets the grain with the given name
    */
-  SaltGrain *grain_by_name (const std::string &name);
+  SaltGrain *grain_by_name(const std::string &name);
 
   /**
    *  @brief Gets the grain with the given name (const version)
    */
-  const SaltGrain *grain_by_name (const std::string &name) const
-  {
-    return const_cast<Salt *> (this)->grain_by_name (name);
+  const SaltGrain *grain_by_name(const std::string &name) const {
+    return const_cast<Salt *>(this)->grain_by_name(name);
   }
 
   /**
    *  @brief Loads the salt from a "salt mine" file
    */
-  void load (const std::string &p)
-  {
-    m_root.load (p);
-  }
+  void load(const std::string &p) { m_root.load(p); }
 
   /**
    *  @brief Loads the salt from a "salt mine" stream
    */
-  void load (const std::string &p, tl::InputStream &s)
-  {
-    m_root.load (p, s);
-  }
+  void load(const std::string &p, tl::InputStream &s) { m_root.load(p, s); }
 
   /**
    *  @brief Saves the salt to a "salt mine" file
    *  This feature is provided for debugging purposes mainly.
    */
-  void save (const std::string &p)
-  {
-    m_root.save (p);
-  }
+  void save(const std::string &p) { m_root.save(p); }
 
   /**
    *  @brief Removes a grain from the salt
    *
-   *  This operation will remove the grain with the given name from the salt and delete all files and directories related to it.
-   *  If multiple grains with the same name exist, they will all be removed.
+   *  This operation will remove the grain with the given name from the salt and
+   * delete all files and directories related to it. If multiple grains with the
+   * same name exist, they will all be removed.
    *
    *  Returns true, if the package could be removed successfully.
    */
-  bool remove_grain (const SaltGrain &grain);
+  bool remove_grain(const SaltGrain &grain);
 
   /**
    *  @brief Creates a new grain from a template
    *
-   *  This method will create a folder for a grain with the given path and download or copy
-   *  all files related to this grain. It will copy the download URL from the template into the
-   *  new grain, so updates will come from the original location.
+   *  This method will create a folder for a grain with the given path and
+   * download or copy all files related to this grain. It will copy the download
+   * URL from the template into the new grain, so updates will come from the
+   * original location.
    *
    *  If the target's name is not set, it will be taken from the template.
-   *  If the target's path is not set and a grain with the given name already exists in
-   *  the package, the path is taken from that grain.
-   *  If no target path is set and no grain with this name exists yet, a new path will
-   *  be constructed using the first location in the salt.
+   *  If the target's path is not set and a grain with the given name already
+   * exists in the package, the path is taken from that grain. If no target path
+   * is set and no grain with this name exists yet, a new path will be
+   * constructed using the first location in the salt.
    *
-   *  The target grain will be updated with the installation information. If the target grain
-   *  contains an installation path prior to the installation, this path will be used for the
-   *  installation of the grain files.
+   *  The target grain will be updated with the installation information. If the
+   * target grain contains an installation path prior to the installation, this
+   * path will be used for the installation of the grain files.
    *
    *  Returns true, if the package could be created successfully.
    */
-  bool create_grain (const SaltGrain &templ, SaltGrain &target, double timeout = 60.0, tl::InputHttpStreamCallback *callback = 0);
+  bool create_grain(const SaltGrain &templ, SaltGrain &target,
+                    double timeout = 60.0,
+                    tl::InputHttpStreamCallback *callback = 0);
 
   /**
    *  @brief Removes redundant entries with same names
    *
    *  This method will keep the first entry or the one with the higher version.
    */
-  void consolidate ();
+  void consolidate();
 
   /**
    *  @brief Gets the root collection
    *
    *  This method is provided for test purposes mainly.
    */
-  SaltGrains &root ();
+  SaltGrains &root();
 
 signals:
   /**
    *  @brief A signal triggered before one of the collections changed
    */
-  void collections_about_to_change ();
+  void collections_about_to_change();
 
   /**
    *  @brief A signal triggered when one of the collections changed
    */
-  void collections_changed ();
+  void collections_changed();
 
 private:
   SaltGrains m_root;
   std::vector<SaltGrain *> mp_flat_grains;
   std::map<std::string, SaltGrain *> m_grains_by_name;
 
-  void validate ();
-  void invalidate ();
-  void add_collection_to_flat (lay::SaltGrains &gg);
+  void validate();
+  void invalidate();
+  void add_collection_to_flat(lay::SaltGrains &gg);
 };
 
-}
+} // namespace lay
 
 #endif

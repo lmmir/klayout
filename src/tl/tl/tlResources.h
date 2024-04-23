@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_tlResources
 #define HDR_tlResources
 
@@ -29,15 +28,15 @@
 
 #include <cstddef>
 
-namespace tl
-{
+namespace tl {
 
 typedef size_t resource_id_type;
 
 /**
  *  @brief A facility for retrieving resource data similar to Qt resources
  *
- *  This feature is intended to substitute Qt resources when Qt is not available.
+ *  This feature is intended to substitute Qt resources when Qt is not
+ * available.
  */
 
 /**
@@ -45,48 +44,54 @@ typedef size_t resource_id_type;
  *
  *  @param name The name of the resource
  *  @param compressed True, if the data is gzip-compressed
- *  @param data The data pointer - needs to stay valid during the lifetime of the application
+ *  @param data The data pointer - needs to stay valid during the lifetime of
+ * the application
  *  @param data_size The size of the data block
  *
  *  The return value is an Id by which the resource can be unregistered.
  */
-TL_PUBLIC resource_id_type register_resource (const char *name, bool compressed, const unsigned char *data, size_t data_size);
+TL_PUBLIC resource_id_type register_resource(const char *name, bool compressed,
+                                             const unsigned char *data,
+                                             size_t data_size);
 
 /**
  *  @brief Registers the resource data under the given name
  *
  *  @param id The id of the resource to unregister (see "register_resource")
  */
-TL_PUBLIC void unregister_resource (size_t id);
+TL_PUBLIC void unregister_resource(size_t id);
 
 /**
  *  @brief Gets the resource data as a stream
  *
  *  @param name The resource name
- *  @return A tl::InputStream object delivering the data or 0 if there is no such resource
- *  It is the responsibility of the called to delete the input stream.
+ *  @return A tl::InputStream object delivering the data or 0 if there is no
+ * such resource It is the responsibility of the called to delete the input
+ * stream.
  */
-TL_PUBLIC tl::InputStream *get_resource (const char *name);
+TL_PUBLIC tl::InputStream *get_resource(const char *name);
 
 /**
- *  @brief Gets the resource data as a stream reader delegate plus compressed flag
+ *  @brief Gets the resource data as a stream reader delegate plus compressed
+ * flag
  *
  *  @param name The resource name
- *  @return A pair of reader delegate and a flag indicating whether the stream is compressed.
- *  If the resource is not found, the reade delegate is 0.
- *  It is the responsibility of the called to delete the reader delegate.
+ *  @return A pair of reader delegate and a flag indicating whether the stream
+ * is compressed. If the resource is not found, the reade delegate is 0. It is
+ * the responsibility of the called to delete the reader delegate.
  */
-TL_PUBLIC std::pair<tl::InputStreamBase *, bool> get_resource_reader (const char *name);
+TL_PUBLIC std::pair<tl::InputStreamBase *, bool>
+get_resource_reader(const char *name);
 
 /**
  *  @brief Get resource names matching a glob pattern
  *
- *  For example, find_resources("/group*") will find resources whose name start with "group".
+ *  For example, find_resources("/group*") will find resources whose name start
+ * with "group".
  *  "*" also matches "/"!
  */
-TL_PUBLIC std::vector<std::string> find_resources (const std::string &pattern);
+TL_PUBLIC std::vector<std::string> find_resources(const std::string &pattern);
 
-}
+} // namespace tl
 
 #endif
-

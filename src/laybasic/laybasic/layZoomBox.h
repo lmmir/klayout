@@ -20,38 +20,38 @@
 
 */
 
-
-
 #ifndef HDR_layZoomBox
 #define HDR_layZoomBox
 
 #include "layViewObject.h"
 
-namespace lay
-{
+namespace lay {
 
 class LayoutViewBase;
 class LayoutCanvas;
 class RubberBox;
 
-class LAYBASIC_PUBLIC ZoomService
-  : public lay::ViewService
-{
-public: 
-  ZoomService (lay::LayoutViewBase *view);
-  ~ZoomService ();
+class LAYBASIC_PUBLIC ZoomService : public lay::ViewService {
+public:
+  ZoomService(lay::LayoutViewBase *view);
+  ~ZoomService();
 
-  void set_colors (tl::Color background, tl::Color text);
-  void begin (const db::DPoint &pos);
-  void begin_pan (const db::DPoint &pos);
+  void set_colors(tl::Color background, tl::Color text);
+  void begin(const db::DPoint &pos);
+  void begin_pan(const db::DPoint &pos);
 
 private:
-  virtual bool mouse_move_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool mouse_release_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool mouse_press_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool mouse_click_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool wheel_event (int delta, bool horizontal, const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual void drag_cancel ();
+  virtual bool mouse_move_event(const db::DPoint &p, unsigned int buttons,
+                                bool prio);
+  virtual bool mouse_release_event(const db::DPoint &p, unsigned int buttons,
+                                   bool prio);
+  virtual bool mouse_press_event(const db::DPoint &p, unsigned int buttons,
+                                 bool prio);
+  virtual bool mouse_click_event(const db::DPoint &p, unsigned int buttons,
+                                 bool prio);
+  virtual bool wheel_event(int delta, bool horizontal, const db::DPoint &p,
+                           unsigned int buttons, bool prio);
+  virtual void drag_cancel();
 
   db::DPoint m_p1, m_p2;
   db::DBox m_vp;
@@ -60,8 +60,6 @@ private:
   unsigned int m_color;
 };
 
-}
+} // namespace lay
 
 #endif
-
-

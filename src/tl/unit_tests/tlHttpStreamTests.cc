@@ -20,108 +20,106 @@
 
 */
 
-
 #include "tlHttpStream.h"
-#include "tlUnitTest.h"
 #include "tlTimer.h"
+#include "tlUnitTest.h"
 
-static std::string test_url1 ("http://www.klayout.org/svn-public/klayout-resources/trunk/testdata/text");
-static std::string test_url2 ("http://www.klayout.org/svn-public/klayout-resources/trunk/testdata/dir1");
+static std::string test_url1(
+    "http://www.klayout.org/svn-public/klayout-resources/trunk/testdata/text");
+static std::string test_url2(
+    "http://www.klayout.org/svn-public/klayout-resources/trunk/testdata/dir1");
 
-TEST(1)
-{
-  if (! tl::InputHttpStream::is_available ()) {
-    throw tl::CancelException ();
+TEST(1) {
+  if (!tl::InputHttpStream::is_available()) {
+    throw tl::CancelException();
   }
 
-  tl::InputHttpStream stream (test_url1);
+  tl::InputHttpStream stream(test_url1);
 
   char b[100];
-  size_t n = stream.read (b, sizeof (b));
-  std::string res (b, n);
-  EXPECT_EQ (res, "hello, world.\n");
+  size_t n = stream.read(b, sizeof(b));
+  std::string res(b, n);
+  EXPECT_EQ(res, "hello, world.\n");
 }
 
-TEST(2)
-{
-  if (! tl::InputHttpStream::is_available ()) {
-    throw tl::CancelException ();
+TEST(2) {
+  if (!tl::InputHttpStream::is_available()) {
+    throw tl::CancelException();
   }
 
-  tl::InputHttpStream stream (test_url2);
-  stream.add_header ("User-Agent", "SVN");
-  stream.add_header ("Depth", "1");
-  stream.set_request ("PROPFIND");
-  stream.set_data ("<?xml version=\"1.0\" encoding=\"utf-8\"?><propfind xmlns=\"DAV:\"><prop><resourcetype xmlns=\"DAV:\"/></prop></propfind>");
+  tl::InputHttpStream stream(test_url2);
+  stream.add_header("User-Agent", "SVN");
+  stream.add_header("Depth", "1");
+  stream.set_request("PROPFIND");
+  stream.set_data(
+      "<?xml version=\"1.0\" encoding=\"utf-8\"?><propfind "
+      "xmlns=\"DAV:\"><prop><resourcetype xmlns=\"DAV:\"/></prop></propfind>");
 
   char b[10000];
-  size_t n = stream.read (b, sizeof (b));
-  std::string res (b, n);
+  size_t n = stream.read(b, sizeof(b));
+  std::string res(b, n);
 
-  EXPECT_EQ (res,
-    "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-    "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns0=\"DAV:\">\n"
-    "<D:response xmlns:lp1=\"DAV:\">\n"
-    "<D:href>/svn-public/klayout-resources/trunk/testdata/dir1/</D:href>\n"
-    "<D:propstat>\n"
-    "<D:prop>\n"
-    "<lp1:resourcetype><D:collection/></lp1:resourcetype>\n"
-    "</D:prop>\n"
-    "<D:status>HTTP/1.1 200 OK</D:status>\n"
-    "</D:propstat>\n"
-    "</D:response>\n"
-    "<D:response xmlns:lp1=\"DAV:\">\n"
-    "<D:href>/svn-public/klayout-resources/trunk/testdata/dir1/text</D:href>\n"
-    "<D:propstat>\n"
-    "<D:prop>\n"
-    "<lp1:resourcetype/>\n"
-    "</D:prop>\n"
-    "<D:status>HTTP/1.1 200 OK</D:status>\n"
-    "</D:propstat>\n"
-    "</D:response>\n"
-    "</D:multistatus>\n"
-  );
+  EXPECT_EQ(
+      res,
+      "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+      "<D:multistatus xmlns:D=\"DAV:\" xmlns:ns0=\"DAV:\">\n"
+      "<D:response xmlns:lp1=\"DAV:\">\n"
+      "<D:href>/svn-public/klayout-resources/trunk/testdata/dir1/</D:href>\n"
+      "<D:propstat>\n"
+      "<D:prop>\n"
+      "<lp1:resourcetype><D:collection/></lp1:resourcetype>\n"
+      "</D:prop>\n"
+      "<D:status>HTTP/1.1 200 OK</D:status>\n"
+      "</D:propstat>\n"
+      "</D:response>\n"
+      "<D:response xmlns:lp1=\"DAV:\">\n"
+      "<D:href>/svn-public/klayout-resources/trunk/testdata/dir1/text</"
+      "D:href>\n"
+      "<D:propstat>\n"
+      "<D:prop>\n"
+      "<lp1:resourcetype/>\n"
+      "</D:prop>\n"
+      "<D:status>HTTP/1.1 200 OK</D:status>\n"
+      "</D:propstat>\n"
+      "</D:response>\n"
+      "</D:multistatus>\n");
 }
 
-namespace
-{
+namespace {
 
-class Receiver : public tl::Object
-{
+class Receiver : public tl::Object {
 public:
-  Receiver () : flag (false) { }
-  void handle () { flag = true; }
+  Receiver() : flag(false) {}
+  void handle() { flag = true; }
   bool flag;
 };
 
-}
+} // namespace
 
 //  async mode
-TEST(3)
-{
-  if (! tl::InputHttpStream::is_available ()) {
-    throw tl::CancelException ();
+TEST(3) {
+  if (!tl::InputHttpStream::is_available()) {
+    throw tl::CancelException();
   }
 
-  tl::InputHttpStream stream (test_url1);
+  tl::InputHttpStream stream(test_url1);
 
   Receiver r;
-  stream.ready ().add (&r, &Receiver::handle);
+  stream.ready().add(&r, &Receiver::handle);
 
-  EXPECT_EQ (stream.data_available (), false);
-  stream.send ();
-  EXPECT_EQ (stream.data_available (), false);
+  EXPECT_EQ(stream.data_available(), false);
+  stream.send();
+  EXPECT_EQ(stream.data_available(), false);
 
-  tl::Clock start = tl::Clock::current ();
-  while (! r.flag && (tl::Clock::current () - start).seconds () < 10) {
-    stream.tick ();
+  tl::Clock start = tl::Clock::current();
+  while (!r.flag && (tl::Clock::current() - start).seconds() < 10) {
+    stream.tick();
   }
-  EXPECT_EQ (r.flag, true);
-  EXPECT_EQ (stream.data_available (), true);
+  EXPECT_EQ(r.flag, true);
+  EXPECT_EQ(stream.data_available(), true);
 
   char b[100];
-  size_t n = stream.read (b, sizeof (b));
-  std::string res (b, n);
-  EXPECT_EQ (res, "hello, world.\n");
+  size_t n = stream.read(b, sizeof(b));
+  std::string res(b, n);
+  EXPECT_EQ(res, "hello, world.\n");
 }
-

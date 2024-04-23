@@ -20,13 +20,10 @@
 
 */
 
-
 #include "gsiSignals.h"
 
-namespace gsi
-{
+namespace gsi {
 
 // .. nothing yet ..
 
 }
-

@@ -26,23 +26,19 @@
 #include "dbCommon.h"
 #include "dbNetlist.h"
 
-namespace db
-{
+namespace db {
 
 /**
  *  @brief A basic resistor device class
  *  A resistor defines a single parameter, "R", which is the resistance in Ohm.
  *  It defines two terminals, "A" and "B" for the two terminals.
  */
-class DB_PUBLIC DeviceClassResistor
-  : public db::DeviceClass
-{
+class DB_PUBLIC DeviceClassResistor : public db::DeviceClass {
 public:
-  DeviceClassResistor ();
+  DeviceClassResistor();
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassResistor (*this);
+  virtual db::DeviceClass *clone() const {
+    return new DeviceClassResistor(*this);
   }
 
   static size_t param_id_R;
@@ -60,15 +56,12 @@ public:
  *  In addition to DeviceClassResistor, this class defines a third terminal
  *  ("W") for the bulk or well connection.
  */
-class DB_PUBLIC DeviceClassResistorWithBulk
-  : public db::DeviceClassResistor
-{
+class DB_PUBLIC DeviceClassResistorWithBulk : public db::DeviceClassResistor {
 public:
-  DeviceClassResistorWithBulk ();
+  DeviceClassResistorWithBulk();
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassResistorWithBulk (*this);
+  virtual db::DeviceClass *clone() const {
+    return new DeviceClassResistorWithBulk(*this);
   }
 
   static size_t terminal_id_W;
@@ -76,18 +69,15 @@ public:
 
 /**
  *  @brief A basic capacitor device class
- *  A capacitor defines a single parameter, "C", which is the capacitance in Farad.
- *  It defines two terminals, "A" and "B" for the two terminals.
+ *  A capacitor defines a single parameter, "C", which is the capacitance in
+ * Farad. It defines two terminals, "A" and "B" for the two terminals.
  */
-class DB_PUBLIC DeviceClassCapacitor
-  : public db::DeviceClass
-{
+class DB_PUBLIC DeviceClassCapacitor : public db::DeviceClass {
 public:
-  DeviceClassCapacitor ();
+  DeviceClassCapacitor();
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassCapacitor (*this);
+  virtual db::DeviceClass *clone() const {
+    return new DeviceClassCapacitor(*this);
   }
 
   static size_t param_id_C;
@@ -103,15 +93,12 @@ public:
  *  In addition to DeviceClassCapacitor, this class defines a third terminal
  *  ("W") for the bulk or well connection.
  */
-class DB_PUBLIC DeviceClassCapacitorWithBulk
-  : public db::DeviceClassCapacitor
-{
+class DB_PUBLIC DeviceClassCapacitorWithBulk : public db::DeviceClassCapacitor {
 public:
-  DeviceClassCapacitorWithBulk ();
+  DeviceClassCapacitorWithBulk();
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassCapacitorWithBulk (*this);
+  virtual db::DeviceClass *clone() const {
+    return new DeviceClassCapacitorWithBulk(*this);
   }
 
   static size_t terminal_id_W;
@@ -119,18 +106,15 @@ public:
 
 /**
  *  @brief A basic inductor device class
- *  An inductor defines a single parameter, "L", which is the inductance in Henry.
- *  It defines two terminals, "A" and "B" for the two terminals.
+ *  An inductor defines a single parameter, "L", which is the inductance in
+ * Henry. It defines two terminals, "A" and "B" for the two terminals.
  */
-class DB_PUBLIC DeviceClassInductor
-  : public db::DeviceClass
-{
+class DB_PUBLIC DeviceClassInductor : public db::DeviceClass {
 public:
-  DeviceClassInductor ();
+  DeviceClassInductor();
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassInductor (*this);
+  virtual db::DeviceClass *clone() const {
+    return new DeviceClassInductor(*this);
   }
 
   static size_t param_id_L;
@@ -141,15 +125,13 @@ public:
 
 /**
  *  @brief A basic diode device class
- *  A diode defines a single parameter, "A", which is the area in square micrometers (YES: micrometers, as this is the basic unit of measure
- *  in KLayout).
- *  It defines two terminals, "A" and "C" for anode and cathode.
+ *  A diode defines a single parameter, "A", which is the area in square
+ * micrometers (YES: micrometers, as this is the basic unit of measure in
+ * KLayout). It defines two terminals, "A" and "C" for anode and cathode.
  */
-class DB_PUBLIC DeviceClassDiode
-  : public db::DeviceClass
-{
+class DB_PUBLIC DeviceClassDiode : public db::DeviceClass {
 public:
-  DeviceClassDiode ();
+  DeviceClassDiode();
 
   static size_t param_id_A;
   static size_t param_id_P;
@@ -157,23 +139,19 @@ public:
   static size_t terminal_id_A;
   static size_t terminal_id_C;
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassDiode (*this);
-  }
+  virtual db::DeviceClass *clone() const { return new DeviceClassDiode(*this); }
 };
 
 /**
  *  @brief A basic MOSFET device class with three terminals
- *  A MOSFET defines six parameters: "W" for the gate width in micrometers, "L" for the gate length in micrometers,
- *  "AS" for the source area and "AD" for the drain area and "PS" and "PD" for the source and drain perimeter.
- *  The MOSFET device defines three terminals, "S", "D" and "G" for source, drain and gate.
+ *  A MOSFET defines six parameters: "W" for the gate width in micrometers, "L"
+ * for the gate length in micrometers, "AS" for the source area and "AD" for the
+ * drain area and "PS" and "PD" for the source and drain perimeter. The MOSFET
+ * device defines three terminals, "S", "D" and "G" for source, drain and gate.
  */
-class DB_PUBLIC DeviceClassMOS3Transistor
-  : public db::DeviceClass
-{
+class DB_PUBLIC DeviceClassMOS3Transistor : public db::DeviceClass {
 public:
-  DeviceClassMOS3Transistor ();
+  DeviceClassMOS3Transistor();
 
   static size_t param_id_L;
   static size_t param_id_W;
@@ -186,66 +164,61 @@ public:
   static size_t terminal_id_G;
   static size_t terminal_id_D;
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassMOS3Transistor (*this);
+  virtual db::DeviceClass *clone() const {
+    return new DeviceClassMOS3Transistor(*this);
   }
 
   /**
    *  @brief Implements the "split_gates" feature
-   *  This feature will join internal source/drain nodes to form fingered multi-gate
-   *  transistors.
+   *  This feature will join internal source/drain nodes to form fingered
+   * multi-gate transistors.
    */
-  void join_split_gates (db::Circuit *circuit) const;
+  void join_split_gates(db::Circuit *circuit) const;
 
   /**
    * @brief Returns true if device lengths are compatible
    */
-  static bool lengths_are_identical (const db::Device *a, const db::Device *b);
+  static bool lengths_are_identical(const db::Device *a, const db::Device *b);
 
 protected:
-  void combine_parameters (Device *a, Device *b) const;
-  virtual bool has_bulk_pin () const;
+  void combine_parameters(Device *a, Device *b) const;
+  virtual bool has_bulk_pin() const;
 
 private:
-  bool is_source_terminal (size_t tid) const;
-  bool is_drain_terminal (size_t tid) const;
-  bool net_is_source_drain_connection (const db::Net *net) const;
+  bool is_source_terminal(size_t tid) const;
+  bool is_drain_terminal(size_t tid) const;
+  bool net_is_source_drain_connection(const db::Net *net) const;
 };
 
 /**
  *  @brief A basic MOSFET device class with four terminals
- *  The four-terminal MOSFET behaves identical to the three-terminal one but adds one more
- *  terminal for the bulk.
+ *  The four-terminal MOSFET behaves identical to the three-terminal one but
+ * adds one more terminal for the bulk.
  */
-class DB_PUBLIC DeviceClassMOS4Transistor
-  : public DeviceClassMOS3Transistor
-{
+class DB_PUBLIC DeviceClassMOS4Transistor : public DeviceClassMOS3Transistor {
 public:
-  DeviceClassMOS4Transistor ();
+  DeviceClassMOS4Transistor();
 
   static size_t terminal_id_B;
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassMOS4Transistor (*this);
+  virtual db::DeviceClass *clone() const {
+    return new DeviceClassMOS4Transistor(*this);
   }
 
 protected:
-  virtual bool has_bulk_pin () const;
+  virtual bool has_bulk_pin() const;
 };
 
 /**
  *  @brief A bipolar transistor device class with three terminals
- *  A MOSFET defines two parameters: "AE" for the emitter area in square micrometers and "PE" for the emitter perimeter
- *  in micrometers.
- *  The bipolar transistor defines three terminals, "C", "B" and "E" for collector, base and emitter.
+ *  A MOSFET defines two parameters: "AE" for the emitter area in square
+ * micrometers and "PE" for the emitter perimeter in micrometers. The bipolar
+ * transistor defines three terminals, "C", "B" and "E" for collector, base and
+ * emitter.
  */
-class DB_PUBLIC DeviceClassBJT3Transistor
-  : public db::DeviceClass
-{
+class DB_PUBLIC DeviceClassBJT3Transistor : public db::DeviceClass {
 public:
-  DeviceClassBJT3Transistor ();
+  DeviceClassBJT3Transistor();
 
   static size_t param_id_AE;
   static size_t param_id_PE;
@@ -259,31 +232,27 @@ public:
   static size_t terminal_id_B;
   static size_t terminal_id_E;
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassBJT3Transistor (*this);
+  virtual db::DeviceClass *clone() const {
+    return new DeviceClassBJT3Transistor(*this);
   }
 };
 
 /**
  *  @brief A basic bipolar transistor class with four terminals
- *  The four-terminal BJT behaves identical to the three-terminal one but adds one more
- *  terminal for the substrate.
+ *  The four-terminal BJT behaves identical to the three-terminal one but adds
+ * one more terminal for the substrate.
  */
-class DB_PUBLIC DeviceClassBJT4Transistor
-  : public DeviceClassBJT3Transistor
-{
+class DB_PUBLIC DeviceClassBJT4Transistor : public DeviceClassBJT3Transistor {
 public:
-  DeviceClassBJT4Transistor ();
+  DeviceClassBJT4Transistor();
 
   static size_t terminal_id_S;
 
-  virtual db::DeviceClass *clone () const
-  {
-    return new DeviceClassBJT4Transistor (*this);
+  virtual db::DeviceClass *clone() const {
+    return new DeviceClassBJT4Transistor(*this);
   }
 };
 
-}
+} // namespace db
 
 #endif

@@ -23,15 +23,14 @@
 #ifndef HDR_tlHttpStreamCurl
 #define HDR_tlHttpStreamCurl
 
-#include "tlStream.h"
 #include "tlEvents.h"
 #include "tlObject.h"
 #include "tlProgress.h"
+#include "tlStream.h"
 
 #include <memory>
 
-namespace tl
-{
+namespace tl {
 
 class CurlConnection;
 class HttpCredentialProvider;
@@ -41,21 +40,19 @@ class HttpCredentialProvider;
  *
  *  Implements the reader from a server using the HTTP protocol
  */
-class TL_PUBLIC InputHttpStreamPrivateData
-  : public tl::Object
-{
+class TL_PUBLIC InputHttpStreamPrivateData : public tl::Object {
 public:
   /**
    *  @brief Open a stream with the given URL
    */
-  InputHttpStreamPrivateData (InputHttpStream *stream, const std::string &url);
+  InputHttpStreamPrivateData(InputHttpStream *stream, const std::string &url);
 
   /**
    *  @brief Close the file
    *
    *  The destructor will automatically close the connection.
    */
-  virtual ~InputHttpStreamPrivateData ();
+  virtual ~InputHttpStreamPrivateData();
 
   /**
    *  @brief Sends the request for data
@@ -68,48 +65,45 @@ public:
    *  is available.
    *  If a request has already been sent, this method will do nothing.
    */
-  void send ();
+  void send();
 
   /**
    *  @brief Sets the request verb
    *  The default verb is "GET"
    */
-  void set_request (const char *r);
+  void set_request(const char *r);
 
   /**
    *  @brief Sets data to be sent with the request
    *  If data is given, it is sent along with the request.
    *  This version takes a null-terminated string.
    */
-  void set_data (const char *data);
+  void set_data(const char *data);
 
   /**
    *  @brief Sets data to be sent with the request
    *  If data is given, it is sent along with the request.
    *  This version takes a data plus length.
    */
-  void set_data (const char *data, size_t n);
+  void set_data(const char *data, size_t n);
 
   /**
    *  @brief Sets a header field
    */
-  void add_header (const std::string &name, const std::string &value);
+  void add_header(const std::string &name, const std::string &value);
 
   /**
    *  @brief Read from the stream
    *  Implements the basic read method.
    */
-  virtual size_t read (char *b, size_t n);
+  virtual size_t read(char *b, size_t n);
 
   /**
    *  @brief Gets the "ready" event
    *  Connect to this event for the asynchronous interface.
    *  This event is fired when the request has finished.
    */
-  tl::Event &ready ()
-  {
-    return m_ready_event;
-  }
+  tl::Event &ready() { return m_ready_event; }
 
   /**
    *  @brief Checks for errors
@@ -117,7 +111,7 @@ public:
    *  It will throw an exception if errors occurred.
    *  read() will do the same.
    */
-  void check ();
+  void check();
 
   /**
    *  @brief Gets the "data available" event
@@ -125,32 +119,29 @@ public:
    *  This event is fired when data becomes available for read.
    *  It is just fired once.
    */
-  tl::Event &data_ready ()
-  {
-    return m_data_ready_event;
-  }
+  tl::Event &data_ready() { return m_data_ready_event; }
 
   /**
    *  @brief Gets a value indicating whether data is available
    */
-  bool data_available ();
+  bool data_available();
 
   /**
    *  @brief Sets the timeout in seconds
    */
-  void set_timeout (double to);
+  void set_timeout(double to);
 
   /**
    *  @brief Gets the timeout in seconds
    */
-  double timeout () const;
+  double timeout() const;
 
   //  Basic interface
-  virtual void reset ();
-  virtual void close ();
-  virtual std::string source () const;
-  virtual std::string absolute_path () const;
-  virtual std::string filename () const;
+  virtual void reset();
+  virtual void close();
+  virtual std::string source() const;
+  virtual std::string absolute_path() const;
+  virtual std::string filename() const;
 
 private:
   std::unique_ptr<CurlConnection> m_connection;
@@ -162,11 +153,10 @@ private:
   double m_timeout;
   InputHttpStream *mp_stream;
 
-  void on_data_available ();
-  void on_finished ();
+  void on_data_available();
+  void on_finished();
 };
 
-}
+} // namespace tl
 
 #endif
-

@@ -20,15 +20,9 @@
 
 */
 
-
 #include "drcForceLink.h"
 #include "rdbForceLink.h"
 
-namespace drc
-{
-  int _force_link_f () 
-  { 
-    return 0; 
-  }
-}
-
+namespace drc {
+int _force_link_f() { return 0; }
+} // namespace drc

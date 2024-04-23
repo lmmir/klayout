@@ -29,70 +29,50 @@
 
 #include <QStyledItemDelegate>
 
-namespace lay
-{
+namespace lay {
 
 // --------------------------------------------------------------------------------------
 
 /**
  *  @brief A delegate displaying the display text as HTML formatted text
  */
-class LAYUI_PUBLIC HTMLItemDelegate
-  : public QStyledItemDelegate
-{
-Q_OBJECT
+class LAYUI_PUBLIC HTMLItemDelegate : public QStyledItemDelegate {
+  Q_OBJECT
 
 public:
-  HTMLItemDelegate (QObject *parent);
+  HTMLItemDelegate(QObject *parent);
 
-  virtual void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-  virtual QSize sizeHint (const QStyleOptionViewItem &option, const QModelIndex &index) const;
-  virtual bool editorEvent (QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem &option,
+                     const QModelIndex &index) const;
+  virtual QSize sizeHint(const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const;
+  virtual bool editorEvent(QEvent *event, QAbstractItemModel *model,
+                           const QStyleOptionViewItem &option,
+                           const QModelIndex &index);
 
-  void set_anchors_clickable (bool a);
-  bool anchors_clickable () const
-  {
-    return m_anchors_clickable;
-  }
+  void set_anchors_clickable(bool a);
+  bool anchors_clickable() const { return m_anchors_clickable; }
 
-  void set_icon_margin (int m);
-  int icon_margin () const
-  {
-    return m_icon_margin;
-  }
+  void set_icon_margin(int m);
+  int icon_margin() const { return m_icon_margin; }
 
-  void set_icon_spacing (int s);
-  int icon_spacing () const
-  {
-    return m_icon_spacing;
-  }
+  void set_icon_spacing(int s);
+  int icon_spacing() const { return m_icon_spacing; }
 
-  void set_text_margin (int m);
-  int text_margin () const
-  {
-    return m_text_margin;
-  }
+  void set_text_margin(int m);
+  int text_margin() const { return m_text_margin; }
 
-  void set_text_height (int h);
-  int text_height () const
-  {
-    return m_text_height;
-  }
+  void set_text_height(int h);
+  int text_height() const { return m_text_height; }
 
-  void set_text_width (int w);
-  int text_width () const
-  {
-    return m_text_width;
-  }
+  void set_text_width(int w);
+  int text_width() const { return m_text_width; }
 
-  void set_plain_text (bool pt);
-  bool plain_text () const
-  {
-    return m_plain_text;
-  }
+  void set_plain_text(bool pt);
+  bool plain_text() const { return m_plain_text; }
 
 signals:
-  void anchor_clicked (const QString &url);
+  void anchor_clicked(const QString &url);
 
 private:
   int m_icon_margin, m_icon_spacing, m_text_margin;
@@ -101,9 +81,8 @@ private:
   bool m_anchors_clickable;
 };
 
-
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

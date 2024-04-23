@@ -20,12 +20,10 @@
 
 */
 
-
 #ifndef HDR_tlIteratorUtils
 #define HDR_tlIteratorUtils
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief Checks an iterator against the default-constructed value
@@ -33,13 +31,12 @@ namespace tl
  *  This function takes care of using the right way of comparing iterators
  *  suitable for MSVC with iterator debugging on.
  */
-template <class Iter>
-static inline bool is_null_iterator (const Iter &iter)
-{
-#if defined(_MSC_VER) && defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL >= 2
-  return iter._Unwrapped () == Iter ()._Unwrapped ();
+template <class Iter> static inline bool is_null_iterator(const Iter &iter) {
+#if defined(_MSC_VER) && defined(_ITERATOR_DEBUG_LEVEL) &&                     \
+    _ITERATOR_DEBUG_LEVEL >= 2
+  return iter._Unwrapped() == Iter()._Unwrapped();
 #else
-  return iter == Iter ();
+  return iter == Iter();
 #endif
 }
 
@@ -50,15 +47,15 @@ static inline bool is_null_iterator (const Iter &iter)
  *  suitable for MSVC with iterator debugging on.
  */
 template <class Iter>
-static inline bool is_equal_iterator_unchecked (const Iter &a, const Iter &b)
-{
-#if defined(_MSC_VER) && defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL >= 2
-  return a._Unwrapped () == b._Unwrapped ();
+static inline bool is_equal_iterator_unchecked(const Iter &a, const Iter &b) {
+#if defined(_MSC_VER) && defined(_ITERATOR_DEBUG_LEVEL) &&                     \
+    _ITERATOR_DEBUG_LEVEL >= 2
+  return a._Unwrapped() == b._Unwrapped();
 #else
   return a == b;
 #endif
 }
 
-}
+} // namespace tl
 
 #endif

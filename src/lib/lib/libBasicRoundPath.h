@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_libBasicRoundPath
 #define HDR_libBasicRoundPath
 
@@ -28,54 +27,58 @@
 
 #include "dbPCellDeclaration.h"
 
-namespace lib
-{
+namespace lib {
 
 /**
  *  @brief Implements the "ROUND_PATH" PCell of the basic library
  */
-class BasicRoundPath 
-  : public db::PCellDeclaration
-{
+class BasicRoundPath : public db::PCellDeclaration {
 public:
   /**
    *  @brief The constructor
    */
-  BasicRoundPath ();
+  BasicRoundPath();
 
   /**
    *  @brief This PCell can be created from a shape
    */
-  virtual bool can_create_from_shape (const db::Layout &layout, const db::Shape &shape, unsigned int layer) const;
+  virtual bool can_create_from_shape(const db::Layout &layout,
+                                     const db::Shape &shape,
+                                     unsigned int layer) const;
 
   /**
    *  @brief Get the parameters from a shape
    */
 
-  virtual db::pcell_parameters_type parameters_from_shape (const db::Layout &layout, const db::Shape &shape, unsigned int layer) const;
+  virtual db::pcell_parameters_type
+  parameters_from_shape(const db::Layout &layout, const db::Shape &shape,
+                        unsigned int layer) const;
   /**
    *  @brief Get the layer declarations
    */
-  virtual std::vector<db::PCellLayerDeclaration> get_layer_declarations (const db::pcell_parameters_type &parameters) const;
+  virtual std::vector<db::PCellLayerDeclaration>
+  get_layer_declarations(const db::pcell_parameters_type &parameters) const;
 
   /**
    *  @brief Produces the layout
    */
-  virtual void produce (const db::Layout &layout, const std::vector<unsigned int> &layer_ids, const db::pcell_parameters_type &parameters, db::Cell &cell) const;
+  virtual void produce(const db::Layout &layout,
+                       const std::vector<unsigned int> &layer_ids,
+                       const db::pcell_parameters_type &parameters,
+                       db::Cell &cell) const;
 
   /**
    *  @brief Get the display name for a PCell with the given parameters
    */
-  virtual std::string get_display_name (const db::pcell_parameters_type &) const;
+  virtual std::string get_display_name(const db::pcell_parameters_type &) const;
 
   /**
    *  @brief Get the parameter declarations
    */
-  virtual std::vector<db::PCellParameterDeclaration> get_parameter_declarations () const;
+  virtual std::vector<db::PCellParameterDeclaration>
+  get_parameter_declarations() const;
 };
 
-}
+} // namespace lib
 
 #endif
-
-

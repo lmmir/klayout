@@ -20,21 +20,20 @@
 
 */
 
-
 #ifndef HDR_layGridNet
 #define HDR_layGridNet
 
-#include "layViewObject.h"
 #include "layPlugin.h"
+#include "layViewObject.h"
 #if defined(HAVE_QT)
-#  include "layPluginConfigPage.h"
+#include "layPluginConfigPage.h"
 #endif
-#include "tlColor.h"
-#include "dbTypes.h"
 #include "dbBox.h"
+#include "dbTypes.h"
+#include "tlColor.h"
 
 namespace Ui {
-  class GridNetConfigPage;
+class GridNetConfigPage;
 }
 
 namespace lay {
@@ -42,39 +41,43 @@ namespace lay {
 class LayoutViewBase;
 class ColorButton;
 
-class GridNetPluginDeclaration
-  : public lay::PluginDeclaration
-{
+class GridNetPluginDeclaration : public lay::PluginDeclaration {
 public:
-  virtual void get_options (std::vector < std::pair<std::string, std::string> > &options) const;
+  virtual void
+  get_options(std::vector<std::pair<std::string, std::string>> &options) const;
 #if defined(HAVE_QT)
-  virtual lay::ConfigPage *config_page (QWidget *parent, std::string &title) const;
+  virtual lay::ConfigPage *config_page(QWidget *parent,
+                                       std::string &title) const;
 #endif
-  virtual lay::Plugin *create_plugin (db::Manager *, lay::Dispatcher *, lay::LayoutViewBase *view) const;
+  virtual lay::Plugin *create_plugin(db::Manager *, lay::Dispatcher *,
+                                     lay::LayoutViewBase *view) const;
 };
 
-class GridNet
-  : public lay::BackgroundViewObject,
-    public lay::Plugin
-{
-public: 
+class GridNet : public lay::BackgroundViewObject, public lay::Plugin {
+public:
   enum GridStyle {
-    Invisible = 0, 
+    Invisible = 0,
     //  dot styles:
-    Dots, DottedLines, LightDottedLines, TenthDottedLines,  
+    Dots,
+    DottedLines,
+    LightDottedLines,
+    TenthDottedLines,
     //  line styles:
-    Crosses, Lines, TenthMarkedLines, 
+    Crosses,
+    Lines,
+    TenthMarkedLines,
     //  others
     CheckerBoard
   };
 
-  GridNet (lay::LayoutViewBase *view);
+  GridNet(lay::LayoutViewBase *view);
 
 private:
-  virtual void render_bg (const lay::Viewport &vp, lay::ViewObjectCanvas &canvas);
+  virtual void render_bg(const lay::Viewport &vp,
+                         lay::ViewObjectCanvas &canvas);
 
   //  implementation of the lay::Plugin interface
-  virtual bool configure (const std::string &name, const std::string &value);
+  virtual bool configure(const std::string &name, const std::string &value);
 
   lay::LayoutViewBase *mp_view;
   bool m_visible;
@@ -89,14 +92,12 @@ private:
   GridStyle m_style2;
 };
 
-class GridNetStyleConverter
-{
+class GridNetStyleConverter {
 public:
-  void from_string (const std::string &value, lay::GridNet::GridStyle &style);
-  std::string to_string (lay::GridNet::GridStyle style);
+  void from_string(const std::string &value, lay::GridNet::GridStyle &style);
+  std::string to_string(lay::GridNet::GridStyle style);
 };
 
-}
+} // namespace lay
 
 #endif
-

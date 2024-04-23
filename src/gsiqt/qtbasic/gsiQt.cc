@@ -26,50 +26,48 @@
 #include <QGraphicsObject>
 #include <QVariant>
 
-namespace qt_gsi
-{
+namespace qt_gsi {
 
 // ---------------------------------------------------------------------------
 //  AbstractMethodCalledException implementation
 
-AbstractMethodCalledException::AbstractMethodCalledException (const char *method_name)
-  : tl::Exception (tl::to_string (QObject::tr ("Abstract method called (%s)")).c_str (), method_name)
-{
+AbstractMethodCalledException::AbstractMethodCalledException(
+    const char *method_name)
+    : tl::Exception(
+          tl::to_string(QObject::tr("Abstract method called (%s)")).c_str(),
+          method_name) {
   //  .. nothing yet ..
 }
 
 // ---------------------------------------------------------------------------
 //  QtObjectBase implementation
 
-void QtObjectBase::init(QObject *object)
-{
-  //  This method is called whenever a QtObjectBase object is created as a GSI 
-  //  interface for a QObject. If there is a parent, we can make C++ hold the reference to that
-  //  object, thus moving the ownership to the C++ parent.
-  if (object->parent ()) {
-    keep ();
+void QtObjectBase::init(QObject *object) {
+  //  This method is called whenever a QtObjectBase object is created as a GSI
+  //  interface for a QObject. If there is a parent, we can make C++ hold the
+  //  reference to that object, thus moving the ownership to the C++ parent.
+  if (object->parent()) {
+    keep();
   }
 }
 
-void QtObjectBase::init(QGraphicsItem *object)
-{
-  //  This method is called whenever a QtObjectBase object is created as a GSI 
-  //  interface for a QGraphicsItem. If there is a parent, we can make C++ hold the reference to that
-  //  object, thus moving the ownership to the C++ parent.
-  if (object->parentItem ()) {
-    keep ();
+void QtObjectBase::init(QGraphicsItem *object) {
+  //  This method is called whenever a QtObjectBase object is created as a GSI
+  //  interface for a QGraphicsItem. If there is a parent, we can make C++ hold
+  //  the reference to that object, thus moving the ownership to the C++ parent.
+  if (object->parentItem()) {
+    keep();
   }
 }
 
-void QtObjectBase::init(QGraphicsObject *object)
-{
-  //  This method is called whenever a QtObjectBase object is created as a GSI 
-  //  interface for a QGraphicsObject. If there is a parent, we can make C++ hold the reference to that
-  //  object, thus moving the ownership to the C++ parent.
-  if (object->parentItem () || object->parent ()) {
-    keep ();
+void QtObjectBase::init(QGraphicsObject *object) {
+  //  This method is called whenever a QtObjectBase object is created as a GSI
+  //  interface for a QGraphicsObject. If there is a parent, we can make C++
+  //  hold the reference to that object, thus moving the ownership to the C++
+  //  parent.
+  if (object->parentItem() || object->parent()) {
+    keep();
   }
 }
 
-}
-
+} // namespace qt_gsi

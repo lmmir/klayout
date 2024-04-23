@@ -20,61 +20,68 @@
 
 */
 
-
-#include "laySearchReplaceDialog.h"
 #include "laySearchReplaceConfigPage.h"
+#include "laySearchReplaceDialog.h"
 
-#include "layMainWindow.h"
 #include "layApplication.h"
+#include "layMainWindow.h"
 #include "layUtils.h"
 
-namespace lay
-{
+namespace lay {
 
 // ------------------------------------------------------------
 //  Declaration of the configuration options
 
-class SearchReplacePluginDeclaration
-  : public lay::PluginDeclaration
-{
+class SearchReplacePluginDeclaration : public lay::PluginDeclaration {
 public:
-  virtual void get_options (std::vector < std::pair<std::string, std::string> > &options) const
-  {
-    options.push_back (std::pair<std::string, std::string> (cfg_sr_window_mode, "fit-marker"));
-    options.push_back (std::pair<std::string, std::string> (cfg_sr_window_state, ""));
-    options.push_back (std::pair<std::string, std::string> (cfg_sr_window_dim, "1.0"));
-    options.push_back (std::pair<std::string, std::string> (cfg_sr_max_item_count, "1000"));
+  virtual void
+  get_options(std::vector<std::pair<std::string, std::string>> &options) const {
+    options.push_back(
+        std::pair<std::string, std::string>(cfg_sr_window_mode, "fit-marker"));
+    options.push_back(
+        std::pair<std::string, std::string>(cfg_sr_window_state, ""));
+    options.push_back(
+        std::pair<std::string, std::string>(cfg_sr_window_dim, "1.0"));
+    options.push_back(
+        std::pair<std::string, std::string>(cfg_sr_max_item_count, "1000"));
   }
 
-  virtual lay::ConfigPage *config_page (QWidget *parent, std::string &title) const
-  {
-    title = tl::to_string (QObject::tr ("Browsers|Search Result Browser"));
-    return new SearchReplaceConfigPage (parent); 
+  virtual lay::ConfigPage *config_page(QWidget *parent,
+                                       std::string &title) const {
+    title = tl::to_string(QObject::tr("Browsers|Search Result Browser"));
+    return new SearchReplaceConfigPage(parent);
   }
 
-  virtual void get_menu_entries (std::vector<lay::MenuEntry> &menu_entries) const
-  {
-    lay::PluginDeclaration::get_menu_entries (menu_entries);
+  virtual void
+  get_menu_entries(std::vector<lay::MenuEntry> &menu_entries) const {
+    lay::PluginDeclaration::get_menu_entries(menu_entries);
 
     //  separator:
-    menu_entries.push_back (lay::separator ("search_replace_sep", "edit_menu.utils_group+"));
+    menu_entries.push_back(
+        lay::separator("search_replace_sep", "edit_menu.utils_group+"));
 
     //  two entries - one for view mode and one for edit mode:
-    menu_entries.push_back (lay::menu_item ("search_replace::show", "search_replace_editor:edit:edit_mode", "edit_menu.utils_group+", tl::to_string (QObject::tr ("Search and Replace"))));
-    menu_entries.push_back (lay::menu_item ("search_replace::show", "search_replace_viewer:edit:view_mode", "edit_menu.utils_group+", tl::to_string (QObject::tr ("Search"))));
+    menu_entries.push_back(lay::menu_item(
+        "search_replace::show", "search_replace_editor:edit:edit_mode",
+        "edit_menu.utils_group+",
+        tl::to_string(QObject::tr("Search and Replace"))));
+    menu_entries.push_back(lay::menu_item(
+        "search_replace::show", "search_replace_viewer:edit:view_mode",
+        "edit_menu.utils_group+", tl::to_string(QObject::tr("Search"))));
   }
- 
-  virtual lay::Plugin *create_plugin (db::Manager *, lay::Dispatcher *root, lay::LayoutViewBase *view) const
-  {
-    if (lay::has_gui ()) {
-      return new SearchReplaceDialog (root, view);
+
+  virtual lay::Plugin *create_plugin(db::Manager *, lay::Dispatcher *root,
+                                     lay::LayoutViewBase *view) const {
+    if (lay::has_gui()) {
+      return new SearchReplaceDialog(root, view);
     } else {
       return 0;
     }
   }
 };
 
-static tl::RegisteredClass<lay::PluginDeclaration> config_decl (new SearchReplacePluginDeclaration (), 20000, "SearchReplacePlugin");
+static tl::RegisteredClass<lay::PluginDeclaration>
+    config_decl(new SearchReplacePluginDeclaration(), 20000,
+                "SearchReplacePlugin");
 
-}
-
+} // namespace lay

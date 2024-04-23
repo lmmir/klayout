@@ -21,55 +21,48 @@
 */
 
 #include "tlScriptError.h"
-#include "tlString.h"
 #include "tlInclude.h"
+#include "tlString.h"
 
-namespace tl
-{
+namespace tl {
 
 // -------------------------------------------------------------------
 //  BacktraceElement implementation
 
-BacktraceElement::BacktraceElement (const std::string &_file, int _line)
-  : file (_file), line (_line)
-{
-  translate_includes ();
+BacktraceElement::BacktraceElement(const std::string &_file, int _line)
+    : file(_file), line(_line) {
+  translate_includes();
 }
 
-BacktraceElement::BacktraceElement (const std::string &_file, int _line, const std::string _more_info)
-  : file (_file), line (_line), more_info (_more_info)
-{
-  translate_includes ();
+BacktraceElement::BacktraceElement(const std::string &_file, int _line,
+                                   const std::string _more_info)
+    : file(_file), line(_line), more_info(_more_info) {
+  translate_includes();
 }
 
-BacktraceElement::BacktraceElement ()
-  : line (0)
-{
+BacktraceElement::BacktraceElement() : line(0) {
   // .. nothing yet ..
 }
 
-void
-BacktraceElement::translate_includes ()
-{
+void BacktraceElement::translate_includes() {
   if (line < 1) {
     return;
   }
 
-  std::pair<std::string, int> fl = tl::IncludeExpander::translate_to_original (file, line);
+  std::pair<std::string, int> fl =
+      tl::IncludeExpander::translate_to_original(file, line);
   if (fl.second > 0) {
     file = fl.first;
     line = fl.second;
   }
 }
 
-std::string 
-BacktraceElement::to_string() const
-{
+std::string BacktraceElement::to_string() const {
   if (line > 0) {
-    if (! more_info.empty ()) {
-      return file + ":" + tl::to_string (line) + ":" + more_info;
+    if (!more_info.empty()) {
+      return file + ":" + tl::to_string(line) + ":" + more_info;
     } else {
-      return file + ":" + tl::to_string (line);
+      return file + ":" + tl::to_string(line);
     }
   } else {
     return more_info;
@@ -79,8 +72,7 @@ BacktraceElement::to_string() const
 // -------------------------------------------------------------------
 //  ScriptError implementation
 
-static std::string make_basic_msg (const char *text, const char *cls)
-{
+static std::string make_basic_msg(const char *text, const char *cls) {
   std::string msg;
   if (*cls) {
     msg = cls;
@@ -94,56 +86,54 @@ static std::string make_basic_msg (const char *text, const char *cls)
   return msg;
 }
 
-
-ScriptError::ScriptError (const char *msg, const char *cls, const std::vector<BacktraceElement> &backtrace)
-  : tl::Exception (make_basic_msg (msg, cls)), m_line (-1), m_cls (cls), m_backtrace (backtrace)
-{
+ScriptError::ScriptError(const char *msg, const char *cls,
+                         const std::vector<BacktraceElement> &backtrace)
+    : tl::Exception(make_basic_msg(msg, cls)), m_line(-1), m_cls(cls),
+      m_backtrace(backtrace) {
   //  .. nothing yet ..
 }
 
-ScriptError::ScriptError (const char *msg, const char *sourcefile, int line, const char *cls, const std::vector<BacktraceElement> &backtrace)
-  : tl::Exception (make_basic_msg (msg, cls)), m_sourcefile (sourcefile), m_line (line), m_cls (cls), m_backtrace (backtrace)
-{
-  translate_includes ();
+ScriptError::ScriptError(const char *msg, const char *sourcefile, int line,
+                         const char *cls,
+                         const std::vector<BacktraceElement> &backtrace)
+    : tl::Exception(make_basic_msg(msg, cls)), m_sourcefile(sourcefile),
+      m_line(line), m_cls(cls), m_backtrace(backtrace) {
+  translate_includes();
 }
 
-ScriptError::ScriptError (const ScriptError &d)
-  : tl::Exception (d), m_sourcefile (d.m_sourcefile), m_line (d.m_line), m_cls (d.m_cls), m_context (d.m_context), m_backtrace (d.m_backtrace)
-{
+ScriptError::ScriptError(const ScriptError &d)
+    : tl::Exception(d), m_sourcefile(d.m_sourcefile), m_line(d.m_line),
+      m_cls(d.m_cls), m_context(d.m_context), m_backtrace(d.m_backtrace) {
   //  .. nothing yet ..
 }
 
-std::string
-ScriptError::msg () const
-{
-  std::string m = basic_msg ();
+std::string ScriptError::msg() const {
+  std::string m = basic_msg();
 
-  if (! m_context.empty ()) {
-    m += tl::to_string (tr (" in ")) + m_context;
+  if (!m_context.empty()) {
+    m += tl::to_string(tr(" in ")) + m_context;
   }
 
-  for (std::vector<BacktraceElement>::const_iterator bt = backtrace ().begin (); bt != backtrace ().end (); ++bt) {
+  for (std::vector<BacktraceElement>::const_iterator bt = backtrace().begin();
+       bt != backtrace().end(); ++bt) {
     m += "\n  ";
-    m += bt->to_string ();
+    m += bt->to_string();
   }
 
   return m;
 }
 
-void
-ScriptError::translate_includes ()
-{
+void ScriptError::translate_includes() {
   if (m_line < 1) {
     return;
   }
 
-  std::pair<std::string, int> fl = tl::IncludeExpander::translate_to_original (m_sourcefile, m_line);
+  std::pair<std::string, int> fl =
+      tl::IncludeExpander::translate_to_original(m_sourcefile, m_line);
   if (fl.second > 0) {
     m_sourcefile = fl.first;
     m_line = fl.second;
   }
 }
 
-}
-
-
+} // namespace tl

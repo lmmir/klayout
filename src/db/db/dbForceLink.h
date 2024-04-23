@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_dbForceLink
 #define HDR_dbForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the db module
  */
 
-namespace db
-{
-  DB_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace db {
+DB_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace db
 
 #endif
-

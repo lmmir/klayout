@@ -22,11 +22,6 @@
 
 #include "layuiForceLink.h"
 
-namespace layui
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace layui {
+int _force_link_f() { return 0; }
+} // namespace layui

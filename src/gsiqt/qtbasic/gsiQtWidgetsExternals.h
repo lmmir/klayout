@@ -21,10 +21,10 @@
 */
 
 #if QT_VERSION >= 0x060000
-#  include "../qt6/QtWidgets/gsiQtExternals.h"
+#include "../qt6/QtWidgets/gsiQtExternals.h"
 #elif QT_VERSION >= 0x050000
-#  include "../qt5/QtWidgets/gsiQtExternals.h"
+#include "../qt5/QtWidgets/gsiQtExternals.h"
 #else
 //  no present in Qt4
-#  define FORCE_LINK_GSI_QTWIDGETS
+#define FORCE_LINK_GSI_QTWIDGETS
 #endif

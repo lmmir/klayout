@@ -32,69 +32,67 @@
 
 #include <algorithm>
 
-namespace Ui
-{
-  class MarkerBrowserConfigPage;
-  class MarkerBrowserConfigPage2;
-}
+namespace Ui {
+class MarkerBrowserConfigPage;
+class MarkerBrowserConfigPage2;
+} // namespace Ui
 
-namespace rdb
-{
+namespace rdb {
 
-enum context_mode_type { AnyCell = 0 , DatabaseTop, Current, CurrentOrAny, Local };
+enum context_mode_type {
+  AnyCell = 0,
+  DatabaseTop,
+  Current,
+  CurrentOrAny,
+  Local
+};
 enum window_type { DontChange = 0, FitCell, FitMarker, Center, CenterSize };
 
-class MarkerBrowserConfigPage
-  : public lay::ConfigPage
-{
-  Q_OBJECT 
+class MarkerBrowserConfigPage : public lay::ConfigPage {
+  Q_OBJECT
 
 public:
-  MarkerBrowserConfigPage (QWidget *parent);
-  ~MarkerBrowserConfigPage ();
+  MarkerBrowserConfigPage(QWidget *parent);
+  ~MarkerBrowserConfigPage();
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 public slots:
-  void window_changed (int);
+  void window_changed(int);
 
 private:
   Ui::MarkerBrowserConfigPage *mp_ui;
 };
 
-class MarkerBrowserConfigPage2
-  : public lay::ConfigPage
-{
-  Q_OBJECT 
+class MarkerBrowserConfigPage2 : public lay::ConfigPage {
+  Q_OBJECT
 
 public:
-  MarkerBrowserConfigPage2 (QWidget *parent);
-  ~MarkerBrowserConfigPage2 ();
+  MarkerBrowserConfigPage2(QWidget *parent);
+  ~MarkerBrowserConfigPage2();
 
-  virtual void setup (lay::Dispatcher *root);
-  virtual void commit (lay::Dispatcher *root);
+  virtual void setup(lay::Dispatcher *root);
+  virtual void commit(lay::Dispatcher *root);
 
 private:
   Ui::MarkerBrowserConfigPage2 *mp_ui;
 };
 
-class MarkerBrowserContextModeConverter
-{
+class MarkerBrowserContextModeConverter {
 public:
-  void from_string (const std::string &value, rdb::context_mode_type &mode);
-  std::string to_string (rdb::context_mode_type mode);
+  void from_string(const std::string &value, rdb::context_mode_type &mode);
+  std::string to_string(rdb::context_mode_type mode);
 };
 
-class MarkerBrowserWindowModeConverter
-{
+class MarkerBrowserWindowModeConverter {
 public:
-  void from_string (const std::string &value, rdb::window_type &mode);
-  std::string to_string (rdb::window_type mode);
+  void from_string(const std::string &value, rdb::window_type &mode);
+  std::string to_string(rdb::window_type mode);
 };
 
-}
+} // namespace rdb
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

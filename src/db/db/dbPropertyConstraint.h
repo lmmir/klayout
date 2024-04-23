@@ -20,22 +20,18 @@
 
 */
 
-
-
 #ifndef HDR_dbPropertyConstraint
 #define HDR_dbPropertyConstraint
 
 #include "dbCommon.h"
 #include "dbTypes.h"
 
-namespace db
-{
+namespace db {
 
 /**
  *  @brief Specifies a property constraint for some operations
  */
-enum PropertyConstraint
-{
+enum PropertyConstraint {
   /**
    *  @brief Ignore properties
    *
@@ -80,29 +76,30 @@ enum PropertyConstraint
 };
 
 /**
- *  @brief Returns a predicate indicating whether properties need to be considered
+ *  @brief Returns a predicate indicating whether properties need to be
+ * considered
  */
-bool inline pc_skip (PropertyConstraint pc)
-{
-  return pc == IgnoreProperties;
+bool inline pc_skip(PropertyConstraint pc) { return pc == IgnoreProperties; }
+
+/**
+ *  @brief Returns a predicate indicating whether properties are always
+ * different
+ */
+bool inline pc_always_different(PropertyConstraint pc) {
+  return pc == DifferentPropertiesConstraint ||
+         pc == DifferentPropertiesConstraintDrop;
 }
 
 /**
- *  @brief Returns a predicate indicating whether properties are always different
+ *  @brief Returns a value indicating whether two properties satisfy the
+ * condition
  */
-bool inline pc_always_different (PropertyConstraint pc)
-{
-  return pc == DifferentPropertiesConstraint || pc == DifferentPropertiesConstraintDrop;
-}
-
-/**
- *  @brief Returns a value indicating whether two properties satisfy the condition
- */
-bool inline pc_match (PropertyConstraint pc, db::properties_id_type a, db::properties_id_type b)
-{
+bool inline pc_match(PropertyConstraint pc, db::properties_id_type a,
+                     db::properties_id_type b) {
   if (pc == SamePropertiesConstraint || pc == SamePropertiesConstraintDrop) {
     return a == b;
-  } else if (pc == DifferentPropertiesConstraint || pc == DifferentPropertiesConstraintDrop) {
+  } else if (pc == DifferentPropertiesConstraint ||
+             pc == DifferentPropertiesConstraintDrop) {
     return a != b;
   } else {
     return true;
@@ -110,22 +107,22 @@ bool inline pc_match (PropertyConstraint pc, db::properties_id_type a, db::prope
 }
 
 /**
- *  @brief Returns a value indicating whether the property can be removed on output
+ *  @brief Returns a value indicating whether the property can be removed on
+ * output
  */
-bool inline pc_remove (PropertyConstraint pc)
-{
-  return pc == IgnoreProperties || pc == SamePropertiesConstraintDrop || pc == DifferentPropertiesConstraintDrop;
+bool inline pc_remove(PropertyConstraint pc) {
+  return pc == IgnoreProperties || pc == SamePropertiesConstraintDrop ||
+         pc == DifferentPropertiesConstraintDrop;
 }
 
 /**
  *  @brief Returns a normalized property for output
  */
-db::properties_id_type inline pc_norm (PropertyConstraint pc, db::properties_id_type prop_id)
-{
-  return pc_remove (pc) ? 0 : prop_id;
+db::properties_id_type inline pc_norm(PropertyConstraint pc,
+                                      db::properties_id_type prop_id) {
+  return pc_remove(pc) ? 0 : prop_id;
 }
 
-}
+} // namespace db
 
 #endif
-

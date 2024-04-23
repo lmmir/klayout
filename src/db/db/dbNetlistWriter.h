@@ -28,28 +28,26 @@
 
 #include <string>
 
-namespace tl
-{
-  class OutputStream;
+namespace tl {
+class OutputStream;
 }
 
-namespace db
-{
+namespace db {
 
 class Netlist;
 
 /**
  *  @brief A common base class for netlist writers
  */
-class DB_PUBLIC NetlistWriter
-{
+class DB_PUBLIC NetlistWriter {
 public:
-  NetlistWriter () { }
-  virtual ~NetlistWriter () { }
+  NetlistWriter() {}
+  virtual ~NetlistWriter() {}
 
-  virtual void write (tl::OutputStream &stream, const db::Netlist &netlist, const std::string &description = std::string ()) = 0;
+  virtual void write(tl::OutputStream &stream, const db::Netlist &netlist,
+                     const std::string &description = std::string()) = 0;
 };
 
-}
+} // namespace db
 
 #endif

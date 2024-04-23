@@ -27,42 +27,39 @@
 
 #include "layuiCommon.h"
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief An interface providing the "busy" methods
  *
  *  There must be one provider implementing this interface.
  */
-class LAYUI_PUBLIC BusyMode
-{
+class LAYUI_PUBLIC BusyMode {
 public:
-  BusyMode ();
-  virtual ~BusyMode ();
+  BusyMode();
+  virtual ~BusyMode();
 
-  virtual bool is_busy () const = 0;
-  virtual void enter_busy_mode (bool bm) = 0;
+  virtual bool is_busy() const = 0;
+  virtual void enter_busy_mode(bool bm) = 0;
 };
 
 /**
  *  @brief A RAII implementation of the busy mode setter
  */
-class LAYUI_PUBLIC BusySection
-{
+class LAYUI_PUBLIC BusySection {
 public:
-  BusySection ();
-  ~BusySection ();
+  BusySection();
+  ~BusySection();
 
-  static bool is_busy ();
+  static bool is_busy();
 
 private:
   bool m_previous_mode;
   BusyMode *mp_busy_mode;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

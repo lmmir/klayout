@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layEnhancedTabWidget
 #define HDR_layEnhancedTabWidget
 
@@ -29,36 +28,32 @@
 class QActionGroup;
 class QToolButton;
 
-namespace lay
-{
+namespace lay {
 
-class EnhancedTabBar
-  : public QTabBar
-{
-Q_OBJECT
+class EnhancedTabBar : public QTabBar {
+  Q_OBJECT
 
 public:
-  EnhancedTabBar (QWidget *parent);
-  ~EnhancedTabBar () override;
+  EnhancedTabBar(QWidget *parent);
+  ~EnhancedTabBar() override;
 
-  QToolButton *menu_button () { return mp_list_tool_button; }
+  QToolButton *menu_button() { return mp_list_tool_button; }
 
 protected:
-  void tabInserted (int index) override;
-  void tabRemoved (int index) override;
+  void tabInserted(int index) override;
+  void tabRemoved(int index) override;
 
 private slots:
-  void list_action_group_triggered (QAction* action);
-  void list_tool_button_menu_about_to_show ();
+  void list_action_group_triggered(QAction *action);
+  void list_tool_button_menu_about_to_show();
 
 private:
   QActionGroup *mp_list_action_group;
   QToolButton *mp_list_tool_button;
 
-  void update_list_button_visibility ();
+  void update_list_button_visibility();
 };
 
-}
+} // namespace lay
 
 #endif
-

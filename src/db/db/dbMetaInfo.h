@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_dbMetaInfo
 #define HDR_dbMetaInfo
 
@@ -28,8 +27,7 @@
 #include "dbMemStatistics.h"
 #include <string>
 
-namespace db
-{
+namespace db {
 
 //  Switch for version-agnostic code
 #define KLAYOUT_META_INFO_V2
@@ -42,17 +40,13 @@ namespace db
  *  "description" is a "speaking" description of the information.
  *  "value" is the value of the specific part of meta information.
  */
-struct DB_PUBLIC MetaInfo
-{
-  MetaInfo (const std::string &d, const tl::Variant &v, bool p = false)
-    : description (d), value (v), persisted (p)
-  {
+struct DB_PUBLIC MetaInfo {
+  MetaInfo(const std::string &d, const tl::Variant &v, bool p = false)
+      : description(d), value(v), persisted(p) {
     //  .. nothing else ..
   }
 
-  MetaInfo ()
-    : persisted (false)
-  {
+  MetaInfo() : persisted(false) {
     //  .. nothing else ..
   }
 
@@ -64,13 +58,12 @@ struct DB_PUBLIC MetaInfo
 /**
  *  @brief Collect memory statistics
  */
-inline void mem_stat (MemStatistics *stat, MemStatistics::purpose_t purpose, int cat, const MetaInfo &v, bool no_self, void *parent)
-{
-  db::mem_stat (stat, purpose, cat, v.description, no_self, parent);
-  db::mem_stat (stat, purpose, cat, v.value, no_self, parent);
+inline void mem_stat(MemStatistics *stat, MemStatistics::purpose_t purpose,
+                     int cat, const MetaInfo &v, bool no_self, void *parent) {
+  db::mem_stat(stat, purpose, cat, v.description, no_self, parent);
+  db::mem_stat(stat, purpose, cat, v.value, no_self, parent);
 }
 
-}
+} // namespace db
 
 #endif
-

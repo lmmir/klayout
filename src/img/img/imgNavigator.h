@@ -27,45 +27,41 @@
 
 #include <QFrame>
 
-namespace lay
-{
-  class Dispatcher;
-  class LayoutViewWidget;
-  class LayoutView;
-  class ZoomService;
-  class ViewService;
-}
+namespace lay {
+class Dispatcher;
+class LayoutViewWidget;
+class LayoutView;
+class ZoomService;
+class ViewService;
+} // namespace lay
 
-namespace img
-{
+namespace img {
 
 class Object;
 
 /**
- *  @brief The navigator window 
+ *  @brief The navigator window
  */
-class Navigator 
-  : public QFrame
-{
-Q_OBJECT
+class Navigator : public QFrame {
+  Q_OBJECT
 
 public:
-  Navigator (QWidget *parent);
-  ~Navigator ();
+  Navigator(QWidget *parent);
+  ~Navigator();
 
-  void background_color (QColor c);
-  img::Object *setup (lay::Dispatcher *root, img::Object *img);
+  void background_color(QColor c);
+  img::Object *setup(lay::Dispatcher *root, img::Object *img);
 
-  lay::LayoutView *view ();
+  lay::LayoutView *view();
 
-  void activate_service (lay::ViewService *service);
+  void activate_service(lay::ViewService *service);
 
 private:
   lay::LayoutViewWidget *mp_view;
   lay::ZoomService *mp_zoom_service;
 };
 
-}
+} // namespace img
 
 #endif
 

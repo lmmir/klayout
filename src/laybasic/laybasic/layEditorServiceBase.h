@@ -20,125 +20,110 @@
 
 */
 
-
 #ifndef HDR_layEditorServiceBase
 #define HDR_layEditorServiceBase
 
-#include "laybasicCommon.h"
 #include "layEditable.h"
-#include "layViewObject.h"
 #include "layPlugin.h"
+#include "layViewObject.h"
+#include "laybasicCommon.h"
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief A generic base class for an editor service
  *
  *  This class offers common services such as a mouse cursor.
  */
-class LAYBASIC_PUBLIC EditorServiceBase
-  : public lay::ViewService,
-    public lay::Editable,
-    public lay::Plugin
-{
-public: 
+class LAYBASIC_PUBLIC EditorServiceBase : public lay::ViewService,
+                                          public lay::Editable,
+                                          public lay::Plugin {
+public:
   /**
    *  @brief Constructor
    */
-  EditorServiceBase (lay::LayoutViewBase *view);
+  EditorServiceBase(lay::LayoutViewBase *view);
 
   /**
    *  @brief Destructor
    */
-  ~EditorServiceBase ();
+  ~EditorServiceBase();
 
   /**
    *  @brief Obtain the lay::ViewService interface
    */
-  lay::ViewService *view_service_interface ()
-  {
-    return this;
-  }
+  lay::ViewService *view_service_interface() { return this; }
 
   /**
    *  @brief Obtain the lay::Editable interface
    */
-  lay::Editable *editable_interface ()
-  {
-    return this;
-  }
+  lay::Editable *editable_interface() { return this; }
 
   /**
    *  @brief Adds a mouse cursor to the given point
    */
-  void add_mouse_cursor (const db::DPoint &pt, bool emphasize = false);
+  void add_mouse_cursor(const db::DPoint &pt, bool emphasize = false);
 
   /**
    *  @brief Adds a mouse cursor to the given point in layout space
    */
-  void add_mouse_cursor (const db::Point &pt, unsigned int cv_index, const db::ICplxTrans &gt, const std::vector<db::DCplxTrans> &tv, bool emphasize = false);
+  void add_mouse_cursor(const db::Point &pt, unsigned int cv_index,
+                        const db::ICplxTrans &gt,
+                        const std::vector<db::DCplxTrans> &tv,
+                        bool emphasize = false);
 
   /**
    *  @brief Adds an edge marker for the given edge
    */
-  void add_edge_marker (const db::DEdge &e, bool emphasize = false);
+  void add_edge_marker(const db::DEdge &e, bool emphasize = false);
 
   /**
    *  @brief Adds an edge marker for the given edge in layout space
    */
-  void add_edge_marker (const db::Edge &e, unsigned int cv_index, const db::ICplxTrans &gt, const std::vector<db::DCplxTrans> &tv, bool emphasize = false);
+  void add_edge_marker(const db::Edge &e, unsigned int cv_index,
+                       const db::ICplxTrans &gt,
+                       const std::vector<db::DCplxTrans> &tv,
+                       bool emphasize = false);
 
   /**
    *  @brief Resets the mouse cursor
    */
-  void clear_mouse_cursors ();
+  void clear_mouse_cursors();
 
   /**
    *  @brief Provides a nice mouse tracking cursor from the given snap details
    */
-  void mouse_cursor_from_snap_details (const lay::PointSnapToObjectResult &snap_details);
+  void mouse_cursor_from_snap_details(
+      const lay::PointSnapToObjectResult &snap_details);
 
   /**
    *  @brief Gets the tracking cursor color
    */
-  tl::Color tracking_cursor_color () const
-  {
-    return m_cursor_color;
-  }
+  tl::Color tracking_cursor_color() const { return m_cursor_color; }
 
   /**
    *  @brief Gets a value indicating whether the tracking cursor is enabled
    */
-  bool tracking_cursor_enabled () const
-  {
-    return m_cursor_enabled;
-  }
+  bool tracking_cursor_enabled() const { return m_cursor_enabled; }
 
   /**
    *  @brief Gets a value indicating whether a cursor position it set
    */
-  virtual bool has_tracking_position () const
-  {
-    return m_has_tracking_position;
-  }
+  virtual bool has_tracking_position() const { return m_has_tracking_position; }
 
   /**
    *  @brief Gets the cursor position if one is set
    */
-  virtual db::DPoint tracking_position () const
-  {
-    return m_tracking_position;
-  }
+  virtual db::DPoint tracking_position() const { return m_tracking_position; }
 
   /**
    *  @brief Shows an error where an exception is not applicable
    */
-  void show_error (tl::Exception &ex);
+  void show_error(tl::Exception &ex);
 
 protected:
-  virtual bool configure (const std::string &name, const std::string &value);
-  virtual void deactivated ();
+  virtual bool configure(const std::string &name, const std::string &value);
+  virtual void deactivated();
 
 private:
   //  The marker representing the mouse cursor
@@ -150,7 +135,6 @@ private:
   db::DPoint m_tracking_position;
 };
 
-}
+} // namespace lay
 
 #endif
-

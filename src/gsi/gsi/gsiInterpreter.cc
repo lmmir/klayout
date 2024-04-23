@@ -22,21 +22,17 @@
 
 #include "gsiInterpreter.h"
 
-namespace gsi
-{
+namespace gsi {
 
 GSI_PUBLIC tl::Registrar<Interpreter> interpreters;
 
-Interpreter::Interpreter (int position, const char *name)
-  : tl::RegisteredClass<Interpreter> (this, position, name, false)
-{
+Interpreter::Interpreter(int position, const char *name)
+    : tl::RegisteredClass<Interpreter>(this, position, name, false) {
   //  .. nothing yet ..
 }
 
-Interpreter::~Interpreter ()
-{
+Interpreter::~Interpreter() {
   //  .. nothing yet ..
 }
 
-}
-
+} // namespace gsi

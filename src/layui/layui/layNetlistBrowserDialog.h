@@ -25,40 +25,35 @@
 #ifndef HDR_layNetlistBrowserDialog
 #define HDR_layNetlistBrowserDialog
 
-#include "layuiCommon.h"
 #include "layBrowser.h"
+#include "layColorPalette.h"
 #include "layNetlistBrowser.h"
 #include "layViewObject.h"
-#include "layColorPalette.h"
+#include "layuiCommon.h"
 #include "tlEvents.h"
 
-namespace Ui
-{
-  class NetlistBrowserDialog;
+namespace Ui {
+class NetlistBrowserDialog;
 }
 
-namespace db
-{
-  class LayoutToNetlist;
+namespace db {
+class LayoutToNetlist;
 }
 
-namespace lay
-{
+namespace lay {
 
 class NetlistObjectPath;
 class NetlistObjectsPath;
 
-class LAYUI_PUBLIC NetlistBrowserDialog
-  : public lay::Browser,
-    public lay::ViewService
-{
+class LAYUI_PUBLIC NetlistBrowserDialog : public lay::Browser,
+                                          public lay::ViewService {
   Q_OBJECT
 
 public:
-  NetlistBrowserDialog (lay::Dispatcher *root, lay::LayoutViewBase *view);
-  ~NetlistBrowserDialog ();
+  NetlistBrowserDialog(lay::Dispatcher *root, lay::LayoutViewBase *view);
+  ~NetlistBrowserDialog();
 
-  void load (int lay_index, int cv_index);
+  void load(int lay_index, int cv_index);
 
   /**
    *  @brief This event is emitted after the current database changed
@@ -67,25 +62,25 @@ public:
 
   /**
    *  @brief This event is emitted when a shape is probed
-   *  The first path is that of the layout, the second that of the schematic in case of a
-   *  LVS database.
+   *  The first path is that of the layout, the second that of the schematic in
+   * case of a LVS database.
    */
   tl::event<lay::NetlistObjectPath, lay::NetlistObjectPath> probe_event;
 
   /**
    *  @brief Gets the current database
    */
-  db::LayoutToNetlist *db ();
+  db::LayoutToNetlist *db();
 
   /**
    *  @brief Gets the current object's path
    */
-  const lay::NetlistObjectsPath &current_path () const;
+  const lay::NetlistObjectsPath &current_path() const;
 
   /**
    *  @brief Gets the selected nets
    */
-  const std::vector<lay::NetlistObjectsPath> &selected_paths () const;
+  const std::vector<lay::NetlistObjectsPath> &selected_paths() const;
 
   /**
    *  @brief An event indicating that the selection has changed
@@ -94,39 +89,38 @@ public:
 
 private:
   //  implementation of the lay::Browser interface
-  virtual void activated ();
-  virtual void deactivated ();
+  virtual void activated();
+  virtual void deactivated();
 
-  virtual bool configure (const std::string &name, const std::string &value);
+  virtual bool configure(const std::string &name, const std::string &value);
 
-  virtual bool mouse_move_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool mouse_click_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual lay::ViewService *view_service_interface ();
+  virtual bool mouse_move_event(const db::DPoint &p, unsigned int buttons,
+                                bool prio);
+  virtual bool mouse_click_event(const db::DPoint &p, unsigned int buttons,
+                                 bool prio);
+  virtual lay::ViewService *view_service_interface();
 
   //  implementation of the lay::Plugin interface
-  virtual void menu_activated (const std::string &symbol);
+  virtual void menu_activated(const std::string &symbol);
 
-  void cellviews_changed ();
-  void cellview_changed (int index);
-  void l2ndbs_changed ();
+  void cellviews_changed();
+  void cellview_changed(int index);
+  void l2ndbs_changed();
 
-  void selection_changed ()
-  {
-    selection_changed_event ();
-  }
+  void selection_changed() { selection_changed_event(); }
 
 public slots:
-  void cv_index_changed (int);
-  void l2ndb_index_changed (int);
-  void saveas_clicked ();
-  void export_clicked ();
-  void reload_clicked ();
-  void open_clicked ();
-  void unload_clicked ();
-  void unload_all_clicked ();
-  void configure_clicked ();
-  void probe_button_pressed ();
-  void sticky_mode_clicked ();
+  void cv_index_changed(int);
+  void l2ndb_index_changed(int);
+  void saveas_clicked();
+  void export_clicked();
+  void reload_clicked();
+  void open_clicked();
+  void unload_clicked();
+  void unload_all_clicked();
+  void configure_clicked();
+  void probe_button_pressed();
+  void sticky_mode_clicked();
 
 private:
   Ui::NetlistBrowserDialog *mp_ui;
@@ -156,13 +150,13 @@ private:
   QAction *m_unload_all_action;
   QAction *m_reload_action;
 
-  void update_content ();
-  void release_mouse ();
-  void probe_net (const db::DPoint &p, bool trace_path);
+  void update_content();
+  void release_mouse();
+  void probe_net(const db::DPoint &p, bool trace_path);
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

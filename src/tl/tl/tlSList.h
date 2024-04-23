@@ -20,8 +20,6 @@
 
 */
 
-
-
 #ifndef HDR_tlSList
 #define HDR_tlSList
 
@@ -30,8 +28,7 @@
 #include <algorithm>
 #include <iterator>
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief A simple single-linked list implementation
@@ -46,14 +43,11 @@ namespace tl
  *  - empty
  */
 
-template <class T>
-class slist
-{
+template <class T> class slist {
 private:
-  struct node_type
-  {
-    node_type (const T &_t) : next (0), t (_t) { }
-    node_type (T &&_t) : next (0), t (_t) { }
+  struct node_type {
+    node_type(const T &_t) : next(0), t(_t) {}
+    node_type(T &&_t) : next(0), t(_t) {}
     node_type *next;
     T t;
   };
@@ -61,166 +55,124 @@ private:
 public:
   class const_iterator;
 
-  class iterator
-  {
+  class iterator {
   public:
     typedef std::forward_iterator_tag category;
     typedef T value_type;
     typedef T &reference;
     typedef T *pointer;
 
-    iterator (node_type *p = 0) : mp_p (p) { }
-    iterator operator++ () { mp_p = mp_p->next; return *this; }
-
-    T *operator-> () const
-    {
-      return &mp_p->t;
+    iterator(node_type *p = 0) : mp_p(p) {}
+    iterator operator++() {
+      mp_p = mp_p->next;
+      return *this;
     }
 
-    T &operator* () const
-    {
-      return mp_p->t;
-    }
+    T *operator->() const { return &mp_p->t; }
 
-    bool operator== (iterator other) const { return mp_p == other.mp_p; }
-    bool operator!= (iterator other) const { return mp_p != other.mp_p; }
+    T &operator*() const { return mp_p->t; }
+
+    bool operator==(iterator other) const { return mp_p == other.mp_p; }
+    bool operator!=(iterator other) const { return mp_p != other.mp_p; }
 
   private:
     friend class slist<T>::const_iterator;
     node_type *mp_p;
   };
 
-  class const_iterator
-  {
+  class const_iterator {
   public:
     typedef std::forward_iterator_tag category;
     typedef const T value_type;
     typedef const T &reference;
     typedef const T *pointer;
 
-    const_iterator (iterator i) : mp_p (i.mp_p) { }
-    const_iterator (const node_type *p = 0) : mp_p (p) { }
-    const_iterator operator++ () { mp_p = mp_p->next; return *this; }
-
-    const T *operator-> () const
-    {
-      return &mp_p->t;
+    const_iterator(iterator i) : mp_p(i.mp_p) {}
+    const_iterator(const node_type *p = 0) : mp_p(p) {}
+    const_iterator operator++() {
+      mp_p = mp_p->next;
+      return *this;
     }
 
-    const T &operator* () const
-    {
-      return mp_p->t;
-    }
+    const T *operator->() const { return &mp_p->t; }
 
-    bool operator== (const_iterator other) const { return mp_p == other.mp_p; }
-    bool operator!= (const_iterator other) const { return mp_p != other.mp_p; }
+    const T &operator*() const { return mp_p->t; }
+
+    bool operator==(const_iterator other) const { return mp_p == other.mp_p; }
+    bool operator!=(const_iterator other) const { return mp_p != other.mp_p; }
 
   private:
     const node_type *mp_p;
   };
 
-  slist ()
-    : mp_first (0), mp_last (0), m_size (0)
-  {
+  slist() : mp_first(0), mp_last(0), m_size(0) {
     //  .. nothing yet ..
   }
 
   template <class Iter>
-  slist (Iter from, Iter to)
-    : mp_first (0), mp_last (0), m_size (0)
-  {
+  slist(Iter from, Iter to) : mp_first(0), mp_last(0), m_size(0) {
     for (Iter i = from; i != to; ++i) {
-      push_back (*i);
+      push_back(*i);
     }
   }
 
-  slist (const slist<T> &other)
-    : mp_first (0), mp_last (0), m_size (0)
-  {
-    for (auto i = other.begin (); i != other.end (); ++i) {
-      push_back (*i);
+  slist(const slist<T> &other) : mp_first(0), mp_last(0), m_size(0) {
+    for (auto i = other.begin(); i != other.end(); ++i) {
+      push_back(*i);
     }
   }
 
-  slist (slist<T> &&other)
-    : mp_first (0), mp_last (0), m_size (0)
-  {
-    std::swap (mp_first, other.mp_first);
-    std::swap (mp_last, other.mp_last);
-    std::swap (m_size, other.m_size);
+  slist(slist<T> &&other) : mp_first(0), mp_last(0), m_size(0) {
+    std::swap(mp_first, other.mp_first);
+    std::swap(mp_last, other.mp_last);
+    std::swap(m_size, other.m_size);
   }
 
-  slist<T> &operator= (const slist<T> &other)
-  {
+  slist<T> &operator=(const slist<T> &other) {
     if (this != &other) {
-      clear ();
-      for (const_iterator i = other.begin (); i != other.end (); ++i) {
-        push_back (*i);
+      clear();
+      for (const_iterator i = other.begin(); i != other.end(); ++i) {
+        push_back(*i);
       }
     }
     return *this;
   }
 
-  slist<T> &operator= (slist<T> &&other)
-  {
-    clear ();
-    std::swap (mp_first, other.mp_first);
-    std::swap (mp_last, other.mp_last);
-    std::swap (m_size, other.m_size);
+  slist<T> &operator=(slist<T> &&other) {
+    clear();
+    std::swap(mp_first, other.mp_first);
+    std::swap(mp_last, other.mp_last);
+    std::swap(m_size, other.m_size);
     return *this;
   }
 
-  ~slist ()
-  {
-    clear ();
-  }
+  ~slist() { clear(); }
 
-  iterator begin ()
-  {
-    return iterator (mp_first);
-  }
+  iterator begin() { return iterator(mp_first); }
 
-  iterator end ()
-  {
-    return iterator (0);
-  }
+  iterator end() { return iterator(0); }
 
-  const_iterator begin () const
-  {
-    return const_iterator (mp_first);
-  }
+  const_iterator begin() const { return const_iterator(mp_first); }
 
-  const_iterator end () const
-  {
-    return const_iterator (0);
-  }
+  const_iterator end() const { return const_iterator(0); }
 
-  size_t size () const
-  {
-    return m_size;
-  }
+  size_t size() const { return m_size; }
 
-  bool empty () const
-  {
-    return mp_first == 0;
-  }
+  bool empty() const { return mp_first == 0; }
 
-  void clear ()
-  {
-    while (! empty ()) {
-      pop_front ();
+  void clear() {
+    while (!empty()) {
+      pop_front();
     }
   }
 
-  void swap (slist<T> &other)
-  {
-    std::swap (mp_first, other.mp_first);
-    std::swap (mp_last, other.mp_last);
-    std::swap (m_size, other.m_size);
+  void swap(slist<T> &other) {
+    std::swap(mp_first, other.mp_first);
+    std::swap(mp_last, other.mp_last);
+    std::swap(m_size, other.m_size);
   }
 
-  void pop_front ()
-  {
+  void pop_front() {
     if (mp_first) {
       node_type *n = mp_first;
       if (n == mp_last) {
@@ -233,53 +185,28 @@ public:
     }
   }
 
-  T &front ()
-  {
-    return mp_first->t;
-  }
+  T &front() { return mp_first->t; }
 
-  const T &front () const
-  {
-    return mp_first->t;
-  }
+  const T &front() const { return mp_first->t; }
 
-  T &back ()
-  {
-    return mp_last->t;
-  }
+  T &back() { return mp_last->t; }
 
-  const T &back () const
-  {
-    return mp_last->t;
-  }
+  const T &back() const { return mp_last->t; }
 
-  void push_front (const T &t)
-  {
-    push_front_impl (new node_type (t));
-  }
+  void push_front(const T &t) { push_front_impl(new node_type(t)); }
 
-  void push_front (T &&t)
-  {
-    push_front_impl (new node_type (t));
-  }
+  void push_front(T &&t) { push_front_impl(new node_type(t)); }
 
-  void push_back (const T &t)
-  {
-    push_back_impl (new node_type (t));
-  }
+  void push_back(const T &t) { push_back_impl(new node_type(t)); }
 
-  void push_back (T &&t)
-  {
-    push_back_impl (new node_type (t));
-  }
+  void push_back(T &&t) { push_back_impl(new node_type(t)); }
 
-  void splice (slist<T> &other)
-  {
-    if (! other.mp_first) {
+  void splice(slist<T> &other) {
+    if (!other.mp_first) {
       return;
     }
 
-    if (! mp_first) {
+    if (!mp_first) {
       mp_first = other.mp_first;
     } else {
       mp_last->next = other.mp_first;
@@ -296,8 +223,7 @@ private:
   node_type *mp_first, *mp_last;
   size_t m_size;
 
-  void push_front_impl (node_type *n)
-  {
+  void push_front_impl(node_type *n) {
     if (mp_first) {
       n->next = mp_first;
       mp_first = n;
@@ -307,8 +233,7 @@ private:
     ++m_size;
   }
 
-  void push_back_impl (node_type *n)
-  {
+  void push_back_impl(node_type *n) {
     if (mp_last) {
       mp_last->next = n;
       mp_last = n;
@@ -319,6 +244,6 @@ private:
   }
 };
 
-}
+} // namespace tl
 
 #endif

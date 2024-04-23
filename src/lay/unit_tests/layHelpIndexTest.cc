@@ -20,14 +20,12 @@
 
 */
 
-
 #include "layHelpSource.h"
 #include "tlUnitTest.h"
 
-TEST (1)
-{
+TEST(1) {
   //  tests whether the index can be built - i.e. all XML files
   //  are valid.
-  lay::HelpSource help_source (false /*don't load index file*/);
-  help_source.scan ();
+  lay::HelpSource help_source(false /*don't load index file*/);
+  help_source.scan();
 }

@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_imgForceLink
 #define HDR_imgForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the img module
  */
 
-namespace img
-{
-  IMG_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace img {
+IMG_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace img
 
 #endif
-

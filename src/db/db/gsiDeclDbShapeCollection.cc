@@ -20,17 +20,16 @@
 
 */
 
-#include "gsiDecl.h"
 #include "dbShapeCollection.h"
+#include "gsiDecl.h"
 
-namespace gsi
-{
+namespace gsi {
 
-Class<db::ShapeCollection> decl_dbShapeCollection ("db", "ShapeCollection",
-  gsi::Methods (),
-  "@brief A base class for the shape collections (\\Region, \\Edges, \\EdgePairs and \\Texts)\n"
-  "\n"
-  "This class has been introduced in version 0.27."
-);
+Class<db::ShapeCollection>
+    decl_dbShapeCollection("db", "ShapeCollection", gsi::Methods(),
+                           "@brief A base class for the shape collections "
+                           "(\\Region, \\Edges, \\EdgePairs and \\Texts)\n"
+                           "\n"
+                           "This class has been introduced in version 0.27.");
 
 }

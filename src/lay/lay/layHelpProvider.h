@@ -20,77 +20,73 @@
 
 */
 
-
 #ifndef HDR_layHelpProvider
 #define HDR_layHelpProvider
 
 #include <QDomDocument>
 #include <string>
 
-namespace lay
-{
+namespace lay {
 
 class HelpSource;
 
 /**
  *  @brief A provider for documentation in the help system
  *
- *  A help provider is responsible for providing documention of a certain 
+ *  A help provider is responsible for providing documention of a certain
  *  category. That can be written documentation or generated documentation.
  *  Each help provider provides documents under a certain folder, i.e.
  *  "doc/..".
- *  It must be able to deliver a keyword list for the search system and 
+ *  It must be able to deliver a keyword list for the search system and
  *  a DOM model for a given URL below that folder.
  */
-class HelpProvider
-{
+class HelpProvider {
 public:
   /**
    *  @brief Constructor
    */
-  HelpProvider ();
+  HelpProvider();
 
   /**
    *  @brief Destructor
    */
-  virtual ~HelpProvider () { }
+  virtual ~HelpProvider() {}
 
   /**
    *  @brief Gets the main entry page for this category
    *
    *  @return The documentation path for the main entry point for this provider.
    */
-  virtual std::string index (lay::HelpSource *src) const
-  {
-    return "/" + folder (src) + "/index.xml";
+  virtual std::string index(lay::HelpSource *src) const {
+    return "/" + folder(src) + "/index.xml";
   }
 
   /**
    *  @brief Gets the DOM for a given URL
    *
-   *  The DOM is the document in XML form which can be converted to HTML form for example
-   *  or scanned for keywords.
+   *  The DOM is the document in XML form which can be converted to HTML form
+   * for example or scanned for keywords.
    */
-  virtual QDomDocument get (lay::HelpSource * /*src*/, const std::string & /*path*/) const
-  {
-    return QDomDocument ();
+  virtual QDomDocument get(lay::HelpSource * /*src*/,
+                           const std::string & /*path*/) const {
+    return QDomDocument();
   }
-  
+
   /**
-   *  @brief Delivers the folder name below which the help documents of this provider are located
+   *  @brief Delivers the folder name below which the help documents of this
+   * provider are located
    *
-   *  If this string is "doc" for example, all help documents will be looked up under
-   *  "doc/...".
+   *  If this string is "doc" for example, all help documents will be looked up
+   * under "doc/...".
    */
-  virtual std::string folder (lay::HelpSource * /*src*/) const = 0;
+  virtual std::string folder(lay::HelpSource * /*src*/) const = 0;
 
   /**
    *  @brief Gets the title for this category
    */
-  virtual std::string title (lay::HelpSource * /*src*/) const = 0;
+  virtual std::string title(lay::HelpSource * /*src*/) const = 0;
 };
 
-}
+} // namespace lay
 
 #endif
-

@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layControlWidgetStack
 #define HDR_layControlWidgetStack
 
@@ -30,53 +29,41 @@
 
 class QLabel;
 
-namespace lay
-{
+namespace lay {
 
-class ControlWidgetStack
-  : public QFrame
-{
+class ControlWidgetStack : public QFrame {
 public:
-  ControlWidgetStack (QWidget *parent = 0, const char *name = 0, bool size_follows_content = false);
+  ControlWidgetStack(QWidget *parent = 0, const char *name = 0,
+                     bool size_follows_content = false);
 
-  void focusInEvent (QFocusEvent *);
+  void focusInEvent(QFocusEvent *);
 
-  QSize sizeHint () const;
+  QSize sizeHint() const;
 
-  void add_widget (QWidget *w);
-  void remove_widget (size_t index);
-  void raise_widget (size_t index);
-  QWidget *widget (size_t index);
-  QWidget *background_widget ();
+  void add_widget(QWidget *w);
+  void remove_widget(size_t index);
+  void raise_widget(size_t index);
+  QWidget *widget(size_t index);
+  QWidget *background_widget();
 
-  QWidget *currentWidget () const
-  {
-    return mp_current_widget;
-  }
+  QWidget *currentWidget() const { return mp_current_widget; }
 
-  size_t count () const
-  {
-    return m_widgets.size ();
-  }
+  size_t count() const { return m_widgets.size(); }
 
 protected:
-  virtual void resizeEvent (QResizeEvent *)
-  {
-    resize_children ();
-  }
+  virtual void resizeEvent(QResizeEvent *) { resize_children(); }
 
-  void resize_children ();
-  void update_geometry ();
+  void resize_children();
+  void update_geometry();
 
-  bool event (QEvent *e);
+  bool event(QEvent *e);
 
-
-  std::vector <QWidget *> m_widgets;
+  std::vector<QWidget *> m_widgets;
   QWidget *mp_current_widget;
   QLabel *mp_bglabel;
   bool m_size_follows_content;
 };
 
-}
+} // namespace lay
 
 #endif

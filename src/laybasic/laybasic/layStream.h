@@ -27,25 +27,23 @@
 
 #include "laybasicCommon.h"
 
+#include "dbLoadLayoutOptions.h"
 #include "layPlugin.h"
 #include "tlXMLParser.h"
 #include "tlXMLWriter.h"
-#include "dbLoadLayoutOptions.h"
 
 #include <QFrame>
 
-namespace db
-{
-  class StreamFormatDeclaration;
-  class FormatSpecificWriterOptions;
-  class FormatSpecificReaderOptions;
-  class LoadLayoutOptions;
-  class SaveLayoutOptions;
-  class Technology;
-}
+namespace db {
+class StreamFormatDeclaration;
+class FormatSpecificWriterOptions;
+class FormatSpecificReaderOptions;
+class LoadLayoutOptions;
+class SaveLayoutOptions;
+class Technology;
+} // namespace db
 
-namespace lay
-{
+namespace lay {
 
 class Dispatcher;
 class LayoutHandle;
@@ -56,13 +54,9 @@ class LayoutHandle;
  *  This interface defines some services the configuration page
  *  must provide (i.e. setup, commit)
  */
-class LAYBASIC_PUBLIC StreamWriterOptionsPage 
-  : public QFrame
-{
+class LAYBASIC_PUBLIC StreamWriterOptionsPage : public QFrame {
 public:
-  StreamWriterOptionsPage (QWidget *parent) 
-    : QFrame (parent)
-  {
+  StreamWriterOptionsPage(QWidget *parent) : QFrame(parent) {
     // .. nothing else ..
   }
 
@@ -73,21 +67,21 @@ public:
    *  Plugin object provided and load the widgets accordingly.
    *  The options object can be cast to the specific format object.
    */
-  virtual void setup (const db::FormatSpecificWriterOptions * /*options*/, const db::Technology * /*tech*/)
-  {
+  virtual void setup(const db::FormatSpecificWriterOptions * /*options*/,
+                     const db::Technology * /*tech*/) {
     //  the default implementation does nothing.
   }
 
   /**
    *  @brief Commit the page
    *
-   *  The implementation is supposed to read the configuration (and 
+   *  The implementation is supposed to read the configuration (and
    *  throw exceptions if the configuration something is invalid)
-   *  and commit the changes through 
+   *  and commit the changes through
    *  The options object can be cast to the specific format object.
    */
-  virtual void commit (db::FormatSpecificWriterOptions * /*options*/, const db::Technology * /*tech*/, bool /*gzip*/)
-  {
+  virtual void commit(db::FormatSpecificWriterOptions * /*options*/,
+                      const db::Technology * /*tech*/, bool /*gzip*/) {
     //  the default implementation does nothing.
   }
 };
@@ -98,13 +92,9 @@ public:
  *  This interface defines some services the configuration page
  *  must provide (i.e. setup, commit)
  */
-class LAYBASIC_PUBLIC StreamReaderOptionsPage 
-  : public QFrame
-{
+class LAYBASIC_PUBLIC StreamReaderOptionsPage : public QFrame {
 public:
-  StreamReaderOptionsPage (QWidget *parent) 
-    : QFrame (parent)
-  {
+  StreamReaderOptionsPage(QWidget *parent) : QFrame(parent) {
     // .. nothing else ..
   }
 
@@ -115,91 +105,83 @@ public:
    *  Plugin object provided and load the widgets accordingly.
    *  The options object can be cast to the specific format object.
    */
-  virtual void setup (const db::FormatSpecificReaderOptions * /*options*/, const db::Technology * /*tech*/)
-  {
+  virtual void setup(const db::FormatSpecificReaderOptions * /*options*/,
+                     const db::Technology * /*tech*/) {
     //  the default implementation does nothing.
   }
 
   /**
    *  @brief Commit the page
    *
-   *  The implementation is supposed to read the configuration (and 
+   *  The implementation is supposed to read the configuration (and
    *  throw exceptions if the configuration something is invalid)
-   *  and commit the changes through 
+   *  and commit the changes through
    *  The options object can be cast to the specific format object.
    */
-  virtual void commit (db::FormatSpecificReaderOptions * /*options*/, const db::Technology * /*tech*/)
-  {
+  virtual void commit(db::FormatSpecificReaderOptions * /*options*/,
+                      const db::Technology * /*tech*/) {
     //  the default implementation does nothing.
   }
 };
 
 /**
- *  This plugin specializations add the stream readers and writers to the configuration
- *  system. The plugins can provide menu entries, configuration parameters, configuration
- *  pages etc.
- */  
-  
-class LAYBASIC_PUBLIC StreamPluginDeclarationBase
-  : public PluginDeclaration
-{
+ *  This plugin specializations add the stream readers and writers to the
+ * configuration system. The plugins can provide menu entries, configuration
+ * parameters, configuration pages etc.
+ */
+
+class LAYBASIC_PUBLIC StreamPluginDeclarationBase : public PluginDeclaration {
 public:
-  StreamPluginDeclarationBase (const std::string &format_name)
-    : PluginDeclaration (), m_format_name (format_name), mp_stream_fmt (0)
-  { 
+  StreamPluginDeclarationBase(const std::string &format_name)
+      : PluginDeclaration(), m_format_name(format_name), mp_stream_fmt(0) {
     //  .. nothing yet ..
   }
 
-  db::StreamFormatDeclaration &stream_fmt ();
+  db::StreamFormatDeclaration &stream_fmt();
 
-  const db::StreamFormatDeclaration &stream_fmt () const
-  {
+  const db::StreamFormatDeclaration &stream_fmt() const {
     //  dirty hack:
-    return const_cast <StreamPluginDeclarationBase *> (this)->stream_fmt ();
+    return const_cast<StreamPluginDeclarationBase *>(this)->stream_fmt();
   }
 
-  const std::string &format_name () const
-  {
-    return m_format_name;
-  }
+  const std::string &format_name() const { return m_format_name; }
 
 private:
   std::string m_format_name;
   db::StreamFormatDeclaration *mp_stream_fmt;
 
   //  don't allow overrides - use a special configuration page for that purpose.
-  virtual ConfigPage *config_page (QWidget * /*parent*/, std::string & /*title*/) const
-  {
+  virtual ConfigPage *config_page(QWidget * /*parent*/,
+                                  std::string & /*title*/) const {
     return 0;
   }
 };
-  
+
 /**
  *  @brief A specialization of Plugin declaration for stream reader plugins
  */
 class LAYBASIC_PUBLIC StreamReaderPluginDeclaration
-  : public StreamPluginDeclarationBase
-{
+    : public StreamPluginDeclarationBase {
 public:
   /**
    *  @brief Constructor
    */
-  StreamReaderPluginDeclaration (const std::string &format_name)
-    : StreamPluginDeclarationBase (format_name)
-  { 
+  StreamReaderPluginDeclaration(const std::string &format_name)
+      : StreamPluginDeclarationBase(format_name) {
     //  .. nothing yet ..
   }
 
   /**
    *  @brief Gets the plugin for a given format name
    */
-  static const StreamReaderPluginDeclaration *plugin_for_format (const std::string &format_name);
+  static const StreamReaderPluginDeclaration *
+  plugin_for_format(const std::string &format_name);
 
   /**
-   *  @brief Create a format specific options page 
+   *  @brief Create a format specific options page
    */
-  virtual StreamReaderOptionsPage *format_specific_options_page (QWidget * /*parent*/) const 
-  {
+  virtual StreamReaderOptionsPage *
+  format_specific_options_page(QWidget * /*parent*/) const {
     return 0;
   }
 
@@ -208,8 +190,7 @@ public:
    *
    *  This method is supposed to create a format specific options object.
    */
-  virtual db::FormatSpecificReaderOptions *create_specific_options () const
-  {
+  virtual db::FormatSpecificReaderOptions *create_specific_options() const {
     return 0;
   }
 };
@@ -218,62 +199,59 @@ public:
  *  @brief A specialization of Plugin declaration for stream reader plugins
  */
 class LAYBASIC_PUBLIC StreamWriterPluginDeclaration
-  : public StreamPluginDeclarationBase
-{
+    : public StreamPluginDeclarationBase {
 public:
-  StreamWriterPluginDeclaration (const std::string &format_name)
-    : StreamPluginDeclarationBase (format_name)
-  { 
+  StreamWriterPluginDeclaration(const std::string &format_name)
+      : StreamPluginDeclarationBase(format_name) {
     //  .. nothing yet ..
   }
 
   /**
    *  @brief Gets the plugin for a given format name
    */
-  static const StreamWriterPluginDeclaration *plugin_for_format (const std::string &format_name);
+  static const StreamWriterPluginDeclaration *
+  plugin_for_format(const std::string &format_name);
 
   /**
-   *  @brief If the options are shared with another declaration, returns this name of this declaration here
+   *  @brief If the options are shared with another declaration, returns this
+   * name of this declaration here
    */
-  virtual const char *options_alias () const
-  {
-    return 0;
-  }
+  virtual const char *options_alias() const { return 0; }
 
   /**
-   *  @brief Create a format specific options page 
+   *  @brief Create a format specific options page
    */
-  virtual StreamWriterOptionsPage *format_specific_options_page (QWidget * /*parent*/) const 
-  {
+  virtual StreamWriterOptionsPage *
+  format_specific_options_page(QWidget * /*parent*/) const {
     return 0;
   }
 
   /**
    *  @brief Create a format specific options object from the configuration
    *
-   *  This method is supposed to create a format specific options object or return 0
-   *  if there is no such object.
+   *  This method is supposed to create a format specific options object or
+   * return 0 if there is no such object.
    */
-  virtual db::FormatSpecificWriterOptions *create_specific_options () const
-  {
+  virtual db::FormatSpecificWriterOptions *create_specific_options() const {
     return 0;
   }
 
   /**
    *  @brief Initialize the writer options from a layout handle
    *
-   *  The layout handle carries information about meta data read and similar. This
-   *  method gives the plugin a chance to modify the options based on the meta data
-   *  of the layout.
+   *  The layout handle carries information about meta data read and similar.
+   * This method gives the plugin a chance to modify the options based on the
+   * meta data of the layout.
    */
-  virtual void initialize_options_from_layout_handle (db::FormatSpecificWriterOptions * /*options*/, const lay::LayoutHandle & /*lh*/) const
-  {
+  virtual void initialize_options_from_layout_handle(
+      db::FormatSpecificWriterOptions * /*options*/,
+      const lay::LayoutHandle & /*lh*/) const {
     //  the default implementation does nothing.
   }
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

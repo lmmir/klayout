@@ -20,111 +20,104 @@
 
 */
 
-
 #include "tlVariant.h"
 #include "tlInternational.h"
 #include "tlString.h"
 
-#include <string.h>
-#include <limits>
 #include <cmath>
+#include <limits>
+#include <string.h>
 
 #if defined(HAVE_QT)
 
-# include <QVariant>
-# include <QStringList>
+#include <QStringList>
+#include <QVariant>
 
 //  the Qt classes supported by QVariant:
-# include <QBitArray>
-# include <QBitmap>
-# include <QBrush>
-# include <QByteArray>
-# include <QChar>
-# include <QColor>
-# include <QCursor>
-# include <QDate>
-# include <QDateTime>
-# if QT_VERSION >= 0x040600
-#   include <QEasingCurve>
-# endif
-# include <QFont>
-# include <QVariantHash>
-# include <QIcon>
-# include <QImage>
-# include <QKeySequence>
-# include <QLine>
-# include <QLineF>
-# include <QVariantList>
-# include <QLocale>
-# include <QTransform>
-# include <QMatrix4x4>
-# include <QPalette>
-# include <QPen>
-# include <QPixmap>
-# include <QPoint>
-# include <QPointF>
-# include <QPolygon>
-# include <QQuaternion>
-# include <QRect>
-# include <QRectF>
-# include <QRegExp>
-# include <QRegion>
-# include <QSize>
-# include <QSizeF>
-# include <QSizePolicy>
-# include <QString>
-# include <QStringList>
-# include <QTextFormat>
-# include <QTextLength>
-# include <QTime>
-# include <QUrl>
-# include <QVector2D>
-# include <QVector3D>
-# include <QVector4D>
+#include <QBitArray>
+#include <QBitmap>
+#include <QBrush>
+#include <QByteArray>
+#include <QChar>
+#include <QColor>
+#include <QCursor>
+#include <QDate>
+#include <QDateTime>
+#if QT_VERSION >= 0x040600
+#include <QEasingCurve>
+#endif
+#include <QFont>
+#include <QIcon>
+#include <QImage>
+#include <QKeySequence>
+#include <QLine>
+#include <QLineF>
+#include <QLocale>
+#include <QMatrix4x4>
+#include <QPalette>
+#include <QPen>
+#include <QPixmap>
+#include <QPoint>
+#include <QPointF>
+#include <QPolygon>
+#include <QQuaternion>
+#include <QRect>
+#include <QRectF>
+#include <QRegExp>
+#include <QRegion>
+#include <QSize>
+#include <QSizeF>
+#include <QSizePolicy>
+#include <QString>
+#include <QStringList>
+#include <QTextFormat>
+#include <QTextLength>
+#include <QTime>
+#include <QTransform>
+#include <QUrl>
+#include <QVariantHash>
+#include <QVariantList>
+#include <QVector2D>
+#include <QVector3D>
+#include <QVector4D>
 
 #endif
 
-namespace tl
-{
+namespace tl {
 
 // --------------------------------------------------------------------
 //  Helper for converting int128 from and to string
 
 #if defined(HAVE_64BIT_COORD)
 
-template <>
-TL_PUBLIC bool test_extractor_impl (tl::Extractor &ex, __int128 &v)
-{
+template <> TL_PUBLIC bool test_extractor_impl(tl::Extractor &ex, __int128 &v) {
   __int128 x = 0;
   bool neg = ex.test("-");
   while (*ex <= '9' && *ex >= '0') {
-    x = x * 10 + __int128 (*ex - '0');
+    x = x * 10 + __int128(*ex - '0');
     ++ex;
   }
   v = neg ? -x : x;
   return true;
 }
 
-template <>
-TL_PUBLIC void extractor_impl (tl::Extractor &ex, __int128 &v)
-{
-  if (! test_extractor_impl (ex, v)) {
-    ex.error (tl::to_string (QObject::tr ("Expected a value specification")));
+template <> TL_PUBLIC void extractor_impl(tl::Extractor &ex, __int128 &v) {
+  if (!test_extractor_impl(ex, v)) {
+    ex.error(tl::to_string(QObject::tr("Expected a value specification")));
   }
 }
 
-TL_PUBLIC std::string to_string (__int128 v)
-{
+TL_PUBLIC std::string to_string(__int128 v) {
   if (v < 0) {
-    return std::string ("-") + to_string (-v);
+    return std::string("-") + to_string(-v);
   }
- 
+
   std::string res;
   do {
-    res += '0' + char (v % __int128 (10));
-    v /= __int128 (10);
+    res += '0' + char(v % __int128(10));
+    v /= __int128(10);
   } while (v > 0);
-  std::reverse (res.begin (), res.end ());
+  std::reverse(res.begin(), res.end());
   return res;
 }
 
@@ -133,15 +126,11 @@ TL_PUBLIC std::string to_string (__int128 v)
 // --------------------------------------------------------------------
 //  Implementation of tl::VariantUserClassBase
 
-struct VariantUserClassTableKey 
-{
-  VariantUserClassTableKey (const std::type_info &t, bool c)
-    : type (&t), is_const (c)
-  {
-  }
+struct VariantUserClassTableKey {
+  VariantUserClassTableKey(const std::type_info &t, bool c)
+      : type(&t), is_const(c) {}
 
-  bool operator< (const VariantUserClassTableKey &k) const
-  {
+  bool operator<(const VariantUserClassTableKey &k) const {
     if (is_const != k.is_const) {
       return is_const < k.is_const;
     }
@@ -151,8 +140,7 @@ struct VariantUserClassTableKey
     return false;
   }
 
-  bool operator== (const VariantUserClassTableKey &k) const
-  {
+  bool operator==(const VariantUserClassTableKey &k) const {
     return is_const == k.is_const && type == k.type;
   }
 
@@ -161,22 +149,19 @@ struct VariantUserClassTableKey
 };
 
 static std::vector<const VariantUserClassBase *> *sp_classes = 0;
-static std::map<const VariantUserClassBase *, size_t> *sp_class_to_index = 0; 
-static std::map<std::pair<std::string, bool>, size_t> *sp_class_index_by_name = 0;
+static std::map<const VariantUserClassBase *, size_t> *sp_class_to_index = 0;
+static std::map<std::pair<std::string, bool>, size_t> *sp_class_index_by_name =
+    0;
 static std::map<VariantUserClassTableKey, size_t> *sp_class_table = 0;
-static std::map <std::string, const VariantUserClassBase *> s_user_type_by_name;
+static std::map<std::string, const VariantUserClassBase *> s_user_type_by_name;
 
-void
-VariantUserClassBase::clear_class_table ()
-{
-  s_user_type_by_name.clear ();
-}
+void VariantUserClassBase::clear_class_table() { s_user_type_by_name.clear(); }
 
-std::string 
-VariantUserClassBase::translate_class_name (const std::string &lc_clsname)
-{
-  //  Note: for pre-0.23 versions to be able to read PCells generated by 0.23 and further
-  //  (see #601), we need to use the old "complex type" names, specifically "layer" instead of "layerinfo".
+std::string
+VariantUserClassBase::translate_class_name(const std::string &lc_clsname) {
+  //  Note: for pre-0.23 versions to be able to read PCells generated by 0.23
+  //  and further (see #601), we need to use the old "complex type" names,
+  //  specifically "layer" instead of "layerinfo".
   if (lc_clsname == "layerinfo") {
     return "layer";
   } else {
@@ -184,19 +169,17 @@ VariantUserClassBase::translate_class_name (const std::string &lc_clsname)
   }
 }
 
-void 
-VariantUserClassBase::register_user_class (const std::string &name, const VariantUserClassBase *cls)
-{
-  s_user_type_by_name.insert (std::make_pair (name, cls));
+void VariantUserClassBase::register_user_class(
+    const std::string &name, const VariantUserClassBase *cls) {
+  s_user_type_by_name.insert(std::make_pair(name, cls));
 }
 
 const VariantUserClassBase *
-VariantUserClassBase::find_cls_by_name (const std::string &name) 
-{
-  tl_assert (! s_user_type_by_name.empty ());
+VariantUserClassBase::find_cls_by_name(const std::string &name) {
+  tl_assert(!s_user_type_by_name.empty());
 
-  auto s = s_user_type_by_name.find (tl::to_lower_case (name));
-  if (s == s_user_type_by_name.end ()) {
+  auto s = s_user_type_by_name.find(tl::to_lower_case(name));
+  if (s == s_user_type_by_name.end()) {
     return 0;
   }
 
@@ -205,95 +188,105 @@ VariantUserClassBase::find_cls_by_name (const std::string &name)
 
 //  type-info based interface
 
-const tl::VariantUserClassBase *VariantUserClassBase::instance (const std::type_info &type, bool is_const)
-{
-  tl_assert (sp_class_table != 0);
+const tl::VariantUserClassBase *
+VariantUserClassBase::instance(const std::type_info &type, bool is_const) {
+  tl_assert(sp_class_table != 0);
 
   const tl::VariantUserClassBase *inst = 0;
 
-  auto c = sp_class_table->find (VariantUserClassTableKey (type, is_const));
-  if (c == sp_class_table->end ()) {
+  auto c = sp_class_table->find(VariantUserClassTableKey(type, is_const));
+  if (c == sp_class_table->end()) {
 
-    //  fallback: lookup by name and update if required - sometimes, there may be two different type info objects for the same thing
-    auto c2i = sp_class_index_by_name->find (std::make_pair (std::string (type.name ()), is_const));
-    tl_assert (c2i != sp_class_index_by_name->end ());
-    sp_class_table->insert (std::make_pair (VariantUserClassTableKey (type, is_const), c2i->second));
-    inst = sp_classes->operator[] (c2i->second);
+    //  fallback: lookup by name and update if required - sometimes, there may
+    //  be two different type info objects for the same thing
+    auto c2i = sp_class_index_by_name->find(
+        std::make_pair(std::string(type.name()), is_const));
+    tl_assert(c2i != sp_class_index_by_name->end());
+    sp_class_table->insert(
+        std::make_pair(VariantUserClassTableKey(type, is_const), c2i->second));
+    inst = sp_classes->operator[](c2i->second);
 
   } else {
-    inst = sp_classes->operator[] (c->second);
+    inst = sp_classes->operator[](c->second);
   }
 
-  tl_assert (inst != 0);
+  tl_assert(inst != 0);
   return inst;
 }
 
-void VariantUserClassBase::register_instance (const tl::VariantUserClassBase *inst, const std::type_info &type, bool is_const)
-{
-  if (! sp_class_table) {
-    sp_class_table = new std::map<VariantUserClassTableKey, size_t> ();
+void VariantUserClassBase::register_instance(
+    const tl::VariantUserClassBase *inst, const std::type_info &type,
+    bool is_const) {
+  if (!sp_class_table) {
+    sp_class_table = new std::map<VariantUserClassTableKey, size_t>();
   }
-  if (! sp_classes) {
-    sp_classes = new std::vector<const tl::VariantUserClassBase *> ();
+  if (!sp_classes) {
+    sp_classes = new std::vector<const tl::VariantUserClassBase *>();
   }
-  if (! sp_class_index_by_name) {
-    sp_class_index_by_name = new std::map<std::pair<std::string, bool>, size_t> ();
+  if (!sp_class_index_by_name) {
+    sp_class_index_by_name =
+        new std::map<std::pair<std::string, bool>, size_t>();
   }
-  if (! sp_class_to_index) {
-    sp_class_to_index = new std::map<const VariantUserClassBase *, size_t> ();
+  if (!sp_class_to_index) {
+    sp_class_to_index = new std::map<const VariantUserClassBase *, size_t>();
   }
 
-  size_t index = sp_class_to_index->insert (std::make_pair (inst, sp_classes->size ())).first->second;
-  if (index == sp_classes->size ()) {
-    sp_classes->push_back (inst);
+  size_t index =
+      sp_class_to_index->insert(std::make_pair(inst, sp_classes->size()))
+          .first->second;
+  if (index == sp_classes->size()) {
+    sp_classes->push_back(inst);
   }
-  
-  (*sp_class_table)[VariantUserClassTableKey (type, is_const)] = index;
-  (*sp_class_index_by_name) [std::make_pair (std::string (type.name ()), is_const)] = index;
+
+  (*sp_class_table)[VariantUserClassTableKey(type, is_const)] = index;
+  (*sp_class_index_by_name)[std::make_pair(std::string(type.name()),
+                                           is_const)] = index;
 }
 
-void VariantUserClassBase::unregister_instance (const tl::VariantUserClassBase *inst, const std::type_info &type, bool is_const)
-{
+void VariantUserClassBase::unregister_instance(
+    const tl::VariantUserClassBase *inst, const std::type_info &type,
+    bool is_const) {
   if (sp_class_table) {
-    auto c = sp_class_table->find (VariantUserClassTableKey (type, is_const));
-    if (c != sp_class_table->end ()) {
-      if (sp_classes && c->second < sp_classes->size ()) {
-        sp_classes->operator[] (c->second) = 0;
-        while (!sp_classes->empty () && sp_classes->back () == 0) {
-          sp_classes->pop_back ();
+    auto c = sp_class_table->find(VariantUserClassTableKey(type, is_const));
+    if (c != sp_class_table->end()) {
+      if (sp_classes && c->second < sp_classes->size()) {
+        sp_classes->operator[](c->second) = 0;
+        while (!sp_classes->empty() && sp_classes->back() == 0) {
+          sp_classes->pop_back();
         }
       }
-      sp_class_table->erase (c);
+      sp_class_table->erase(c);
     }
   }
 
   if (sp_class_index_by_name) {
-    auto cn = sp_class_index_by_name->find (std::make_pair (std::string (type.name ()), is_const));
-    if (cn != sp_class_index_by_name->end ()) {
-      sp_class_index_by_name->erase (cn);
+    auto cn = sp_class_index_by_name->find(
+        std::make_pair(std::string(type.name()), is_const));
+    if (cn != sp_class_index_by_name->end()) {
+      sp_class_index_by_name->erase(cn);
     }
   }
 
   if (sp_class_to_index) {
-    sp_class_to_index->erase (inst);
+    sp_class_to_index->erase(inst);
   }
 
-  if (sp_class_table && sp_class_table->empty ()) {
+  if (sp_class_table && sp_class_table->empty()) {
     delete sp_class_table;
     sp_class_table = 0;
   }
 
-  if (sp_classes && sp_classes->empty ()) {
+  if (sp_classes && sp_classes->empty()) {
     delete sp_classes;
     sp_classes = 0;
   }
 
-  if (sp_class_index_by_name && sp_class_index_by_name->empty ()) {
+  if (sp_class_index_by_name && sp_class_index_by_name->empty()) {
     delete sp_class_index_by_name;
     sp_class_index_by_name = 0;
   }
 
-  if (sp_class_to_index && sp_class_to_index->empty ()) {
+  if (sp_class_to_index && sp_class_to_index->empty()) {
     delete sp_class_to_index;
     sp_class_to_index = 0;
   }
@@ -302,350 +295,280 @@ void VariantUserClassBase::unregister_instance (const tl::VariantUserClassBase *
 // --------------------------------------------------------------------
 //  Implementation of tl::Variant
 
-Variant::Variant () 
-  : m_type (t_nil), m_string (0)
-{
+Variant::Variant() : m_type(t_nil), m_string(0) {
   // .. nothing yet ..
 }
 
-Variant::Variant (const std::vector<char> &ba)
-  : m_type (t_bytearray), m_string (0)
-{
-  m_var.m_bytearray = new std::vector<char> (ba);
+Variant::Variant(const std::vector<char> &ba)
+    : m_type(t_bytearray), m_string(0) {
+  m_var.m_bytearray = new std::vector<char>(ba);
 }
 
 #if defined(HAVE_QT)
 
-Variant::Variant (const QByteArray &qba) 
-  : m_type (t_qbytearray), m_string (0)
-{
-  m_var.m_qbytearray = new QByteArray (qba);
+Variant::Variant(const QByteArray &qba) : m_type(t_qbytearray), m_string(0) {
+  m_var.m_qbytearray = new QByteArray(qba);
 }
 
-Variant::Variant (const QString &qs) 
-  : m_type (t_qstring), m_string (0)
-{
-  m_var.m_qstring = new QString (qs);
+Variant::Variant(const QString &qs) : m_type(t_qstring), m_string(0) {
+  m_var.m_qstring = new QString(qs);
 }
 
-Variant::Variant (const QVariant &v)
-  : m_type (t_nil), m_string (0)
-{
-  switch (v.type ()) {
+Variant::Variant(const QVariant &v) : m_type(t_nil), m_string(0) {
+  switch (v.type()) {
   case QVariant::Invalid:
     break;
   case QVariant::Bool:
-    operator= (v.toBool ());
+    operator=(v.toBool());
     break;
   case QVariant::ByteArray:
-    operator= (v.toByteArray ());
+    operator=(v.toByteArray());
     break;
   case QVariant::Double:
-    operator= (v.toDouble ());
+    operator=(v.toDouble());
     break;
-  case QVariant::Hash:
-    {
-      QHash<QString, QVariant> m = v.toHash ();
-      set_array ();
-      for (QHash<QString, QVariant>::const_iterator i = m.begin (); i != m.end (); ++i) {
-        insert (tl::Variant (i.key ()), tl::Variant (i.value ()));
-      }
+  case QVariant::Hash: {
+    QHash<QString, QVariant> m = v.toHash();
+    set_array();
+    for (QHash<QString, QVariant>::const_iterator i = m.begin(); i != m.end();
+         ++i) {
+      insert(tl::Variant(i.key()), tl::Variant(i.value()));
     }
-    break;
+  } break;
   case QVariant::Int:
-    operator= (v.toInt ());
+    operator=(v.toInt());
     break;
-  case QVariant::List:
-    {
-      QList<QVariant> vl = v.toList ();
-      set_list ();
-      for (QList<QVariant>::const_iterator i = vl.begin (); i != vl.end (); ++i) {
-        push (tl::Variant (*i));
-      }
+  case QVariant::List: {
+    QList<QVariant> vl = v.toList();
+    set_list();
+    for (QList<QVariant>::const_iterator i = vl.begin(); i != vl.end(); ++i) {
+      push(tl::Variant(*i));
     }
-    break;
+  } break;
   case QVariant::LongLong:
-    operator= (v.toLongLong ());
+    operator=(v.toLongLong());
     break;
-  case QVariant::Map:
-    {
-      QMap<QString, QVariant> m = v.toMap ();
-      set_array ();
-      for (QMap<QString, QVariant>::const_iterator i = m.begin (); i != m.end (); ++i) {
-        insert (tl::Variant (i.key ()), tl::Variant (i.value ()));
-      }
+  case QVariant::Map: {
+    QMap<QString, QVariant> m = v.toMap();
+    set_array();
+    for (QMap<QString, QVariant>::const_iterator i = m.begin(); i != m.end();
+         ++i) {
+      insert(tl::Variant(i.key()), tl::Variant(i.value()));
     }
-    break;
-  case QVariant::StringList:
-    {
-      QStringList sl = v.toStringList ();
-      set_list ();
-      for (QStringList::const_iterator s = sl.begin (); s != sl.end (); ++s) {
-        push (tl::Variant (*s));
-      }
+  } break;
+  case QVariant::StringList: {
+    QStringList sl = v.toStringList();
+    set_list();
+    for (QStringList::const_iterator s = sl.begin(); s != sl.end(); ++s) {
+      push(tl::Variant(*s));
     }
-    break;
+  } break;
   case QVariant::UInt:
-    operator= (v.toUInt ());
+    operator=(v.toUInt());
     break;
   case QVariant::ULongLong:
-    operator= (v.toULongLong ());
+    operator=(v.toULongLong());
     break;
   //  special types supported by QVariant too:
   case QVariant::BitArray:
-    operator= (tl::Variant (v.value<QBitArray> ()));
+    operator=(tl::Variant(v.value<QBitArray>()));
     break;
   case QVariant::Bitmap:
-    operator= (tl::Variant (v.value<QBitmap> ()));
+    operator=(tl::Variant(v.value<QBitmap>()));
     break;
   case QVariant::Brush:
-    operator= (tl::Variant (v.value<QBrush> ()));
+    operator=(tl::Variant(v.value<QBrush>()));
     break;
   case QVariant::Color:
-    operator= (tl::Variant (v.value<QColor> ()));
+    operator=(tl::Variant(v.value<QColor>()));
     break;
   case QVariant::Cursor:
-    operator= (tl::Variant (v.value<QCursor> ()));
+    operator=(tl::Variant(v.value<QCursor>()));
     break;
   case QVariant::Date:
-    operator= (tl::Variant (v.value<QDate> ()));
+    operator=(tl::Variant(v.value<QDate>()));
     break;
   case QVariant::DateTime:
-    operator= (tl::Variant (v.value<QDateTime> ()));
+    operator=(tl::Variant(v.value<QDateTime>()));
     break;
 #if QT_VERSION >= 0x040700
   case QVariant::EasingCurve:
-    operator= (tl::Variant (v.value<QEasingCurve> ()));
+    operator=(tl::Variant(v.value<QEasingCurve>()));
     break;
 #endif
   case QVariant::Font:
-    operator= (tl::Variant (v.value<QFont> ()));
+    operator=(tl::Variant(v.value<QFont>()));
     break;
   case QVariant::Icon:
-    operator= (tl::Variant (v.value<QIcon> ()));
+    operator=(tl::Variant(v.value<QIcon>()));
     break;
   case QVariant::Image:
-    operator= (tl::Variant (v.value<QImage> ()));
+    operator=(tl::Variant(v.value<QImage>()));
     break;
   case QVariant::KeySequence:
-    operator= (tl::Variant (v.value<QKeySequence> ()));
+    operator=(tl::Variant(v.value<QKeySequence>()));
     break;
   case QVariant::Line:
-    operator= (tl::Variant (v.value<QLine> ()));
+    operator=(tl::Variant(v.value<QLine>()));
     break;
   case QVariant::LineF:
-    operator= (tl::Variant (v.value<QLineF> ()));
+    operator=(tl::Variant(v.value<QLineF>()));
     break;
   case QVariant::Locale:
-    operator= (tl::Variant (v.value<QLocale> ()));
+    operator=(tl::Variant(v.value<QLocale>()));
     break;
   case QVariant::Transform:
-    operator= (tl::Variant (v.value<QTransform> ()));
+    operator=(tl::Variant(v.value<QTransform>()));
     break;
   case QVariant::Matrix4x4:
-    operator= (tl::Variant (v.value<QMatrix4x4> ()));
+    operator=(tl::Variant(v.value<QMatrix4x4>()));
     break;
   case QVariant::Palette:
-    operator= (tl::Variant (v.value<QPalette> ()));
+    operator=(tl::Variant(v.value<QPalette>()));
     break;
   case QVariant::Pen:
-    operator= (tl::Variant (v.value<QPen> ()));
+    operator=(tl::Variant(v.value<QPen>()));
     break;
   case QVariant::Pixmap:
-    operator= (tl::Variant (v.value<QPixmap> ()));
+    operator=(tl::Variant(v.value<QPixmap>()));
     break;
   case QVariant::Point:
-    operator= (tl::Variant (v.value<QPoint> ()));
+    operator=(tl::Variant(v.value<QPoint>()));
     break;
   case QVariant::PointF:
-    operator= (tl::Variant (v.value<QPointF> ()));
+    operator=(tl::Variant(v.value<QPointF>()));
     break;
   case QVariant::Polygon:
-    operator= (tl::Variant (v.value<QPolygon> ()));
+    operator=(tl::Variant(v.value<QPolygon>()));
     break;
   case QVariant::Quaternion:
-    operator= (tl::Variant (v.value<QQuaternion> ()));
+    operator=(tl::Variant(v.value<QQuaternion>()));
     break;
   case QVariant::Rect:
-    operator= (tl::Variant (v.value<QRect> ()));
+    operator=(tl::Variant(v.value<QRect>()));
     break;
   case QVariant::RectF:
-    operator= (tl::Variant (v.value<QRectF> ()));
+    operator=(tl::Variant(v.value<QRectF>()));
     break;
 #if QT_VERSION < 0x60000
   case QVariant::RegExp:
-    operator= (tl::Variant (v.value<QRegExp> ()));
+    operator=(tl::Variant(v.value<QRegExp>()));
     break;
 #endif
   case QVariant::Region:
-    operator= (tl::Variant (v.value<QRegion> ()));
+    operator=(tl::Variant(v.value<QRegion>()));
     break;
   case QVariant::Size:
-    operator= (tl::Variant (v.value<QSize> ()));
+    operator=(tl::Variant(v.value<QSize>()));
     break;
   case QVariant::SizeF:
-    operator= (tl::Variant (v.value<QSizeF> ()));
+    operator=(tl::Variant(v.value<QSizeF>()));
     break;
   case QVariant::SizePolicy:
-    operator= (tl::Variant (v.value<QSizePolicy> ()));
+    operator=(tl::Variant(v.value<QSizePolicy>()));
     break;
   case QVariant::TextFormat:
-    operator= (tl::Variant (v.value<QTextFormat> ()));
+    operator=(tl::Variant(v.value<QTextFormat>()));
     break;
   case QVariant::TextLength:
-    operator= (tl::Variant (v.value<QTextLength> ()));
+    operator=(tl::Variant(v.value<QTextLength>()));
     break;
   case QVariant::Time:
-    operator= (tl::Variant (v.value<QTime> ()));
+    operator=(tl::Variant(v.value<QTime>()));
     break;
   case QVariant::Url:
-    operator= (tl::Variant (v.value<QUrl> ()));
+    operator=(tl::Variant(v.value<QUrl>()));
     break;
   case QVariant::Vector2D:
-    operator= (tl::Variant (v.value<QVector2D> ()));
+    operator=(tl::Variant(v.value<QVector2D>()));
     break;
   case QVariant::Vector3D:
-    operator= (tl::Variant (v.value<QVector3D> ()));
+    operator=(tl::Variant(v.value<QVector3D>()));
     break;
   case QVariant::Vector4D:
-    operator= (tl::Variant (v.value<QVector4D> ()));
+    operator=(tl::Variant(v.value<QVector4D>()));
     break;
   default:
   case QVariant::String:
-    operator= (v.toString ());
+    operator=(v.toString());
     break;
   }
 }
 
 #endif
 
-Variant::Variant (const std::string &s) 
-  : m_type (t_stdstring), m_string (0)
-{
-  m_var.m_stdstring = new std::string (s);
+Variant::Variant(const std::string &s) : m_type(t_stdstring), m_string(0) {
+  m_var.m_stdstring = new std::string(s);
 }
 
-Variant::Variant (const char *s) 
-  : m_type (t_string)
-{
-  m_string = new char [strlen (s) + 1];
-  strcpy (m_string, s);
+Variant::Variant(const char *s) : m_type(t_string) {
+  m_string = new char[strlen(s) + 1];
+  strcpy(m_string, s);
 }
 
-Variant::Variant (double d)
-  : m_type (t_double), m_string (0)
-{
+Variant::Variant(double d) : m_type(t_double), m_string(0) {
   m_var.m_double = d;
 }
 
-Variant::Variant (float d)
-  : m_type (t_float), m_string (0)
-{
-  m_var.m_float = d;
-}
+Variant::Variant(float d) : m_type(t_float), m_string(0) { m_var.m_float = d; }
 
-Variant::Variant (bool b)
-  : m_type (t_bool), m_string (0)
-{
-  m_var.m_bool = b;
-}
+Variant::Variant(bool b) : m_type(t_bool), m_string(0) { m_var.m_bool = b; }
 
-Variant::Variant (char c)
-  : m_type (t_char), m_string (0)
-{
-  m_var.m_char = c;
-}
+Variant::Variant(char c) : m_type(t_char), m_string(0) { m_var.m_char = c; }
 
-Variant::Variant (signed char c)
-  : m_type (t_schar), m_string (0)
-{
+Variant::Variant(signed char c) : m_type(t_schar), m_string(0) {
   m_var.m_schar = c;
 }
 
-Variant::Variant (unsigned char c)
-  : m_type (t_uchar), m_string (0)
-{
+Variant::Variant(unsigned char c) : m_type(t_uchar), m_string(0) {
   m_var.m_uchar = c;
 }
 
-Variant::Variant (short s)
-  : m_type (t_short), m_string (0)
-{
-  m_var.m_short = s;
-}
+Variant::Variant(short s) : m_type(t_short), m_string(0) { m_var.m_short = s; }
 
-Variant::Variant (unsigned short s)
-  : m_type (t_ushort), m_string (0)
-{
+Variant::Variant(unsigned short s) : m_type(t_ushort), m_string(0) {
   m_var.m_ushort = s;
 }
 
-Variant::Variant (int l)
-  : m_type (t_int), m_string (0)
-{
-  m_var.m_int = l;
-}
+Variant::Variant(int l) : m_type(t_int), m_string(0) { m_var.m_int = l; }
 
-Variant::Variant (unsigned int l)
-  : m_type (t_uint), m_string (0)
-{
+Variant::Variant(unsigned int l) : m_type(t_uint), m_string(0) {
   m_var.m_uint = l;
 }
 
-Variant::Variant (long long l)
-  : m_type (t_longlong), m_string (0)
-{
+Variant::Variant(long long l) : m_type(t_longlong), m_string(0) {
   m_var.m_longlong = l;
 }
 
-Variant::Variant (unsigned long long l)
-  : m_type (t_ulonglong), m_string (0)
-{
+Variant::Variant(unsigned long long l) : m_type(t_ulonglong), m_string(0) {
   m_var.m_ulonglong = l;
 }
 
 #if defined(HAVE_64BIT_COORD)
-Variant::Variant (__int128 l)
-  : m_type (t_int128), m_string (0)
-{
+Variant::Variant(__int128 l) : m_type(t_int128), m_string(0) {
   m_var.m_int128 = l;
 }
 #endif
 
-Variant::Variant (long l)
-  : m_type (t_long), m_string (0)
-{
-  m_var.m_long = l;
-}
+Variant::Variant(long l) : m_type(t_long), m_string(0) { m_var.m_long = l; }
 
-Variant::Variant (unsigned long l)
-  : m_type (t_ulong), m_string (0)
-{
+Variant::Variant(unsigned long l) : m_type(t_ulong), m_string(0) {
   m_var.m_ulong = l;
 }
 
-Variant::Variant (size_t l, bool /*dummy*/)
-  : m_type (t_id), m_string (0)
-{
+Variant::Variant(size_t l, bool /*dummy*/) : m_type(t_id), m_string(0) {
   m_var.m_id = l;
 }
 
-Variant::Variant (const Variant &v)
-  : m_type (t_nil), m_string (0)
-{
-  operator= (v);
+Variant::Variant(const Variant &v) : m_type(t_nil), m_string(0) {
+  operator=(v);
 }
 
-Variant::~Variant ()
-{
-  reset ();
-}
+Variant::~Variant() { reset(); }
 
-void
-Variant::reset ()
-{
+void Variant::reset() {
   if (m_string) {
-    delete [] m_string;
+    delete[] m_string;
   }
   m_string = 0;
   if (m_type == t_list) {
@@ -663,53 +586,48 @@ Variant::reset ()
   } else if (m_type == t_stdstring) {
     delete m_var.m_stdstring;
   } else if (m_type == t_user_ref) {
-    WeakOrSharedPtr *ptr = reinterpret_cast<WeakOrSharedPtr *> (m_var.mp_user_ref.ptr);
+    WeakOrSharedPtr *ptr =
+        reinterpret_cast<WeakOrSharedPtr *>(m_var.mp_user_ref.ptr);
     ptr->~WeakOrSharedPtr();
   } else if (m_type == t_user) {
     if (m_var.mp_user.object && m_var.mp_user.shared) {
-      m_var.mp_user.cls->destroy (m_var.mp_user.object);
+      m_var.mp_user.cls->destroy(m_var.mp_user.object);
     }
   }
   m_type = t_nil;
 }
 
-Variant &
-Variant::operator= (const char *s)
-{
+Variant &Variant::operator=(const char *s) {
   if (m_type == t_string && s == m_string) {
     //  we are assigning to ourselves
   } else {
-    char *snew = new char [strlen (s) + 1];
-    strcpy (snew, s);
-    reset ();
+    char *snew = new char[strlen(s) + 1];
+    strcpy(snew, s);
+    reset();
     m_type = t_string;
     m_string = snew;
   }
   return *this;
 }
 
-Variant &
-Variant::operator= (const std::string &s)
-{
+Variant &Variant::operator=(const std::string &s) {
   if (m_type == t_stdstring && &s == m_var.m_stdstring) {
     //  we are assigning to ourselves
   } else {
-    std::string *snew = new std::string (s);
-    reset ();
+    std::string *snew = new std::string(s);
+    reset();
     m_type = t_stdstring;
     m_var.m_stdstring = snew;
   }
   return *this;
 }
 
-Variant &
-Variant::operator= (const std::vector<char> &s)
-{
+Variant &Variant::operator=(const std::vector<char> &s) {
   if (m_type == t_bytearray && &s == m_var.m_bytearray) {
     //  we are assigning to ourselves
   } else {
-    std::vector<char> *snew = new std::vector<char> (s);
-    reset ();
+    std::vector<char> *snew = new std::vector<char>(s);
+    reset();
     m_type = t_bytearray;
     m_var.m_bytearray = snew;
   }
@@ -718,28 +636,24 @@ Variant::operator= (const std::vector<char> &s)
 
 #if defined(HAVE_QT)
 
-Variant &
-Variant::operator= (const QByteArray &qs)
-{
+Variant &Variant::operator=(const QByteArray &qs) {
   if (m_type == t_qbytearray && &qs == m_var.m_qbytearray) {
     //  we are assigning to ourselves
   } else {
-    QByteArray *snew = new QByteArray (qs);
-    reset ();
+    QByteArray *snew = new QByteArray(qs);
+    reset();
     m_type = t_qbytearray;
     m_var.m_qbytearray = snew;
   }
   return *this;
 }
 
-Variant &
-Variant::operator= (const QString &qs)
-{
+Variant &Variant::operator=(const QString &qs) {
   if (m_type == t_qstring && &qs == m_var.m_qstring) {
     //  we are assigning to ourselves
   } else {
-    QString *snew = new QString (qs);
-    reset ();
+    QString *snew = new QString(qs);
+    reset();
     m_type = t_qstring;
     m_var.m_qstring = snew;
   }
@@ -748,153 +662,121 @@ Variant::operator= (const QString &qs)
 
 #endif
 
-Variant &
-Variant::operator= (double d)
-{
-  reset ();
+Variant &Variant::operator=(double d) {
+  reset();
   m_type = t_double;
   m_var.m_double = d;
   return *this;
 }
 
-Variant &
-Variant::operator= (float d)
-{
-  reset ();
+Variant &Variant::operator=(float d) {
+  reset();
   m_type = t_float;
   m_var.m_float = d;
   return *this;
 }
 
-Variant &
-Variant::operator= (bool b)
-{
-  reset ();
+Variant &Variant::operator=(bool b) {
+  reset();
   m_type = t_bool;
   m_var.m_bool = b;
   return *this;
 }
 
-Variant &
-Variant::operator= (signed char c)
-{
-  reset ();
+Variant &Variant::operator=(signed char c) {
+  reset();
   m_type = t_schar;
   m_var.m_schar = c;
   return *this;
 }
 
-Variant &
-Variant::operator= (unsigned char c)
-{
-  reset ();
+Variant &Variant::operator=(unsigned char c) {
+  reset();
   m_type = t_uchar;
   m_var.m_uchar = c;
   return *this;
 }
 
-Variant &
-Variant::operator= (char c)
-{
-  reset ();
+Variant &Variant::operator=(char c) {
+  reset();
   m_type = t_char;
   m_var.m_char = c;
   return *this;
 }
 
-Variant &
-Variant::operator= (unsigned short s)
-{
-  reset ();
+Variant &Variant::operator=(unsigned short s) {
+  reset();
   m_type = t_ushort;
   m_var.m_ushort = s;
   return *this;
 }
 
-Variant &
-Variant::operator= (short s)
-{
-  reset ();
+Variant &Variant::operator=(short s) {
+  reset();
   m_type = t_short;
   m_var.m_short = s;
   return *this;
 }
 
-Variant &
-Variant::operator= (unsigned int l)
-{
-  reset ();
+Variant &Variant::operator=(unsigned int l) {
+  reset();
   m_type = t_uint;
   m_var.m_uint = l;
   return *this;
 }
 
-Variant &
-Variant::operator= (int l)
-{
-  reset ();
+Variant &Variant::operator=(int l) {
+  reset();
   m_type = t_int;
   m_var.m_int = l;
   return *this;
 }
 
-Variant &
-Variant::operator= (unsigned long l)
-{
-  reset ();
+Variant &Variant::operator=(unsigned long l) {
+  reset();
   m_type = t_ulong;
   m_var.m_ulong = l;
   return *this;
 }
 
-Variant &
-Variant::operator= (long l)
-{
-  reset ();
+Variant &Variant::operator=(long l) {
+  reset();
   m_type = t_long;
   m_var.m_long = l;
   return *this;
 }
 
-Variant &
-Variant::operator= (unsigned long long l)
-{
-  reset ();
+Variant &Variant::operator=(unsigned long long l) {
+  reset();
   m_type = t_ulonglong;
   m_var.m_ulonglong = l;
   return *this;
 }
 
-Variant &
-Variant::operator= (long long l)
-{
-  reset ();
+Variant &Variant::operator=(long long l) {
+  reset();
   m_type = t_longlong;
   m_var.m_longlong = l;
   return *this;
 }
 
 #if defined(HAVE_64BIT_COORD)
-Variant &
-Variant::operator= (__int128 l)
-{
-  reset ();
+Variant &Variant::operator=(__int128 l) {
+  reset();
   m_type = t_int128;
   m_var.m_int128 = l;
   return *this;
 }
 #endif
 
-Variant &
-Variant::operator= (const Variant &v)
-{
+Variant &Variant::operator=(const Variant &v) {
   if (this != &v) {
 
     //  Clearing *this through swap delays the destruction of
     //  this's content. This is important if we assign a list member
     //  of this to this itself (this happens in tl::Expression).
     tl::Variant vv;
-    vv.swap (*this);
+    vv.swap(*this);
 
     m_type = v.m_type;
     if (m_type == t_double) {
@@ -932,27 +814,28 @@ Variant::operator= (const Variant &v)
     } else if (m_type == t_id) {
       m_var.m_id = v.m_var.m_id;
     } else if (m_type == t_bytearray) {
-      m_var.m_bytearray = new std::vector<char> (*v.m_var.m_bytearray);
+      m_var.m_bytearray = new std::vector<char>(*v.m_var.m_bytearray);
 #if defined(HAVE_QT)
     } else if (m_type == t_qstring) {
-      m_var.m_qstring = new QString (*v.m_var.m_qstring);
+      m_var.m_qstring = new QString(*v.m_var.m_qstring);
     } else if (m_type == t_qbytearray) {
-      m_var.m_qbytearray = new QByteArray (*v.m_var.m_qbytearray);
+      m_var.m_qbytearray = new QByteArray(*v.m_var.m_qbytearray);
 #endif
     } else if (m_type == t_stdstring) {
-      m_var.m_stdstring = new std::string (*v.m_var.m_stdstring);
+      m_var.m_stdstring = new std::string(*v.m_var.m_stdstring);
     } else if (m_type == t_string) {
-      m_string = new char [strlen (v.m_string) + 1];
-      strcpy (m_string, v.m_string);
+      m_string = new char[strlen(v.m_string) + 1];
+      strcpy(m_string, v.m_string);
     } else if (m_type == t_list) {
-      m_var.m_list = new std::vector<tl::Variant> (*v.m_var.m_list);
+      m_var.m_list = new std::vector<tl::Variant>(*v.m_var.m_list);
     } else if (m_type == t_array) {
-      m_var.m_array = new std::map<tl::Variant, tl::Variant> (*v.m_var.m_array);
+      m_var.m_array = new std::map<tl::Variant, tl::Variant>(*v.m_var.m_array);
     } else if (m_type == t_user) {
       m_var.mp_user.cls = v.m_var.mp_user.cls;
       if (v.m_var.mp_user.object) {
         if (v.m_var.mp_user.shared) {
-          m_var.mp_user.object = v.m_var.mp_user.cls->clone (v.m_var.mp_user.object);
+          m_var.mp_user.object =
+              v.m_var.mp_user.cls->clone(v.m_var.mp_user.object);
           m_var.mp_user.shared = true;
         } else {
           m_var.mp_user.object = v.m_var.mp_user.object;
@@ -963,17 +846,15 @@ Variant::operator= (const Variant &v)
       }
     } else if (m_type == t_user_ref) {
       m_var.mp_user_ref.cls = v.m_var.mp_user_ref.cls;
-      const WeakOrSharedPtr *ptr = reinterpret_cast<const WeakOrSharedPtr *> (v.m_var.mp_user_ref.ptr);
-      new (m_var.mp_user_ref.ptr) WeakOrSharedPtr (*ptr);
+      const WeakOrSharedPtr *ptr =
+          reinterpret_cast<const WeakOrSharedPtr *>(v.m_var.mp_user_ref.ptr);
+      new (m_var.mp_user_ref.ptr) WeakOrSharedPtr(*ptr);
     }
-
-  } 
+  }
   return *this;
 }
 
-inline bool
-is_integer_type (Variant::type type)
-{
+inline bool is_integer_type(Variant::type type) {
   switch (type) {
   case Variant::t_char:
   case Variant::t_schar:
@@ -995,9 +876,7 @@ is_integer_type (Variant::type type)
   }
 }
 
-inline Variant::type 
-normalized_type (Variant::type type)
-{
+inline Variant::type normalized_type(Variant::type type) {
   switch (type) {
   case Variant::t_float:
   case Variant::t_double:
@@ -1034,45 +913,40 @@ normalized_type (Variant::type type)
   }
 }
 
-inline std::pair<bool, Variant::type> 
-normalized_type (Variant::type type1, Variant::type type2)
-{
-  type1 = normalized_type (type1);
-  type2 = normalized_type (type2);
+inline std::pair<bool, Variant::type> normalized_type(Variant::type type1,
+                                                      Variant::type type2) {
+  type1 = normalized_type(type1);
+  type2 = normalized_type(type2);
 
   if (type1 == type2) {
-    return std::make_pair (true, type1);
+    return std::make_pair(true, type1);
   }
 
-  if (type1 == Variant::t_double && is_integer_type (type2)) {
+  if (type1 == Variant::t_double && is_integer_type(type2)) {
     //  use double as common representation
-    return std::make_pair (true, Variant::t_double);
-  } else if (type2 == Variant::t_double && is_integer_type (type1)) {
+    return std::make_pair(true, Variant::t_double);
+  } else if (type2 == Variant::t_double && is_integer_type(type1)) {
     //  use double as common representation
-    return std::make_pair (true, Variant::t_double);
+    return std::make_pair(true, Variant::t_double);
   } else {
-    return std::make_pair (type1 == type2, type1);
+    return std::make_pair(type1 == type2, type1);
   }
 }
 
 static const double epsilon = 1e-13;
 
-static inline bool fequal (double a, double b)
-{
-  double avg = 0.5 * (fabs (a) + fabs (b));
-  return fabs (a - b) <= epsilon * avg;
+static inline bool fequal(double a, double b) {
+  double avg = 0.5 * (fabs(a) + fabs(b));
+  return fabs(a - b) <= epsilon * avg;
 }
 
-static inline bool fless (double a, double b)
-{
-  return fequal (a, b) ? false : a < b;
+static inline bool fless(double a, double b) {
+  return fequal(a, b) ? false : a < b;
 }
 
-bool 
-Variant::operator== (const tl::Variant &d) const
-{
-  std::pair<bool, type> tt = normalized_type (m_type, d.m_type);
-  if (! tt.first) {
+bool Variant::operator==(const tl::Variant &d) const {
+  std::pair<bool, type> tt = normalized_type(m_type, d.m_type);
+  if (!tt.first) {
     return false;
   }
   type t = tt.second;
@@ -1082,23 +956,23 @@ Variant::operator== (const tl::Variant &d) const
   } else if (t == t_bool) {
     return m_var.m_bool == d.m_var.m_bool;
   } else if (t == t_ulong) {
-    return to_ulong () == d.to_ulong ();
+    return to_ulong() == d.to_ulong();
   } else if (t == t_long) {
-    return to_long () == d.to_long ();
+    return to_long() == d.to_long();
   } else if (t == t_ulonglong) {
-    return to_ulonglong () == d.to_ulonglong ();
+    return to_ulonglong() == d.to_ulonglong();
   } else if (t == t_longlong) {
-    return to_longlong () == d.to_longlong ();
+    return to_longlong() == d.to_longlong();
 #if defined(HAVE_64BIT_COORD)
   } else if (t == t_int128) {
-    return to_int128 () == d.to_int128 ();
+    return to_int128() == d.to_int128();
 #endif
   } else if (t == t_id) {
     return m_var.m_id == d.m_var.m_id;
   } else if (t == t_double) {
-    return fequal (to_double (), d.to_double ());
+    return fequal(to_double(), d.to_double());
   } else if (t == t_string) {
-    return strcmp (to_string (), d.to_string ()) == 0;
+    return strcmp(to_string(), d.to_string()) == 0;
   } else if (t == t_bytearray) {
     //  TODO: can't compare std::vector<char> with QByteArray currently
     return *m_var.m_bytearray == *d.m_var.m_bytearray;
@@ -1113,22 +987,28 @@ Variant::operator== (const tl::Variant &d) const
   } else if (t == t_array) {
     return *m_var.m_array == *d.m_var.m_array;
   } else if (t == t_user) {
-    return m_var.mp_user.cls == d.m_var.mp_user.cls && m_var.mp_user.cls->equal (m_var.mp_user.object, d.m_var.mp_user.object);
+    return m_var.mp_user.cls == d.m_var.mp_user.cls &&
+           m_var.mp_user.cls->equal(m_var.mp_user.object,
+                                    d.m_var.mp_user.object);
   } else if (t == t_user_ref) {
-    const tl::Object *self = reinterpret_cast<const WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ();
-    const tl::Object *other = reinterpret_cast<const WeakOrSharedPtr *> (d.m_var.mp_user_ref.ptr)->get ();
-    return m_var.mp_user_ref.cls == d.m_var.mp_user_ref.cls && m_var.mp_user_ref.cls->equal (m_var.mp_user_ref.cls->deref_proxy_const (self), m_var.mp_user_ref.cls->deref_proxy_const (other));
+    const tl::Object *self =
+        reinterpret_cast<const WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)->get();
+    const tl::Object *other =
+        reinterpret_cast<const WeakOrSharedPtr *>(d.m_var.mp_user_ref.ptr)
+            ->get();
+    return m_var.mp_user_ref.cls == d.m_var.mp_user_ref.cls &&
+           m_var.mp_user_ref.cls->equal(
+               m_var.mp_user_ref.cls->deref_proxy_const(self),
+               m_var.mp_user_ref.cls->deref_proxy_const(other));
   } else {
     return false;
   }
 }
 
-bool 
-Variant::operator< (const tl::Variant &d) const
-{
-  std::pair<bool, type> tt = normalized_type (m_type, d.m_type);
-  if (! tt.first) {
-    return normalized_type (m_type) < normalized_type (d.m_type);
+bool Variant::operator<(const tl::Variant &d) const {
+  std::pair<bool, type> tt = normalized_type(m_type, d.m_type);
+  if (!tt.first) {
+    return normalized_type(m_type) < normalized_type(d.m_type);
   }
 
   type t = tt.second;
@@ -1138,23 +1018,23 @@ Variant::operator< (const tl::Variant &d) const
   } else if (t == t_bool) {
     return m_var.m_bool < d.m_var.m_bool;
   } else if (t == t_ulong) {
-    return to_ulong () < d.to_ulong ();
+    return to_ulong() < d.to_ulong();
   } else if (t == t_long) {
-    return to_long () < d.to_long ();
+    return to_long() < d.to_long();
   } else if (t == t_ulonglong) {
-    return to_ulonglong () < d.to_ulonglong ();
+    return to_ulonglong() < d.to_ulonglong();
   } else if (t == t_longlong) {
-    return to_longlong () < d.to_longlong ();
+    return to_longlong() < d.to_longlong();
 #if defined(HAVE_64BIT_COORD)
   } else if (t == t_int128) {
-    return to_int128 () < d.to_int128 ();
+    return to_int128() < d.to_int128();
 #endif
   } else if (t == t_id) {
     return m_var.m_id < d.m_var.m_id;
   } else if (t == t_double) {
-    return fless (to_double (), d.to_double ());
+    return fless(to_double(), d.to_double());
   } else if (t == t_string) {
-    return strcmp (to_string (), d.to_string ()) < 0;
+    return strcmp(to_string(), d.to_string()) < 0;
   } else if (t == t_bytearray) {
     //  TODO: can't compare std::vector<char> with QByteArray currently
     return *m_var.m_bytearray < *d.m_var.m_bytearray;
@@ -1170,26 +1050,32 @@ Variant::operator< (const tl::Variant &d) const
     return *m_var.m_array < *d.m_var.m_array;
   } else if (t == t_user) {
     if (m_var.mp_user.cls != d.m_var.mp_user.cls) {
-      //  TODO: there should be some class Id that can be used for comparison (that is more predictable)
+      //  TODO: there should be some class Id that can be used for comparison
+      //  (that is more predictable)
       return m_var.mp_user.cls < d.m_var.mp_user.cls;
     }
-    return m_var.mp_user.cls->less (m_var.mp_user.object, d.m_var.mp_user.object);
+    return m_var.mp_user.cls->less(m_var.mp_user.object,
+                                   d.m_var.mp_user.object);
   } else if (t == t_user_ref) {
     if (m_var.mp_user_ref.cls != d.m_var.mp_user_ref.cls) {
-      //  TODO: there should be some class Id that can be used for comparison (that is more predictable)
+      //  TODO: there should be some class Id that can be used for comparison
+      //  (that is more predictable)
       return m_var.mp_user_ref.cls < d.m_var.mp_user_ref.cls;
     }
-    const tl::Object *self = reinterpret_cast<const WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ();
-    const tl::Object *other = reinterpret_cast<const WeakOrSharedPtr *> (d.m_var.mp_user_ref.ptr)->get ();
-    return m_var.mp_user_ref.cls->less (m_var.mp_user_ref.cls->deref_proxy_const (self), m_var.mp_user_ref.cls->deref_proxy_const (other));
+    const tl::Object *self =
+        reinterpret_cast<const WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)->get();
+    const tl::Object *other =
+        reinterpret_cast<const WeakOrSharedPtr *>(d.m_var.mp_user_ref.ptr)
+            ->get();
+    return m_var.mp_user_ref.cls->less(
+        m_var.mp_user_ref.cls->deref_proxy_const(self),
+        m_var.mp_user_ref.cls->deref_proxy_const(other));
   } else {
     return false;
   }
 }
 
-bool 
-Variant::can_convert_to_float () const
-{
+bool Variant::can_convert_to_float() const {
   switch (m_type) {
   case t_float:
   case t_char:
@@ -1210,27 +1096,25 @@ Variant::can_convert_to_float () const
   case t_nil:
     return true;
   case t_double:
-    return m_var.m_double < std::numeric_limits<float>::max () && m_var.m_double > std::numeric_limits<float>::min ();
+    return m_var.m_double < std::numeric_limits<float>::max() &&
+           m_var.m_double > std::numeric_limits<float>::min();
 #if defined(HAVE_QT)
   case t_qstring:
   case t_qbytearray:
 #endif
   case t_bytearray:
   case t_stdstring:
-  case t_string:
-    {
-      tl::Extractor ex (to_string ());
-      double d;
-      return ex.try_read (d) && ex.at_end ();
-    }
+  case t_string: {
+    tl::Extractor ex(to_string());
+    double d;
+    return ex.try_read(d) && ex.at_end();
+  }
   default:
     return false;
   }
 }
 
-bool 
-Variant::can_convert_to_double () const
-{
+bool Variant::can_convert_to_double() const {
   switch (m_type) {
   case t_double:
   case t_float:
@@ -1257,26 +1141,25 @@ Variant::can_convert_to_double () const
 #endif
   case t_bytearray:
   case t_stdstring:
-  case t_string:
-    {
-      tl::Extractor ex (to_string ());
-      double d;
-      return ex.try_read (d) && ex.at_end ();
-    }
+  case t_string: {
+    tl::Extractor ex(to_string());
+    double d;
+    return ex.try_read(d) && ex.at_end();
+  }
   default:
     return false;
   }
 }
 
 #if defined(HAVE_64BIT_COORD)
-bool 
-Variant::can_convert_to_int128 () const
-{
+bool Variant::can_convert_to_int128() const {
   switch (m_type) {
   case t_double:
-    return m_var.m_double <= std::numeric_limits<__int128>::max () && m_var.m_double >= std::numeric_limits<__int128>::min ();
+    return m_var.m_double <= std::numeric_limits<__int128>::max() &&
+           m_var.m_double >= std::numeric_limits<__int128>::min();
   case t_float:
-    return m_var.m_float <= float (std::numeric_limits<__int128>::max ()) && m_var.m_float >= float (std::numeric_limits<__int128>::min ());
+    return m_var.m_float <= float(std::numeric_limits<__int128>::max()) &&
+           m_var.m_float >= float(std::numeric_limits<__int128>::min());
   case t_longlong:
   case t_long:
   case t_int128:
@@ -1305,19 +1188,26 @@ Variant::can_convert_to_int128 () const
 }
 #endif
 
-bool 
-Variant::can_convert_to_ulonglong () const
-{
+bool Variant::can_convert_to_ulonglong() const {
   switch (m_type) {
   case t_double:
-    return m_var.m_double <= double (std::numeric_limits<unsigned long long>::max ()) && m_var.m_double >= double (std::numeric_limits<unsigned long long>::min ());
+    return m_var.m_double <=
+               double(std::numeric_limits<unsigned long long>::max()) &&
+           m_var.m_double >=
+               double(std::numeric_limits<unsigned long long>::min());
   case t_float:
-    return m_var.m_float <= float (std::numeric_limits<unsigned long long>::max ()) && m_var.m_float >= float (std::numeric_limits<unsigned long long>::min ());
+    return m_var.m_float <=
+               float(std::numeric_limits<unsigned long long>::max()) &&
+           m_var.m_float >=
+               float(std::numeric_limits<unsigned long long>::min());
   case t_longlong:
     return m_var.m_longlong >= 0;
 #if defined(HAVE_64BIT_COORD)
   case t_int128:
-    return m_var.m_int128 <= __int128 (std::numeric_limits<unsigned long long>::max ()) && m_var.m_int128 >= __int128 (std::numeric_limits<unsigned long long>::min ());
+    return m_var.m_int128 <=
+               __int128(std::numeric_limits<unsigned long long>::max()) &&
+           m_var.m_int128 >=
+               __int128(std::numeric_limits<unsigned long long>::min());
 #endif
   case t_ulonglong:
   case t_ulong:
@@ -1343,35 +1233,36 @@ Variant::can_convert_to_ulonglong () const
   case t_qbytearray:
 #endif
   case t_stdstring:
-  case t_bytearray:
-    {
-      tl::Extractor ex (to_string ());
-      try {
-        unsigned long long ll;
-        return ex.try_read (ll) && ex.at_end ();
-      } catch (...) {
-        return false;
-      }
+  case t_bytearray: {
+    tl::Extractor ex(to_string());
+    try {
+      unsigned long long ll;
+      return ex.try_read(ll) && ex.at_end();
+    } catch (...) {
+      return false;
     }
+  }
   default:
     return false;
   }
 }
 
-bool 
-Variant::can_convert_to_longlong () const
-{
+bool Variant::can_convert_to_longlong() const {
   switch (m_type) {
   case t_double:
-    return m_var.m_double <= double (std::numeric_limits<long long>::max ()) && m_var.m_double >= double (std::numeric_limits<long long>::min ());
+    return m_var.m_double <= double(std::numeric_limits<long long>::max()) &&
+           m_var.m_double >= double(std::numeric_limits<long long>::min());
   case t_float:
-    return m_var.m_float <= float (std::numeric_limits<long long>::max ()) && m_var.m_float >= float (std::numeric_limits<long long>::min ());
+    return m_var.m_float <= float(std::numeric_limits<long long>::max()) &&
+           m_var.m_float >= float(std::numeric_limits<long long>::min());
 #if defined(HAVE_64BIT_COORD)
   case t_int128:
-    return m_var.m_int128 <= __int128 (std::numeric_limits<long long>::max ()) && m_var.m_int128 >= __int128 (std::numeric_limits<long long>::min ());
+    return m_var.m_int128 <= __int128(std::numeric_limits<long long>::max()) &&
+           m_var.m_int128 >= __int128(std::numeric_limits<long long>::min());
 #endif
   case t_ulonglong:
-    return m_var.m_ulonglong <= (unsigned long long) std::numeric_limits<long long>::max ();
+    return m_var.m_ulonglong <=
+           (unsigned long long)std::numeric_limits<long long>::max();
   case t_longlong:
   case t_ulong:
   case t_long:
@@ -1391,37 +1282,43 @@ Variant::can_convert_to_longlong () const
   case t_qbytearray:
 #endif
   case t_stdstring:
-  case t_bytearray:
-    {
-      tl::Extractor ex (to_string ());
-      try {
-        long long ll;
-        return ex.try_read (ll) && ex.at_end ();
-      } catch (...) {
-        return false;
-      }
+  case t_bytearray: {
+    tl::Extractor ex(to_string());
+    try {
+      long long ll;
+      return ex.try_read(ll) && ex.at_end();
+    } catch (...) {
+      return false;
     }
+  }
   default:
     return false;
   }
 }
 
-bool 
-Variant::can_convert_to_ulong () const
-{
+bool Variant::can_convert_to_ulong() const {
   switch (m_type) {
   case t_double:
-    return m_var.m_double <= double (std::numeric_limits<unsigned long>::max ()) && m_var.m_double >= double (std::numeric_limits<unsigned long>::min ());
+    return m_var.m_double <=
+               double(std::numeric_limits<unsigned long>::max()) &&
+           m_var.m_double >= double(std::numeric_limits<unsigned long>::min());
   case t_float:
-    return m_var.m_float <= float (std::numeric_limits<unsigned long>::max ()) && m_var.m_float >= float (std::numeric_limits<unsigned long>::min ());
+    return m_var.m_float <= float(std::numeric_limits<unsigned long>::max()) &&
+           m_var.m_float >= float(std::numeric_limits<unsigned long>::min());
 #if defined(HAVE_64BIT_COORD)
   case t_int128:
-    return m_var.m_int128 <= __int128 (std::numeric_limits<unsigned long long>::max ()) && m_var.m_int128 >= __int128 (std::numeric_limits<unsigned long long>::min ());
+    return m_var.m_int128 <=
+               __int128(std::numeric_limits<unsigned long long>::max()) &&
+           m_var.m_int128 >=
+               __int128(std::numeric_limits<unsigned long long>::min());
 #endif
   case t_longlong:
-    return m_var.m_longlong >= 0 && (unsigned long long) m_var.m_longlong <= (unsigned long long) std::numeric_limits<unsigned long>::max ();
+    return m_var.m_longlong >= 0 &&
+           (unsigned long long)m_var.m_longlong <=
+               (unsigned long long)std::numeric_limits<unsigned long>::max();
   case t_ulonglong:
-    return m_var.m_ulonglong <= (unsigned long long) std::numeric_limits<unsigned long>::max ();
+    return m_var.m_ulonglong <=
+           (unsigned long long)std::numeric_limits<unsigned long>::max();
   case t_ulong:
   case t_bool:
   case t_uchar:
@@ -1445,39 +1342,41 @@ Variant::can_convert_to_ulong () const
   case t_qbytearray:
 #endif
   case t_stdstring:
-  case t_bytearray:
-    {
-      tl::Extractor ex (to_string ());
-      try {
-        unsigned long l;
-        return ex.try_read (l) && ex.at_end ();
-      } catch (...) {
-        return false;
-      }
+  case t_bytearray: {
+    tl::Extractor ex(to_string());
+    try {
+      unsigned long l;
+      return ex.try_read(l) && ex.at_end();
+    } catch (...) {
+      return false;
     }
+  }
   default:
     return false;
   }
 }
 
-bool 
-Variant::can_convert_to_long () const
-{
+bool Variant::can_convert_to_long() const {
   switch (m_type) {
   case t_double:
-    return m_var.m_double <= double (std::numeric_limits<long>::max ()) && m_var.m_double >= double (std::numeric_limits<long>::min ());
+    return m_var.m_double <= double(std::numeric_limits<long>::max()) &&
+           m_var.m_double >= double(std::numeric_limits<long>::min());
   case t_float:
-    return m_var.m_float <= float (std::numeric_limits<long>::max ()) && m_var.m_float >= float (std::numeric_limits<long>::min ());
+    return m_var.m_float <= float(std::numeric_limits<long>::max()) &&
+           m_var.m_float >= float(std::numeric_limits<long>::min());
 #if defined(HAVE_64BIT_COORD)
   case t_int128:
-    return m_var.m_int128 <= __int128 (std::numeric_limits<long>::max ()) && m_var.m_int128 >= __int128 (std::numeric_limits<long>::min ());
+    return m_var.m_int128 <= __int128(std::numeric_limits<long>::max()) &&
+           m_var.m_int128 >= __int128(std::numeric_limits<long>::min());
 #endif
   case t_ulonglong:
-    return m_var.m_ulonglong <= (unsigned long long) std::numeric_limits<long>::max ();
+    return m_var.m_ulonglong <=
+           (unsigned long long)std::numeric_limits<long>::max();
   case t_longlong:
-    return m_var.m_longlong >= (long long) std::numeric_limits<long>::min () && m_var.m_longlong <= (long long) std::numeric_limits<long>::max ();
+    return m_var.m_longlong >= (long long)std::numeric_limits<long>::min() &&
+           m_var.m_longlong <= (long long)std::numeric_limits<long>::max();
   case t_ulong:
-    return m_var.m_ulong <= (unsigned long) std::numeric_limits<long>::max ();
+    return m_var.m_ulong <= (unsigned long)std::numeric_limits<long>::max();
   case t_long:
   case t_bool:
   case t_char:
@@ -1495,43 +1394,46 @@ Variant::can_convert_to_long () const
   case t_qbytearray:
 #endif
   case t_stdstring:
-  case t_bytearray:
-    {
-      tl::Extractor ex (to_string ());
-      try {
-        long l;
-        return ex.try_read (l) && ex.at_end ();
-      } catch (...) {
-        return false;
-      }
+  case t_bytearray: {
+    tl::Extractor ex(to_string());
+    try {
+      long l;
+      return ex.try_read(l) && ex.at_end();
+    } catch (...) {
+      return false;
     }
+  }
   default:
     return false;
   }
 }
 
-bool 
-Variant::can_convert_to_int () const
-{
+bool Variant::can_convert_to_int() const {
   switch (m_type) {
   case t_double:
-    return m_var.m_double <= double (std::numeric_limits<int>::max ()) && m_var.m_double >= double (std::numeric_limits<int>::min ());
+    return m_var.m_double <= double(std::numeric_limits<int>::max()) &&
+           m_var.m_double >= double(std::numeric_limits<int>::min());
   case t_float:
-    return m_var.m_float <= float (std::numeric_limits<int>::max ()) && m_var.m_float >= float (std::numeric_limits<int>::min ());
+    return m_var.m_float <= float(std::numeric_limits<int>::max()) &&
+           m_var.m_float >= float(std::numeric_limits<int>::min());
 #if defined(HAVE_64BIT_COORD)
   case t_int128:
-    return m_var.m_int128 <= __int128 (std::numeric_limits<int>::max ()) && m_var.m_int128 >= __int128 (std::numeric_limits<int>::min ());
+    return m_var.m_int128 <= __int128(std::numeric_limits<int>::max()) &&
+           m_var.m_int128 >= __int128(std::numeric_limits<int>::min());
 #endif
   case t_ulonglong:
-    return m_var.m_ulonglong <= (unsigned long long) std::numeric_limits<int>::max ();
+    return m_var.m_ulonglong <=
+           (unsigned long long)std::numeric_limits<int>::max();
   case t_longlong:
-    return m_var.m_longlong >= (long long) std::numeric_limits<int>::min () && m_var.m_longlong <= (long long) std::numeric_limits<int>::max ();
+    return m_var.m_longlong >= (long long)std::numeric_limits<int>::min() &&
+           m_var.m_longlong <= (long long)std::numeric_limits<int>::max();
   case t_ulong:
-    return m_var.m_ulong <= (unsigned long) std::numeric_limits<int>::max ();
+    return m_var.m_ulong <= (unsigned long)std::numeric_limits<int>::max();
   case t_uint:
-    return m_var.m_uint <= (unsigned int) std::numeric_limits<int>::max ();
+    return m_var.m_uint <= (unsigned int)std::numeric_limits<int>::max();
   case t_long:
-    return m_var.m_long >= (long) std::numeric_limits<int>::min () && m_var.m_long <= (long) std::numeric_limits<int>::max ();
+    return m_var.m_long >= (long)std::numeric_limits<int>::min() &&
+           m_var.m_long <= (long)std::numeric_limits<int>::max();
   case t_bool:
   case t_char:
   case t_uchar:
@@ -1547,43 +1449,53 @@ Variant::can_convert_to_int () const
   case t_qbytearray:
 #endif
   case t_stdstring:
-  case t_bytearray:
-    {
-      tl::Extractor ex (to_string ());
-      try {
-        long l;
-        return ex.try_read (l) && ex.at_end () && l >= (long) std::numeric_limits<int>::min () && l <= (long) std::numeric_limits<int>::max ();
-      } catch (...) {
-        return false;
-      }
+  case t_bytearray: {
+    tl::Extractor ex(to_string());
+    try {
+      long l;
+      return ex.try_read(l) && ex.at_end() &&
+             l >= (long)std::numeric_limits<int>::min() &&
+             l <= (long)std::numeric_limits<int>::max();
+    } catch (...) {
+      return false;
     }
+  }
   default:
     return false;
   }
 }
 
-bool 
-Variant::can_convert_to_uint () const
-{
+bool Variant::can_convert_to_uint() const {
   switch (m_type) {
   case t_double:
-    return m_var.m_double <= double (std::numeric_limits<unsigned int>::max ()) && m_var.m_double >= double (std::numeric_limits<unsigned int>::min ());
+    return m_var.m_double <= double(std::numeric_limits<unsigned int>::max()) &&
+           m_var.m_double >= double(std::numeric_limits<unsigned int>::min());
   case t_float:
-    return m_var.m_float <= float (std::numeric_limits<unsigned int>::max ()) && m_var.m_float >= float (std::numeric_limits<unsigned int>::min ());
+    return m_var.m_float <= float(std::numeric_limits<unsigned int>::max()) &&
+           m_var.m_float >= float(std::numeric_limits<unsigned int>::min());
 #if defined(HAVE_64BIT_COORD)
   case t_int128:
-    return m_var.m_int128 <= __int128 (std::numeric_limits<unsigned int>::max ()) && m_var.m_int128 >= __int128 (std::numeric_limits<unsigned int>::min ());
+    return m_var.m_int128 <=
+               __int128(std::numeric_limits<unsigned int>::max()) &&
+           m_var.m_int128 >= __int128(std::numeric_limits<unsigned int>::min());
 #endif
   case t_ulonglong:
-    return m_var.m_ulonglong <= (unsigned long long) std::numeric_limits<unsigned int>::max ();
+    return m_var.m_ulonglong <=
+           (unsigned long long)std::numeric_limits<unsigned int>::max();
   case t_longlong:
-    return m_var.m_longlong >= (long long) std::numeric_limits<unsigned int>::min () && m_var.m_longlong <= (long long) std::numeric_limits<unsigned int>::max ();
+    return m_var.m_longlong >=
+               (long long)std::numeric_limits<unsigned int>::min() &&
+           m_var.m_longlong <=
+               (long long)std::numeric_limits<unsigned int>::max();
   case t_ulong:
-    return m_var.m_ulong <= (unsigned long) std::numeric_limits<unsigned int>::max ();
+    return m_var.m_ulong <=
+           (unsigned long)std::numeric_limits<unsigned int>::max();
   case t_int:
-    return m_var.m_int >= (long) std::numeric_limits<unsigned int>::min ();
+    return m_var.m_int >= (long)std::numeric_limits<unsigned int>::min();
   case t_long:
-    return m_var.m_long >= (long) std::numeric_limits<unsigned int>::min () && (sizeof (long) == sizeof (unsigned int) || m_var.m_long <= (long) std::numeric_limits<unsigned int>::max ());
+    return m_var.m_long >= (long)std::numeric_limits<unsigned int>::min() &&
+           (sizeof(long) == sizeof(unsigned int) ||
+            m_var.m_long <= (long)std::numeric_limits<unsigned int>::max());
   case t_bool:
   case t_char:
   case t_uchar:
@@ -1599,140 +1511,138 @@ Variant::can_convert_to_uint () const
   case t_qbytearray:
 #endif
   case t_stdstring:
-  case t_bytearray:
-    {
-      tl::Extractor ex (to_string ());
-      try {
-        long l;
-        return ex.try_read (l) && ex.at_end () && l >= (long) std::numeric_limits<int>::min () && l <= (long) std::numeric_limits<int>::max ();
-      } catch (...) {
-        return false;
-      }
+  case t_bytearray: {
+    tl::Extractor ex(to_string());
+    try {
+      long l;
+      return ex.try_read(l) && ex.at_end() &&
+             l >= (long)std::numeric_limits<int>::min() &&
+             l <= (long)std::numeric_limits<int>::max();
+    } catch (...) {
+      return false;
     }
+  }
   default:
     return false;
   }
 }
 
-bool 
-Variant::can_convert_to_short () const
-{
-  return can_convert_to_long () && (to_long () <= (long) std::numeric_limits<short>::max () && to_long () >= (long) std::numeric_limits<short>::min ());
+bool Variant::can_convert_to_short() const {
+  return can_convert_to_long() &&
+         (to_long() <= (long)std::numeric_limits<short>::max() &&
+          to_long() >= (long)std::numeric_limits<short>::min());
 }
 
-bool 
-Variant::can_convert_to_ushort () const
-{
-  return can_convert_to_long () && (to_long () <= (long) std::numeric_limits<unsigned short>::max () && to_long () >= (long) std::numeric_limits<unsigned short>::min ());
+bool Variant::can_convert_to_ushort() const {
+  return can_convert_to_long() &&
+         (to_long() <= (long)std::numeric_limits<unsigned short>::max() &&
+          to_long() >= (long)std::numeric_limits<unsigned short>::min());
 }
 
-bool 
-Variant::can_convert_to_char () const
-{
-  return can_convert_to_long () && (to_long () <= (long) std::numeric_limits<char>::max () && to_long () >= (long) std::numeric_limits<char>::min ());
+bool Variant::can_convert_to_char() const {
+  return can_convert_to_long() &&
+         (to_long() <= (long)std::numeric_limits<char>::max() &&
+          to_long() >= (long)std::numeric_limits<char>::min());
 }
 
-bool 
-Variant::can_convert_to_schar () const
-{
-  return can_convert_to_long () && (to_short () <= (long) std::numeric_limits<signed char>::max () && to_short () >= (long) std::numeric_limits<signed char>::min ());
+bool Variant::can_convert_to_schar() const {
+  return can_convert_to_long() &&
+         (to_short() <= (long)std::numeric_limits<signed char>::max() &&
+          to_short() >= (long)std::numeric_limits<signed char>::min());
 }
 
-bool 
-Variant::can_convert_to_uchar () const
-{
-  return can_convert_to_long () && (to_short () <= (long) std::numeric_limits<unsigned char>::max () && to_short () >= (long) std::numeric_limits<unsigned char>::min ());
+bool Variant::can_convert_to_uchar() const {
+  return can_convert_to_long() &&
+         (to_short() <= (long)std::numeric_limits<unsigned char>::max() &&
+          to_short() >= (long)std::numeric_limits<unsigned char>::min());
 }
 
 #if defined(HAVE_QT)
 
-QByteArray
-Variant::to_qbytearray () const
-{
+QByteArray Variant::to_qbytearray() const {
   if (m_type == t_qbytearray) {
     return *m_var.m_qbytearray;
   } else if (m_type == t_bytearray) {
-    return QByteArray (&m_var.m_bytearray->front (), int (m_var.m_bytearray->size ()));
+    return QByteArray(&m_var.m_bytearray->front(),
+                      int(m_var.m_bytearray->size()));
   } else if (m_type == t_qstring) {
-    return m_var.m_qstring->toUtf8 ();
+    return m_var.m_qstring->toUtf8();
   } else if (m_type == t_stdstring) {
-    return QByteArray (m_var.m_stdstring->c_str (), int (m_var.m_stdstring->size ()));
+    return QByteArray(m_var.m_stdstring->c_str(),
+                      int(m_var.m_stdstring->size()));
   } else {
-    //  TODO: maybe some other conversion makes sense? I.e. byte representation of int?
-    std::string s = to_string ();
-    return QByteArray (s.c_str (), int (s.size ()));
+    //  TODO: maybe some other conversion makes sense? I.e. byte representation
+    //  of int?
+    std::string s = to_string();
+    return QByteArray(s.c_str(), int(s.size()));
   }
 }
 
-QString
-Variant::to_qstring () const
-{
+QString Variant::to_qstring() const {
   if (m_type == t_qstring) {
     return *m_var.m_qstring;
   } else if (m_type == t_qbytearray) {
-    return QString::fromUtf8 (*m_var.m_qbytearray);
+    return QString::fromUtf8(*m_var.m_qbytearray);
   } else if (m_type == t_bytearray) {
-    return QString::fromUtf8 (&m_var.m_bytearray->front ());
+    return QString::fromUtf8(&m_var.m_bytearray->front());
   } else {
-    return tl::to_qstring (to_string ());
+    return tl::to_qstring(to_string());
   }
 }
 
 #endif
 
-std::vector<char>
-Variant::to_bytearray () const
-{
+std::vector<char> Variant::to_bytearray() const {
   if (m_type == t_bytearray) {
     return *m_var.m_bytearray;
 #if defined(HAVE_QT)
   } else if (m_type == t_qstring) {
-    QByteArray ba = m_var.m_qstring->toUtf8 ();
-    return std::vector<char> (ba.constBegin (), ba.constEnd ());
+    QByteArray ba = m_var.m_qstring->toUtf8();
+    return std::vector<char>(ba.constBegin(), ba.constEnd());
   } else if (m_type == t_qbytearray) {
-    return std::vector<char> (m_var.m_qbytearray->constBegin (), m_var.m_qbytearray->constEnd ());
+    return std::vector<char>(m_var.m_qbytearray->constBegin(),
+                             m_var.m_qbytearray->constEnd());
 #endif
   } else if (m_type == t_stdstring) {
-    return std::vector<char> (m_var.m_stdstring->begin (), m_var.m_stdstring->end ());
+    return std::vector<char>(m_var.m_stdstring->begin(),
+                             m_var.m_stdstring->end());
   } else {
-    //  TODO: maybe some other conversion makes sense? I.e. byte representation of int?
-    std::string s = to_string ();
-    return std::vector<char> (s.begin (), s.end ());
+    //  TODO: maybe some other conversion makes sense? I.e. byte representation
+    //  of int?
+    std::string s = to_string();
+    return std::vector<char>(s.begin(), s.end());
   }
 }
 
-std::string
-Variant::to_stdstring () const
-{
+std::string Variant::to_stdstring() const {
   if (m_type == t_stdstring) {
     return *m_var.m_stdstring;
   } else if (m_type == t_bytearray) {
-    return std::string (m_var.m_bytearray->begin (), m_var.m_bytearray->end ());
+    return std::string(m_var.m_bytearray->begin(), m_var.m_bytearray->end());
 #if defined(HAVE_QT)
   } else if (m_type == t_qstring) {
-    return tl::to_string (*m_var.m_qstring);
+    return tl::to_string(*m_var.m_qstring);
   } else if (m_type == t_qbytearray) {
-    return std::string (m_var.m_qbytearray->constData (), m_var.m_qbytearray->size ());
+    return std::string(m_var.m_qbytearray->constData(),
+                       m_var.m_qbytearray->size());
 #endif
   } else {
-    return std::string (to_string ());
+    return std::string(to_string());
   }
 }
 
-const char *
-Variant::to_string () const
-{
+const char *Variant::to_string() const {
   if (m_type == t_stdstring) {
 
-    return m_var.m_stdstring->c_str ();
+    return m_var.m_stdstring->c_str();
 
   } else if (m_type == t_bytearray) {
 
     //  need to add a terminating 0 for safety
-    if (! m_string) {
-      size_t n = m_var.m_bytearray->size ();
-      m_string = new char [n + 1];
-      strncpy (m_string, &m_var.m_bytearray->front (), n);
+    if (!m_string) {
+      size_t n = m_var.m_bytearray->size();
+      m_string = new char[n + 1];
+      strncpy(m_string, &m_var.m_bytearray->front(), n);
       m_string[n] = 0;
     }
 
@@ -1742,10 +1652,10 @@ Variant::to_string () const
   } else if (m_type == t_qbytearray) {
 
     //  need to add a terminating 0 for safety
-    if (! m_string) {
-      size_t n = m_var.m_qbytearray->size ();
-      m_string = new char [n + 1];
-      strncpy (m_string, m_var.m_qbytearray->constData (), n);
+    if (!m_string) {
+      size_t n = m_var.m_qbytearray->size();
+      m_string = new char[n + 1];
+      strncpy(m_string, m_var.m_qbytearray->constData(), n);
       m_string[n] = 0;
     }
 
@@ -1753,86 +1663,89 @@ Variant::to_string () const
 
 #endif
 
-  // conversion needed
-  } else if (! m_string) {
+    // conversion needed
+  } else if (!m_string) {
 
     std::string r;
 
     if (m_type == t_nil) {
       r = "nil";
     } else if (m_type == t_double) {
-      r = tl::to_string (m_var.m_double);
+      r = tl::to_string(m_var.m_double);
     } else if (m_type == t_float) {
-      r = tl::to_string (m_var.m_float);
+      r = tl::to_string(m_var.m_float);
     } else if (m_type == t_char) {
-      r = tl::to_string ((int) m_var.m_char);
+      r = tl::to_string((int)m_var.m_char);
     } else if (m_type == t_schar) {
-      r = tl::to_string ((int) m_var.m_schar);
+      r = tl::to_string((int)m_var.m_schar);
     } else if (m_type == t_uchar) {
-      r = tl::to_string ((int) m_var.m_uchar);
+      r = tl::to_string((int)m_var.m_uchar);
     } else if (m_type == t_short) {
-      r = tl::to_string ((int) m_var.m_short);
+      r = tl::to_string((int)m_var.m_short);
     } else if (m_type == t_ushort) {
-      r = tl::to_string ((int) m_var.m_ushort);
+      r = tl::to_string((int)m_var.m_ushort);
     } else if (m_type == t_int) {
-      r = tl::to_string (m_var.m_int);
+      r = tl::to_string(m_var.m_int);
     } else if (m_type == t_uint) {
-      r = tl::to_string (m_var.m_uint);
+      r = tl::to_string(m_var.m_uint);
     } else if (m_type == t_long) {
-      r = tl::to_string (m_var.m_long);
+      r = tl::to_string(m_var.m_long);
     } else if (m_type == t_ulong) {
-      r = tl::to_string (m_var.m_ulong);
+      r = tl::to_string(m_var.m_ulong);
     } else if (m_type == t_longlong) {
-      r = tl::to_string (m_var.m_longlong);
+      r = tl::to_string(m_var.m_longlong);
     } else if (m_type == t_ulonglong) {
-      r = tl::to_string (m_var.m_ulonglong);
+      r = tl::to_string(m_var.m_ulonglong);
 #if defined(HAVE_64BIT_COORD)
     } else if (m_type == t_int128) {
-      r = tl::to_string (m_var.m_int128);
+      r = tl::to_string(m_var.m_int128);
 #endif
     } else if (m_type == t_bool) {
-      r = tl::to_string (m_var.m_bool);
+      r = tl::to_string(m_var.m_bool);
 #if defined(HAVE_QT)
     } else if (m_type == t_qstring) {
-      r = tl::to_string (*m_var.m_qstring);
+      r = tl::to_string(*m_var.m_qstring);
 #endif
     } else if (m_type == t_list) {
-      for (std::vector<tl::Variant>::const_iterator v = m_var.m_list->begin (); v != m_var.m_list->end (); ++v) {
-        if (v != m_var.m_list->begin ()) {
+      for (std::vector<tl::Variant>::const_iterator v = m_var.m_list->begin();
+           v != m_var.m_list->end(); ++v) {
+        if (v != m_var.m_list->begin()) {
           r += ",";
         }
-        r += v->to_string ();
+        r += v->to_string();
       }
     } else if (m_type == t_array) {
-      for (const_array_iterator v = m_var.m_array->begin (); v != m_var.m_array->end (); ++v) {
-        if (v != m_var.m_array->begin ()) {
+      for (const_array_iterator v = m_var.m_array->begin();
+           v != m_var.m_array->end(); ++v) {
+        if (v != m_var.m_array->begin()) {
           r += ",";
         }
-        r += v->first.to_string ();
+        r += v->first.to_string();
         r += "=>";
-        r += v->second.to_string ();
+        r += v->second.to_string();
       }
-    } else if (m_type == t_id)  {
-      r = "[id" + tl::to_string (m_var.m_id) + "]";
+    } else if (m_type == t_id) {
+      r = "[id" + tl::to_string(m_var.m_id) + "]";
     } else if (m_type == t_user) {
-      r = m_var.mp_user.cls->to_string (m_var.mp_user.object);
+      r = m_var.mp_user.cls->to_string(m_var.mp_user.object);
     } else if (m_type == t_user_ref) {
-      r = m_var.mp_user_ref.cls->to_string (m_var.mp_user_ref.cls->deref_proxy_const (reinterpret_cast <const tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ()));
+      r = m_var.mp_user_ref.cls->to_string(
+          m_var.mp_user_ref.cls->deref_proxy_const(
+              reinterpret_cast<const tl::WeakOrSharedPtr *>(
+                  m_var.mp_user_ref.ptr)
+                  ->get()));
     } else {
       r = "[unknown]";
     }
 
-    m_string = new char [r.size () + 1];
-    strcpy (m_string, r.c_str ());
-
+    m_string = new char[r.size() + 1];
+    strcpy(m_string, r.c_str());
   }
 
   return m_string;
 }
 
-bool
-Variant::to_bool () const
-{
+bool Variant::to_bool() const {
   if (m_type == t_nil) {
     return false;
   } else if (m_type == t_bool) {
@@ -1843,17 +1756,15 @@ Variant::to_bool () const
 }
 
 #if defined(HAVE_64BIT_COORD)
-__int128
-Variant::to_int128 () const
-{
+__int128 Variant::to_int128() const {
   if (m_type == t_nil) {
     return 0;
   } else if (m_type == t_int128) {
     return m_var.m_int128;
   } else if (m_type == t_double) {
-    return (__int128) (m_var.m_double);
+    return (__int128)(m_var.m_double);
   } else if (m_type == t_float) {
-    return (__int128) (m_var.m_float);
+    return (__int128)(m_var.m_float);
   } else if (m_type == t_uchar) {
     return m_var.m_uchar;
   } else if (m_type == t_schar) {
@@ -1880,47 +1791,48 @@ Variant::to_int128 () const
     return m_var.m_bool;
 #if defined(HAVE_QT)
   } else if (m_type == t_qbytearray || m_type == t_bytearray) {
-    tl::Extractor ex (to_string ());
+    tl::Extractor ex(to_string());
     __int128 l = 0;
-    ex.read (l);
+    ex.read(l);
     return l;
   } else if (m_type == t_qstring) {
-    std::string s (to_string ());
-    tl::Extractor ex (s.c_str ());
+    std::string s(to_string());
+    tl::Extractor ex(s.c_str());
     __int128 l = 0;
-    ex.read (l);
+    ex.read(l);
     return l;
 #endif
   } else if (m_type == t_stdstring) {
-    tl::Extractor ex (m_var.m_stdstring->c_str ());
+    tl::Extractor ex(m_var.m_stdstring->c_str());
     __int128 l = 0;
-    ex.read (l);
+    ex.read(l);
     return l;
   } else if (m_type == t_string) {
-    std::string s (to_string ());
-    tl::Extractor ex (s.c_str ());
+    std::string s(to_string());
+    tl::Extractor ex(s.c_str());
     __int128 l = 0;
-    ex.read (l);
+    ex.read(l);
     return l;
   } else if (m_type == t_user) {
-    return m_var.mp_user.cls->to_int (m_var.mp_user.object);
+    return m_var.mp_user.cls->to_int(m_var.mp_user.object);
   } else if (m_type == t_user_ref) {
-    return m_var.mp_user_ref.cls->to_int (m_var.mp_user_ref.cls->deref_proxy_const (reinterpret_cast <const tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ()));
+    return m_var.mp_user_ref.cls->to_int(
+        m_var.mp_user_ref.cls->deref_proxy_const(
+            reinterpret_cast<const tl::WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)
+                ->get()));
   } else {
     return 0;
   }
 }
 #endif
 
-unsigned long long
-Variant::to_ulonglong () const
-{
+unsigned long long Variant::to_ulonglong() const {
   if (m_type == t_nil) {
     return 0;
   } else if (m_type == t_double) {
-    return (unsigned long long) (m_var.m_double);
+    return (unsigned long long)(m_var.m_double);
   } else if (m_type == t_float) {
-    return (unsigned long long) (m_var.m_float);
+    return (unsigned long long)(m_var.m_float);
   } else if (m_type == t_uchar) {
     return m_var.m_uchar;
   } else if (m_type == t_schar) {
@@ -1941,7 +1853,7 @@ Variant::to_ulonglong () const
     return m_var.m_long;
 #if defined(HAVE_64BIT_COORD)
   } else if (m_type == t_int128) {
-    return (unsigned long long) m_var.m_int128;
+    return (unsigned long long)m_var.m_int128;
 #endif
   } else if (m_type == t_ulonglong) {
     return m_var.m_ulonglong;
@@ -1951,34 +1863,36 @@ Variant::to_ulonglong () const
     return m_var.m_bool;
   } else if (m_type == t_stdstring) {
     unsigned long long l = 0;
-    tl::from_string (*m_var.m_stdstring, l);
+    tl::from_string(*m_var.m_stdstring, l);
     return l;
 #if defined(HAVE_QT)
-  } else if (m_type == t_string || m_type == t_qstring || m_type == t_qbytearray || m_type == t_bytearray) {
+  } else if (m_type == t_string || m_type == t_qstring ||
+             m_type == t_qbytearray || m_type == t_bytearray) {
 #else
   } else if (m_type == t_string || m_type == t_bytearray) {
 #endif
     unsigned long long l = 0;
-    tl::from_string (to_string (), l);
+    tl::from_string(to_string(), l);
     return l;
   } else if (m_type == t_user) {
-    return (unsigned long long) m_var.mp_user.cls->to_int (m_var.mp_user.object);
+    return (unsigned long long)m_var.mp_user.cls->to_int(m_var.mp_user.object);
   } else if (m_type == t_user_ref) {
-    return (unsigned long long) m_var.mp_user_ref.cls->to_int (m_var.mp_user_ref.cls->deref_proxy_const (reinterpret_cast <const tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ()));
+    return (unsigned long long)m_var.mp_user_ref.cls->to_int(
+        m_var.mp_user_ref.cls->deref_proxy_const(
+            reinterpret_cast<const tl::WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)
+                ->get()));
   } else {
     return 0;
   }
 }
 
-long long
-Variant::to_longlong () const
-{
+long long Variant::to_longlong() const {
   if (m_type == t_nil) {
     return 0;
   } else if (m_type == t_double) {
-    return (long long) (m_var.m_double);
+    return (long long)(m_var.m_double);
   } else if (m_type == t_float) {
-    return (long long) (m_var.m_float);
+    return (long long)(m_var.m_float);
   } else if (m_type == t_uchar) {
     return m_var.m_uchar;
   } else if (m_type == t_schar) {
@@ -2003,40 +1917,42 @@ Variant::to_longlong () const
     return m_var.m_longlong;
 #if defined(HAVE_64BIT_COORD)
   } else if (m_type == t_int128) {
-    return (long long) m_var.m_int128;
+    return (long long)m_var.m_int128;
 #endif
   } else if (m_type == t_bool) {
     return m_var.m_bool;
   } else if (m_type == t_stdstring) {
     long long l = 0;
-    tl::from_string (*m_var.m_stdstring, l);
+    tl::from_string(*m_var.m_stdstring, l);
     return l;
 #if defined(HAVE_QT)
-  } else if (m_type == t_string || m_type == t_qstring || m_type == t_qbytearray || m_type == t_bytearray) {
+  } else if (m_type == t_string || m_type == t_qstring ||
+             m_type == t_qbytearray || m_type == t_bytearray) {
 #else
   } else if (m_type == t_string || m_type == t_bytearray) {
 #endif
     long long l = 0;
-    tl::from_string (to_string (), l);
+    tl::from_string(to_string(), l);
     return l;
   } else if (m_type == t_user) {
-    return (long long) m_var.mp_user.cls->to_int (m_var.mp_user.object);
+    return (long long)m_var.mp_user.cls->to_int(m_var.mp_user.object);
   } else if (m_type == t_user_ref) {
-    return (long long) m_var.mp_user_ref.cls->to_int (m_var.mp_user_ref.cls->deref_proxy_const (reinterpret_cast <const tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ()));
+    return (long long)m_var.mp_user_ref.cls->to_int(
+        m_var.mp_user_ref.cls->deref_proxy_const(
+            reinterpret_cast<const tl::WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)
+                ->get()));
   } else {
     return 0;
   }
 }
 
-unsigned long
-Variant::to_ulong () const
-{
+unsigned long Variant::to_ulong() const {
   if (m_type == t_nil) {
     return 0;
   } else if (m_type == t_double) {
-    return (unsigned long) (m_var.m_double);
+    return (unsigned long)(m_var.m_double);
   } else if (m_type == t_float) {
-    return (unsigned long) (m_var.m_float);
+    return (unsigned long)(m_var.m_float);
   } else if (m_type == t_uchar) {
     return m_var.m_uchar;
   } else if (m_type == t_schar) {
@@ -2056,45 +1972,47 @@ Variant::to_ulong () const
   } else if (m_type == t_long) {
     return m_var.m_long;
   } else if (m_type == t_ulonglong) {
-    return (unsigned long) (m_var.m_ulonglong);
+    return (unsigned long)(m_var.m_ulonglong);
   } else if (m_type == t_longlong) {
-    return (unsigned long) (m_var.m_longlong);
+    return (unsigned long)(m_var.m_longlong);
 #if defined(HAVE_64BIT_COORD)
   } else if (m_type == t_int128) {
-    return (unsigned long) (m_var.m_int128);
+    return (unsigned long)(m_var.m_int128);
 #endif
   } else if (m_type == t_bool) {
     return m_var.m_bool;
   } else if (m_type == t_stdstring) {
     unsigned long l = 0;
-    tl::from_string (*m_var.m_stdstring, l);
+    tl::from_string(*m_var.m_stdstring, l);
     return l;
 #if defined(HAVE_QT)
-  } else if (m_type == t_string || m_type == t_qstring || m_type == t_qbytearray || m_type == t_bytearray) {
+  } else if (m_type == t_string || m_type == t_qstring ||
+             m_type == t_qbytearray || m_type == t_bytearray) {
 #else
   } else if (m_type == t_string || m_type == t_bytearray) {
 #endif
     unsigned long l = 0;
-    tl::from_string (to_string (), l);
+    tl::from_string(to_string(), l);
     return l;
   } else if (m_type == t_user) {
-    return (unsigned long) m_var.mp_user.cls->to_int (m_var.mp_user.object);
+    return (unsigned long)m_var.mp_user.cls->to_int(m_var.mp_user.object);
   } else if (m_type == t_user_ref) {
-    return (unsigned long) m_var.mp_user_ref.cls->to_int (m_var.mp_user_ref.cls->deref_proxy_const (reinterpret_cast <const tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ()));
+    return (unsigned long)m_var.mp_user_ref.cls->to_int(
+        m_var.mp_user_ref.cls->deref_proxy_const(
+            reinterpret_cast<const tl::WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)
+                ->get()));
   } else {
     return 0;
   }
 }
 
-long 
-Variant::to_long () const
-{
+long Variant::to_long() const {
   if (m_type == t_nil) {
     return 0;
   } else if (m_type == t_double) {
-    return (long) (m_var.m_double);
+    return (long)(m_var.m_double);
   } else if (m_type == t_float) {
-    return (long) (m_var.m_float);
+    return (long)(m_var.m_float);
   } else if (m_type == t_uchar) {
     return m_var.m_uchar;
   } else if (m_type == t_schar) {
@@ -2114,81 +2032,55 @@ Variant::to_long () const
   } else if (m_type == t_long) {
     return m_var.m_long;
   } else if (m_type == t_ulonglong) {
-    return long (m_var.m_ulonglong);
+    return long(m_var.m_ulonglong);
   } else if (m_type == t_longlong) {
-    return long (m_var.m_longlong);
+    return long(m_var.m_longlong);
 #if defined(HAVE_64BIT_COORD)
   } else if (m_type == t_int128) {
-    return long (m_var.m_int128);
+    return long(m_var.m_int128);
 #endif
   } else if (m_type == t_bool) {
     return m_var.m_bool;
   } else if (m_type == t_stdstring) {
     long l = 0;
-    tl::from_string (*m_var.m_stdstring, l);
+    tl::from_string(*m_var.m_stdstring, l);
     return l;
 #if defined(HAVE_QT)
-  } else if (m_type == t_string || m_type == t_qstring || m_type == t_qbytearray || m_type == t_bytearray) {
+  } else if (m_type == t_string || m_type == t_qstring ||
+             m_type == t_qbytearray || m_type == t_bytearray) {
 #else
   } else if (m_type == t_string || m_type == t_bytearray) {
 #endif
     long l = 0;
-    tl::from_string (to_string (), l);
+    tl::from_string(to_string(), l);
     return l;
   } else if (m_type == t_user) {
-    return (long) m_var.mp_user.cls->to_int (m_var.mp_user.object);
+    return (long)m_var.mp_user.cls->to_int(m_var.mp_user.object);
   } else if (m_type == t_user_ref) {
-    return (long) m_var.mp_user_ref.cls->to_int (m_var.mp_user_ref.cls->deref_proxy_const (reinterpret_cast <const tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ()));
+    return (long)m_var.mp_user_ref.cls->to_int(
+        m_var.mp_user_ref.cls->deref_proxy_const(
+            reinterpret_cast<const tl::WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)
+                ->get()));
   } else {
     return 0;
   }
 }
 
-int 
-Variant::to_int () const
-{
-  return (int) to_long ();
-}
+int Variant::to_int() const { return (int)to_long(); }
 
-unsigned int 
-Variant::to_uint () const
-{
-  return (unsigned int) to_ulong ();
-}
+unsigned int Variant::to_uint() const { return (unsigned int)to_ulong(); }
 
-short 
-Variant::to_short () const
-{
-  return (short) to_long ();
-}
+short Variant::to_short() const { return (short)to_long(); }
 
-unsigned short 
-Variant::to_ushort () const
-{
-  return (unsigned short) to_ulong ();
-}
+unsigned short Variant::to_ushort() const { return (unsigned short)to_ulong(); }
 
-char 
-Variant::to_char () const
-{
-  return (char) to_long ();
-}
+char Variant::to_char() const { return (char)to_long(); }
 
-signed char 
-Variant::to_schar () const
-{
-  return (signed char) to_long ();
-}
+signed char Variant::to_schar() const { return (signed char)to_long(); }
 
-unsigned char 
-Variant::to_uchar () const
-{
-  return (unsigned char) to_ulong ();
-}
+unsigned char Variant::to_uchar() const { return (unsigned char)to_ulong(); }
 
-size_t 
-Variant::to_id () const
-{
+size_t Variant::to_id() const {
   if (m_type == t_id) {
     return m_var.m_id;
   } else {
@@ -2196,9 +2088,7 @@ Variant::to_id () const
   }
 }
 
-double 
-Variant::to_double () const
-{
+double Variant::to_double() const {
   if (m_type == t_nil) {
     return 0;
   } else if (m_type == t_double) {
@@ -2235,39 +2125,38 @@ Variant::to_double () const
     return m_var.m_bool;
   } else if (m_type == t_stdstring) {
     double d = 0;
-    tl::from_string (*m_var.m_stdstring, d);
+    tl::from_string(*m_var.m_stdstring, d);
     return d;
 #if defined(HAVE_QT)
-  } else if (m_type == t_string || m_type == t_qstring || m_type == t_qbytearray || m_type == t_bytearray) {
+  } else if (m_type == t_string || m_type == t_qstring ||
+             m_type == t_qbytearray || m_type == t_bytearray) {
 #else
   } else if (m_type == t_string || m_type == t_bytearray) {
 #endif
     double d = 0;
-    tl::from_string (to_string (), d);
+    tl::from_string(to_string(), d);
     return d;
   } else if (m_type == t_user) {
-    return m_var.mp_user.cls->to_double (m_var.mp_user.object);
+    return m_var.mp_user.cls->to_double(m_var.mp_user.object);
   } else if (m_type == t_user_ref) {
-    return m_var.mp_user_ref.cls->to_double (m_var.mp_user_ref.cls->deref_proxy_const (reinterpret_cast <const tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ()));
+    return m_var.mp_user_ref.cls->to_double(
+        m_var.mp_user_ref.cls->deref_proxy_const(
+            reinterpret_cast<const tl::WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)
+                ->get()));
   } else {
     return 0;
   }
 }
 
-float 
-Variant::to_float () const
-{
-  return to_double ();
-}
+float Variant::to_float() const { return to_double(); }
 
-const void *
-Variant::native_ptr () const
-{
+const void *Variant::native_ptr() const {
   switch (m_type) {
   case t_user:
     return m_var.mp_user.object;
   case t_user_ref:
-    return reinterpret_cast<const WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->get ();
+    return reinterpret_cast<const WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)
+        ->get();
   case t_double:
     return &m_var.m_double;
   case t_float:
@@ -2322,29 +2211,23 @@ Variant::native_ptr () const
   }
 }
 
-tl::Variant
-Variant::empty_list ()
-{
+tl::Variant Variant::empty_list() {
   static std::vector<tl::Variant> empty_list;
-  return tl::Variant (empty_list.begin (), empty_list.end ());
+  return tl::Variant(empty_list.begin(), empty_list.end());
 }
 
-tl::Variant
-Variant::empty_array ()
-{
+tl::Variant Variant::empty_array() {
   tl::Variant e;
-  e.set_array ();
+  e.set_array();
   return e;
 }
 
-tl::Variant *
-tl::Variant::find (const tl::Variant &k)
-{
+tl::Variant *tl::Variant::find(const tl::Variant &k) {
   if (m_type != t_array) {
     return 0;
   } else {
-    array_iterator a = m_var.m_array->find (k);
-    if (a != m_var.m_array->end ()) {
+    array_iterator a = m_var.m_array->find(k);
+    if (a != m_var.m_array->end()) {
       return &a->second;
     } else {
       return 0;
@@ -2353,16 +2236,15 @@ tl::Variant::find (const tl::Variant &k)
 }
 
 /**
- *  @brief Returns the value for the given key or 0 if the variant is not an array or does not contain the key
+ *  @brief Returns the value for the given key or 0 if the variant is not an
+ * array or does not contain the key
  */
-const tl::Variant *
-tl::Variant::find (const tl::Variant &k) const
-{
+const tl::Variant *tl::Variant::find(const tl::Variant &k) const {
   if (m_type != t_array) {
     return 0;
   } else {
-    const_array_iterator a = m_var.m_array->find (k);
-    if (a != m_var.m_array->end ()) {
+    const_array_iterator a = m_var.m_array->find(k);
+    if (a != m_var.m_array->end()) {
       return &a->second;
     } else {
       return 0;
@@ -2370,63 +2252,66 @@ tl::Variant::find (const tl::Variant &k) const
   }
 }
 
-std::string 
-Variant::to_parsable_string () const
-{
-  if (is_long ()) {
-    return "#" + tl::to_string (to_long ());
+std::string Variant::to_parsable_string() const {
+  if (is_long()) {
+    return "#" + tl::to_string(to_long());
 #if defined(HAVE_64BIT_COORD)
-  } else if (is_int128 ()) {
-    return "#ll" + tl::to_string (to_int128 ());
+  } else if (is_int128()) {
+    return "#ll" + tl::to_string(to_int128());
 #endif
-  } else if (is_longlong ()) {
-    return "#l" + tl::to_string (to_longlong ());
-  } else if (is_ulong ()) {
-    return "#u" + tl::to_string (to_ulong ());
-  } else if (is_ulonglong ()) {
-    return "#lu" + tl::to_string (to_ulonglong ());
-  } else if (is_double ()) {
-    return "##" + tl::to_string (to_double ());
-  } else if (is_bool ()) {
+  } else if (is_longlong()) {
+    return "#l" + tl::to_string(to_longlong());
+  } else if (is_ulong()) {
+    return "#u" + tl::to_string(to_ulong());
+  } else if (is_ulonglong()) {
+    return "#lu" + tl::to_string(to_ulonglong());
+  } else if (is_double()) {
+    return "##" + tl::to_string(to_double());
+  } else if (is_bool()) {
     return m_var.m_bool ? "true" : "false";
-  } else if (is_nil ()) {
+  } else if (is_nil()) {
     return "nil";
-  } else if (is_stdstring ()) {
-    return tl::to_quoted_string (*m_var.m_stdstring);
+  } else if (is_stdstring()) {
+    return tl::to_quoted_string(*m_var.m_stdstring);
 #if defined(HAVE_QT)
-  } else if (is_cstring () || is_qstring () || is_qbytearray () || is_bytearray ()) {
+  } else if (is_cstring() || is_qstring() || is_qbytearray() ||
+             is_bytearray()) {
 #else
-  } else if (is_cstring () || is_bytearray ()) {
+  } else if (is_cstring() || is_bytearray()) {
 #endif
-    return tl::to_quoted_string (to_string ());
-  } else if (is_list ()) {
+    return tl::to_quoted_string(to_string());
+  } else if (is_list()) {
     std::string r = "(";
-    for (tl::Variant::const_iterator l = begin (); l != end (); ++l) {
-      if (l != begin ()) {
+    for (tl::Variant::const_iterator l = begin(); l != end(); ++l) {
+      if (l != begin()) {
         r += ",";
       }
-      r += l->to_parsable_string ();
+      r += l->to_parsable_string();
     }
     r += ")";
     return r;
-  } else if (is_array ()) {
+  } else if (is_array()) {
     std::string r = "{";
-    for (tl::Variant::const_array_iterator l = begin_array (); l != end_array (); ++l) {
-      if (l != begin_array ()) {
+    for (tl::Variant::const_array_iterator l = begin_array(); l != end_array();
+         ++l) {
+      if (l != begin_array()) {
         r += ",";
       }
-      r += l->first.to_parsable_string ();
+      r += l->first.to_parsable_string();
       r += "=>";
-      r += l->second.to_parsable_string ();
+      r += l->second.to_parsable_string();
     }
     r += "}";
     return r;
-  } else if (is_id ()) {
-    return "[id" + tl::to_string (m_var.m_id) + "]";
-  } else if (is_user ()) {
-    if (user_cls ()) {
+  } else if (is_id()) {
+    return "[id" + tl::to_string(m_var.m_id) + "]";
+  } else if (is_user()) {
+    if (user_cls()) {
       //  for downward compatibility we use lower case name + do a translation
-      return "[" + tl::VariantUserClassBase::translate_class_name (tl::to_lower_case (user_cls ()->name ())) + ":" + user_cls ()->to_string (to_user ()) + "]";
+      return "[" +
+             tl::VariantUserClassBase::translate_class_name(
+                 tl::to_lower_case(user_cls()->name())) +
+             ":" + user_cls()->to_string(to_user()) + "]";
     } else {
       return "[unknown_user_type]";
     }
@@ -2435,402 +2320,394 @@ Variant::to_parsable_string () const
   }
 }
 
-void 
-tl::Variant::swap (tl::Variant &other)
-{
+void tl::Variant::swap(tl::Variant &other) {
   ValueHolder a = m_var;
   if (m_type == t_user_ref) {
-    new (a.mp_user_ref.ptr) tl::WeakOrSharedPtr (*reinterpret_cast <tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr));
-    reinterpret_cast <tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->~WeakOrSharedPtr ();
+    new (a.mp_user_ref.ptr) tl::WeakOrSharedPtr(
+        *reinterpret_cast<tl::WeakOrSharedPtr *>(m_var.mp_user_ref.ptr));
+    reinterpret_cast<tl::WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)
+        ->~WeakOrSharedPtr();
   }
   m_var = other.m_var;
   if (other.m_type == t_user_ref) {
-    new (m_var.mp_user_ref.ptr) tl::WeakOrSharedPtr (*reinterpret_cast <tl::WeakOrSharedPtr *> (other.m_var.mp_user_ref.ptr));
-    reinterpret_cast <tl::WeakOrSharedPtr *> (other.m_var.mp_user_ref.ptr)->~WeakOrSharedPtr ();
+    new (m_var.mp_user_ref.ptr) tl::WeakOrSharedPtr(
+        *reinterpret_cast<tl::WeakOrSharedPtr *>(other.m_var.mp_user_ref.ptr));
+    reinterpret_cast<tl::WeakOrSharedPtr *>(other.m_var.mp_user_ref.ptr)
+        ->~WeakOrSharedPtr();
   }
   other.m_var = a;
   if (m_type == t_user_ref) {
-    new (other.m_var.mp_user_ref.ptr) tl::WeakOrSharedPtr (*reinterpret_cast <tl::WeakOrSharedPtr *> (a.mp_user_ref.ptr));
-    reinterpret_cast <tl::WeakOrSharedPtr *> (a.mp_user_ref.ptr)->~WeakOrSharedPtr ();
+    new (other.m_var.mp_user_ref.ptr) tl::WeakOrSharedPtr(
+        *reinterpret_cast<tl::WeakOrSharedPtr *>(a.mp_user_ref.ptr));
+    reinterpret_cast<tl::WeakOrSharedPtr *>(a.mp_user_ref.ptr)
+        ->~WeakOrSharedPtr();
   }
 
-  std::swap (m_type, other.m_type);
-  std::swap (m_string, other.m_string);
+  std::swap(m_type, other.m_type);
+  std::swap(m_string, other.m_string);
 }
 
 #if defined(HAVE_QT)
 
-QVariant Variant::to_qvariant () const
-{
+QVariant Variant::to_qvariant() const {
   switch (m_type) {
   case t_nil:
-    return QVariant ();
+    return QVariant();
   case t_double:
-    return QVariant (m_var.m_double);
+    return QVariant(m_var.m_double);
   case t_float:
-    return QVariant ((double) m_var.m_float);
+    return QVariant((double)m_var.m_float);
   case t_char:
-    return QVariant ((unsigned int) m_var.m_char);
+    return QVariant((unsigned int)m_var.m_char);
   case t_schar:
-    return QVariant ((int) m_var.m_schar);
+    return QVariant((int)m_var.m_schar);
   case t_uchar:
-    return QVariant ((unsigned int) m_var.m_uchar);
+    return QVariant((unsigned int)m_var.m_uchar);
   case t_short:
-    return QVariant ((int) m_var.m_short);
+    return QVariant((int)m_var.m_short);
   case t_ushort:
-    return QVariant ((unsigned int) m_var.m_ushort);
+    return QVariant((unsigned int)m_var.m_ushort);
   case t_int:
-    return QVariant (m_var.m_int);
+    return QVariant(m_var.m_int);
   case t_uint:
-    return QVariant (m_var.m_uint);
+    return QVariant(m_var.m_uint);
   case t_long:
     //  TODO: will int == long always?
-    return QVariant ((int) m_var.m_long);
+    return QVariant((int)m_var.m_long);
   case t_ulong:
     //  TODO: will unsigned int == long always?
-    return QVariant ((unsigned int) m_var.m_ulong);
+    return QVariant((unsigned int)m_var.m_ulong);
   case t_longlong:
-    return QVariant (m_var.m_longlong);
+    return QVariant(m_var.m_longlong);
   case t_ulonglong:
-    return QVariant (m_var.m_ulonglong);
+    return QVariant(m_var.m_ulonglong);
 #if defined(HAVE_64BIT_COORD)
   case t_int128:
     //  TODO: support for int128 in QVariant?
-    return QVariant ((double) m_var.m_int128);
+    return QVariant((double)m_var.m_int128);
 #endif
   case t_bool:
-    return QVariant (m_var.m_bool);
+    return QVariant(m_var.m_bool);
   case t_stdstring:
-    return QVariant (tl::to_qstring (*m_var.m_stdstring));
+    return QVariant(tl::to_qstring(*m_var.m_stdstring));
   case t_string:
-    return QVariant (tl::to_qstring (m_string));
+    return QVariant(tl::to_qstring(m_string));
 #if defined(HAVE_QT)
   case t_qstring:
-    return QVariant (*m_var.m_qstring);
+    return QVariant(*m_var.m_qstring);
   case t_qbytearray:
-    return QVariant (*m_var.m_qbytearray);
+    return QVariant(*m_var.m_qbytearray);
 #endif
   case t_bytearray:
-    return QVariant (to_qbytearray ());
-  case t_list:
-    {
-      QList<QVariant> l;
-      for (std::vector<tl::Variant>::const_iterator v = m_var.m_list->begin (); v != m_var.m_list->end (); ++v) {
-        l.append (v->to_qvariant ());
-      }
-      return QVariant (l);
+    return QVariant(to_qbytearray());
+  case t_list: {
+    QList<QVariant> l;
+    for (std::vector<tl::Variant>::const_iterator v = m_var.m_list->begin();
+         v != m_var.m_list->end(); ++v) {
+      l.append(v->to_qvariant());
     }
-  case t_array:
-    {
-      QMap<QString, QVariant> a;
-      for (const_array_iterator v = m_var.m_array->begin (); v != m_var.m_array->end (); ++v) {
-        a.insert (v->first.to_qstring (), v->second.to_qvariant ());
-      }
-      return QVariant (a);
+    return QVariant(l);
+  }
+  case t_array: {
+    QMap<QString, QVariant> a;
+    for (const_array_iterator v = m_var.m_array->begin();
+         v != m_var.m_array->end(); ++v) {
+      a.insert(v->first.to_qstring(), v->second.to_qvariant());
     }
+    return QVariant(a);
+  }
   case t_id:
-    return QVariant ((unsigned int) m_var.m_id);
-  case t_user:
-    {
-      const tl::VariantUserClassBase *cls = user_cls ();
-      //  try any of the other supported classes of QVariant:
-      if (dynamic_cast<const tl::VariantUserClass<QBitArray> *> (cls)) {
-        return QVariant (to_user<QBitArray> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QBitArray> *> (cls)) {
-        return QVariant (to_user<QBitArray> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QBitmap> *> (cls)) {
-        return QVariant (to_user<QBitmap> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QBrush> *> (cls)) {
-        return QVariant (to_user<QBrush> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QChar> *> (cls)) {
-        return QVariant (to_user<QChar> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QColor> *> (cls)) {
-        return QVariant (to_user<QColor> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QCursor> *> (cls)) {
-        return QVariant (to_user<QCursor> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QDate> *> (cls)) {
-        return QVariant (to_user<QDate> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QDateTime> *> (cls)) {
-        return QVariant (to_user<QDateTime> ());
-  #if QT_VERSION >= 0x040700
-      } else if (dynamic_cast<const tl::VariantUserClass<QEasingCurve> *> (cls)) {
-        return QVariant (to_user<QEasingCurve> ());
-  #endif
-      } else if (dynamic_cast<const tl::VariantUserClass<QFont> *> (cls)) {
-        return QVariant (to_user<QFont> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QIcon> *> (cls)) {
-        return QVariant (to_user<QIcon> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QImage> *> (cls)) {
-        return QVariant (to_user<QImage> ());
-  #if QT_VERSION >= 0x050000
-      } else if (dynamic_cast<const tl::VariantUserClass<QKeySequence> *> (cls)) {
-        return QVariant (to_user<QKeySequence> ());
-  #endif
-      } else if (dynamic_cast<const tl::VariantUserClass<QLine> *> (cls)) {
-        return QVariant (to_user<QLine> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QLineF> *> (cls)) {
-        return QVariant (to_user<QLineF> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QLocale> *> (cls)) {
-        return QVariant (to_user<QLocale> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QTransform> *> (cls)) {
-        return QVariant (to_user<QTransform> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QMatrix4x4> *> (cls)) {
-        return QVariant (to_user<QMatrix4x4> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QPalette> *> (cls)) {
-        return QVariant (to_user<QPalette> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QPen> *> (cls)) {
-        return QVariant (to_user<QPen> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QPixmap> *> (cls)) {
-        return QVariant (to_user<QPixmap> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QPoint> *> (cls)) {
-        return QVariant (to_user<QPoint> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QPointF> *> (cls)) {
-        return QVariant (to_user<QPointF> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QPolygon> *> (cls)) {
-        return QVariant (to_user<QPolygon> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QQuaternion> *> (cls)) {
-        return QVariant (to_user<QQuaternion> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QRect> *> (cls)) {
-        return QVariant (to_user<QRect> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QRectF> *> (cls)) {
-        return QVariant (to_user<QRectF> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QRegExp> *> (cls)) {
-        return QVariant (to_user<QRegExp> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QRegion> *> (cls)) {
-        return QVariant (to_user<QRegion> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QSize> *> (cls)) {
-        return QVariant (to_user<QSize> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QSizeF> *> (cls)) {
-        return QVariant (to_user<QSizeF> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QSizePolicy> *> (cls)) {
-        return QVariant (to_user<QSizePolicy> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QTextFormat> *> (cls)) {
-        return QVariant (to_user<QTextFormat> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QTextLength> *> (cls)) {
-        return QVariant (to_user<QTextLength> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QTime> *> (cls)) {
-        return QVariant (to_user<QTime> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QUrl> *> (cls)) {
-        return QVariant (to_user<QUrl> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QVector2D> *> (cls)) {
-        return QVariant (to_user<QVector2D> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QVector3D> *> (cls)) {
-        return QVariant (to_user<QVector3D> ());
-      } else if (dynamic_cast<const tl::VariantUserClass<QVector4D> *> (cls)) {
-        return QVariant (to_user<QVector4D> ());
-      } else {
-        tl::Variant var;
-        cls->to_variant (to_user (), var);
-        return var.to_qvariant ();
-      }
+    return QVariant((unsigned int)m_var.m_id);
+  case t_user: {
+    const tl::VariantUserClassBase *cls = user_cls();
+    //  try any of the other supported classes of QVariant:
+    if (dynamic_cast<const tl::VariantUserClass<QBitArray> *>(cls)) {
+      return QVariant(to_user<QBitArray>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QBitArray> *>(cls)) {
+      return QVariant(to_user<QBitArray>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QBitmap> *>(cls)) {
+      return QVariant(to_user<QBitmap>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QBrush> *>(cls)) {
+      return QVariant(to_user<QBrush>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QChar> *>(cls)) {
+      return QVariant(to_user<QChar>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QColor> *>(cls)) {
+      return QVariant(to_user<QColor>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QCursor> *>(cls)) {
+      return QVariant(to_user<QCursor>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QDate> *>(cls)) {
+      return QVariant(to_user<QDate>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QDateTime> *>(cls)) {
+      return QVariant(to_user<QDateTime>());
+#if QT_VERSION >= 0x040700
+    } else if (dynamic_cast<const tl::VariantUserClass<QEasingCurve> *>(cls)) {
+      return QVariant(to_user<QEasingCurve>());
+#endif
+    } else if (dynamic_cast<const tl::VariantUserClass<QFont> *>(cls)) {
+      return QVariant(to_user<QFont>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QIcon> *>(cls)) {
+      return QVariant(to_user<QIcon>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QImage> *>(cls)) {
+      return QVariant(to_user<QImage>());
+#if QT_VERSION >= 0x050000
+    } else if (dynamic_cast<const tl::VariantUserClass<QKeySequence> *>(cls)) {
+      return QVariant(to_user<QKeySequence>());
+#endif
+    } else if (dynamic_cast<const tl::VariantUserClass<QLine> *>(cls)) {
+      return QVariant(to_user<QLine>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QLineF> *>(cls)) {
+      return QVariant(to_user<QLineF>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QLocale> *>(cls)) {
+      return QVariant(to_user<QLocale>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QTransform> *>(cls)) {
+      return QVariant(to_user<QTransform>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QMatrix4x4> *>(cls)) {
+      return QVariant(to_user<QMatrix4x4>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QPalette> *>(cls)) {
+      return QVariant(to_user<QPalette>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QPen> *>(cls)) {
+      return QVariant(to_user<QPen>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QPixmap> *>(cls)) {
+      return QVariant(to_user<QPixmap>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QPoint> *>(cls)) {
+      return QVariant(to_user<QPoint>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QPointF> *>(cls)) {
+      return QVariant(to_user<QPointF>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QPolygon> *>(cls)) {
+      return QVariant(to_user<QPolygon>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QQuaternion> *>(cls)) {
+      return QVariant(to_user<QQuaternion>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QRect> *>(cls)) {
+      return QVariant(to_user<QRect>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QRectF> *>(cls)) {
+      return QVariant(to_user<QRectF>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QRegExp> *>(cls)) {
+      return QVariant(to_user<QRegExp>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QRegion> *>(cls)) {
+      return QVariant(to_user<QRegion>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QSize> *>(cls)) {
+      return QVariant(to_user<QSize>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QSizeF> *>(cls)) {
+      return QVariant(to_user<QSizeF>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QSizePolicy> *>(cls)) {
+      return QVariant(to_user<QSizePolicy>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QTextFormat> *>(cls)) {
+      return QVariant(to_user<QTextFormat>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QTextLength> *>(cls)) {
+      return QVariant(to_user<QTextLength>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QTime> *>(cls)) {
+      return QVariant(to_user<QTime>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QUrl> *>(cls)) {
+      return QVariant(to_user<QUrl>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QVector2D> *>(cls)) {
+      return QVariant(to_user<QVector2D>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QVector3D> *>(cls)) {
+      return QVariant(to_user<QVector3D>());
+    } else if (dynamic_cast<const tl::VariantUserClass<QVector4D> *>(cls)) {
+      return QVariant(to_user<QVector4D>());
+    } else {
+      tl::Variant var;
+      cls->to_variant(to_user(), var);
+      return var.to_qvariant();
     }
+  }
   default:
-    return QVariant ();
+    return QVariant();
   }
 }
 
 #endif
 
-void Variant::set_user_object (void *obj, bool shared)
-{
+void Variant::set_user_object(void *obj, bool shared) {
   m_var.mp_user.object = obj;
   m_var.mp_user.shared = shared;
 }
 
-bool Variant::user_is_const () const
-{
-  tl_assert (is_user ());
-  return user_cls ()->is_const ();
+bool Variant::user_is_const() const {
+  tl_assert(is_user());
+  return user_cls()->is_const();
 }
 
-bool Variant::user_is_ref () const
-{
+bool Variant::user_is_ref() const {
   if (m_type == t_user) {
     return !m_var.mp_user.shared;
   } else if (m_type == t_user_ref) {
-    return !reinterpret_cast <const tl::WeakOrSharedPtr *> (m_var.mp_user_ref.ptr)->is_shared ();
+    return !reinterpret_cast<const tl::WeakOrSharedPtr *>(m_var.mp_user_ref.ptr)
+                ->is_shared();
   } else {
     return false;
   }
 }
 
-void Variant::user_destroy ()
-{
-  tl_assert (is_user ());
-  void *obj = to_user ();
+void Variant::user_destroy() {
+  tl_assert(is_user());
+  void *obj = to_user();
   if (obj) {
-    user_cls ()->destroy (obj);
+    user_cls()->destroy(obj);
     m_type = t_nil;
   }
 }
 
-void *Variant::user_take ()
-{
-  tl_assert (is_user ());
-  void *obj = to_user ();
+void *Variant::user_take() {
+  tl_assert(is_user());
+  void *obj = to_user();
   if (obj) {
     m_type = t_nil;
   }
   return obj;
 }
 
-void Variant::user_assign (const tl::Variant &other)
-{
-  tl_assert (is_user ());
-  tl_assert (other.is_user ());
-  if (user_cls () == other.user_cls ()) {
-    user_cls ()->assign (to_user (), other.to_user ());
+void Variant::user_assign(const tl::Variant &other) {
+  tl_assert(is_user());
+  tl_assert(other.is_user());
+  if (user_cls() == other.user_cls()) {
+    user_cls()->assign(to_user(), other.to_user());
   }
 }
 
-tl::Variant Variant::user_dup () const
-{
-  tl_assert (is_user ());
-  return tl::Variant (user_cls ()->clone (to_user ()), user_cls (), true);
+tl::Variant Variant::user_dup() const {
+  tl_assert(is_user());
+  return tl::Variant(user_cls()->clone(to_user()), user_cls(), true);
 }
 
 // ----------------------------------------------------------------------------------
 //  Extractor implementation
 
 template <>
-TL_PUBLIC bool test_extractor_impl (tl::Extractor &ex, tl::Variant &v)
-{
+TL_PUBLIC bool test_extractor_impl(tl::Extractor &ex, tl::Variant &v) {
   std::string s;
 
-  if (ex.test ("##")) {
+  if (ex.test("##")) {
 
     double x = 0;
-    ex.read (x);
+    ex.read(x);
     v = x;
     return true;
 
 #if defined(HAVE_64BIT_COORD)
-  } else if (ex.test ("#ll")) {
+  } else if (ex.test("#ll")) {
 
     __int128 x = 0;
-    ex.read (x);
+    ex.read(x);
     v = x;
     return true;
 
 #endif
 
-  } else if (ex.test ("#lu")) {
+  } else if (ex.test("#lu")) {
 
     unsigned long long x = 0;
-    ex.read (x);
+    ex.read(x);
     v = x;
     return true;
 
-  } else if (ex.test ("#l")) {
+  } else if (ex.test("#l")) {
 
     long long x = 0;
-    ex.read (x);
+    ex.read(x);
     v = x;
     return true;
 
-  } else if (ex.test ("#u")) {
+  } else if (ex.test("#u")) {
 
     unsigned long x = 0;
-    ex.read (x);
+    ex.read(x);
     v = x;
     return true;
 
-  } else if (ex.test ("#")) {
+  } else if (ex.test("#")) {
 
     long x = 0;
-    ex.read (x);
+    ex.read(x);
     v = x;
     return true;
 
-  } else if (ex.test ("nil")) {
+  } else if (ex.test("nil")) {
 
-    v = tl::Variant ();
+    v = tl::Variant();
     return true;
 
-  } else if (ex.test ("false")) {
+  } else if (ex.test("false")) {
 
     v = false;
     return true;
 
-  } else if (ex.test ("true")) {
+  } else if (ex.test("true")) {
 
     v = true;
     return true;
 
-  } else if (ex.test ("[")) {
+  } else if (ex.test("[")) {
 
     std::string cls;
-    ex.read_word_or_quoted (cls);
+    ex.read_word_or_quoted(cls);
 
-    const VariantUserClassBase *ccls = tl::VariantUserClassBase::find_cls_by_name (cls);
+    const VariantUserClassBase *ccls =
+        tl::VariantUserClassBase::find_cls_by_name(cls);
     if (ccls) {
-      void *obj = ccls->create ();
-      v.set_user (obj, ccls, true);
-      ex.test (":");
-      ccls->read (obj, ex);
+      void *obj = ccls->create();
+      v.set_user(obj, ccls, true);
+      ex.test(":");
+      ccls->read(obj, ex);
     }
 
-    ex.test ("]");
+    ex.test("]");
     return true;
 
-  } else if (ex.test ("(")) {
+  } else if (ex.test("(")) {
 
     std::vector<tl::Variant> values;
-    if (! ex.test (")")) {
+    if (!ex.test(")")) {
       while (true) {
-        values.push_back (tl::Variant ());
-        ex.read (values.back ());
-        if (ex.test (",")) {
+        values.push_back(tl::Variant());
+        ex.read(values.back());
+        if (ex.test(",")) {
           //  .. continue
         } else {
-          ex.expect (")");
+          ex.expect(")");
           break;
         }
       }
     }
-    v = tl::Variant (values.begin (), values.end ());
+    v = tl::Variant(values.begin(), values.end());
     return true;
 
-  } else if (ex.test ("{")) {
+  } else if (ex.test("{")) {
 
-    v = tl::Variant::empty_array ();
-    if (! ex.test ("}")) {
+    v = tl::Variant::empty_array();
+    if (!ex.test("}")) {
       while (true) {
         tl::Variant k, x;
-        ex.read (k);
-        if (ex.test ("=>")) {
-          ex.read (x);
+        ex.read(k);
+        if (ex.test("=>")) {
+          ex.read(x);
         }
-        v.insert (k, x);
-        if (ex.test (",")) {
+        v.insert(k, x);
+        if (ex.test(",")) {
           //  .. continue
         } else {
-          ex.expect ("}");
+          ex.expect("}");
           break;
         }
       }
     }
     return true;
 
-  } else if (ex.try_read_word_or_quoted (s)) {
+  } else if (ex.try_read_word_or_quoted(s)) {
 
-    v = tl::Variant (s);
+    v = tl::Variant(s);
     return true;
 
   } else {
 
     return false;
-
   }
 }
 
-template <>
-TL_PUBLIC void extractor_impl (tl::Extractor &ex, tl::Variant &v)
-{
-  if (! test_extractor_impl (ex, v)) {
-    ex.error (tl::to_string (tr ("Expected a value specification")));
+template <> TL_PUBLIC void extractor_impl(tl::Extractor &ex, tl::Variant &v) {
+  if (!test_extractor_impl(ex, v)) {
+    ex.error(tl::to_string(tr("Expected a value specification")));
   }
 }
 
 } // namespace tl
-

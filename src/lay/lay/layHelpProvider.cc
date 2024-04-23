@@ -20,19 +20,16 @@
 
 */
 
-
 #include "layHelpProvider.h"
 #include "tlClassRegistry.h"
 
-namespace lay
-{
+namespace lay {
 
 // --------------------------------------------------------------------------------------
 //  HelpProvider implementation
 
-HelpProvider::HelpProvider () 
-{ 
+HelpProvider::HelpProvider() {
   //  .. nothing yet ..
 }
 
-}
+} // namespace lay

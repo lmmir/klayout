@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layViewWidgetStack
 #define HDR_layViewWidgetStack
 
@@ -30,35 +29,29 @@
 
 class QLabel;
 
-namespace lay
-{
+namespace lay {
 
 class LayoutViewWidget;
 
-class ViewWidgetStack
-  : public QWidget
-{
+class ViewWidgetStack : public QWidget {
 public:
-  ViewWidgetStack (QWidget *parent = 0, const char *name = 0);
+  ViewWidgetStack(QWidget *parent = 0, const char *name = 0);
 
-  void add_widget (lay::LayoutViewWidget *w);
-  void remove_widget (size_t index);
-  void raise_widget (size_t index);
-  LayoutViewWidget *widget (size_t index);
-  QWidget *background_widget ();
+  void add_widget(lay::LayoutViewWidget *w);
+  void remove_widget(size_t index);
+  void raise_widget(size_t index);
+  LayoutViewWidget *widget(size_t index);
+  QWidget *background_widget();
 
 protected:
-  virtual void resizeEvent (QResizeEvent *)
-  {
-    resize_children ();
-  }
+  virtual void resizeEvent(QResizeEvent *) { resize_children(); }
 
-  void resize_children ();
+  void resize_children();
 
-  std::vector <LayoutViewWidget *> m_widgets;
+  std::vector<LayoutViewWidget *> m_widgets;
   QLabel *mp_bglabel;
 };
 
-}
+} // namespace lay
 
 #endif

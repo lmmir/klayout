@@ -27,73 +27,64 @@
 
 #include <QDialog>
 
-#include "layLineStyles.h"
 #include "dbObject.h"
+#include "layLineStyles.h"
 
 class QListWidgetItem;
 
-namespace Ui
-{
-  class EditLineStylesForm;
+namespace Ui {
+class EditLineStylesForm;
 }
 
-namespace lay
-{
+namespace lay {
 
 class LayoutViewBase;
 
-class EditLineStylesForm
-  : public QDialog, public db::Object
-{
-  Q_OBJECT 
+class EditLineStylesForm : public QDialog, public db::Object {
+  Q_OBJECT
 
 public:
-  EditLineStylesForm (QWidget *parent, lay::LayoutViewBase *view, const lay::LineStyles &styles);
-  ~EditLineStylesForm ();
+  EditLineStylesForm(QWidget *parent, lay::LayoutViewBase *view,
+                     const lay::LineStyles &styles);
+  ~EditLineStylesForm();
 
   //  ...
 
-  const lay::LineStyles &styles () const
-  {
-    return m_styles;
-  }
+  const lay::LineStyles &styles() const { return m_styles; }
 
-  int selected () const
-  {
-    return m_selected;
-  }
-  
-  void undo (db::Op *op);
-  void redo (db::Op *op);
+  int selected() const { return m_selected; }
+
+  void undo(db::Op *op);
+  void redo(db::Op *op);
 
 public slots:
-  void sel_changed (QListWidgetItem *current, QListWidgetItem *); 
-  void double_clicked (QListWidgetItem *item); 
-  void new_button_clicked ();
-  void delete_button_clicked ();
-  void clone_button_clicked ();
-  void up_button_clicked ();
-  void down_button_clicked ();
-  void clear_button_clicked ();
-  void invert_button_clicked ();
-  void fliph_button_clicked ();
-  void sleft_button_clicked ();
-  void sright_button_clicked ();
-  void undo_button_clicked ();
-  void redo_button_clicked ();
-  void edited ();
-  void size_changed ();
+  void sel_changed(QListWidgetItem *current, QListWidgetItem *);
+  void double_clicked(QListWidgetItem *item);
+  void new_button_clicked();
+  void delete_button_clicked();
+  void clone_button_clicked();
+  void up_button_clicked();
+  void down_button_clicked();
+  void clear_button_clicked();
+  void invert_button_clicked();
+  void fliph_button_clicked();
+  void sleft_button_clicked();
+  void sright_button_clicked();
+  void undo_button_clicked();
+  void redo_button_clicked();
+  void edited();
+  void size_changed();
 
 private slots:
-  void editor_size_changed ();
+  void editor_size_changed();
 
 protected:
-  lay::LineStyles::iterator current ();
-  lay::LineStyles::iterator index_of (QListWidgetItem *item);
-  void update ();
-  void update_current_item ();
-  void select_item (int index);
-  void handle_op (db::Op *op, bool undo);
+  lay::LineStyles::iterator current();
+  lay::LineStyles::iterator index_of(QListWidgetItem *item);
+  void update();
+  void update_current_item();
+  void select_item(int index);
+  void handle_op(db::Op *op, bool undo);
 
 private:
   Ui::EditLineStylesForm *mp_ui;
@@ -104,8 +95,8 @@ private:
   bool m_selection_changed_enabled;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

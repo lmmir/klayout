@@ -20,8 +20,6 @@
 
 */
 
-
-
 #ifndef HDR_dbClipboard
 #define HDR_dbClipboard
 
@@ -29,8 +27,7 @@
 
 #include <vector>
 
-namespace db
-{
+namespace db {
 
 class Object;
 
@@ -38,24 +35,21 @@ class Object;
  *  @brief The clipboard object
  *
  *  Each object stored in the clipboard must be derived from this
- *  base class. 
+ *  base class.
  */
-class DB_PUBLIC ClipboardObject
-{
+class DB_PUBLIC ClipboardObject {
 public:
   /**
    *  @brief The ctor
    */
-  ClipboardObject ()
-  {
+  ClipboardObject() {
     //  nothing yet.
   }
 
   /**
    *  @brief The dtor is virtual to exploit RTTI
    */
-  virtual ~ClipboardObject ()
-  {
+  virtual ~ClipboardObject() {
     //  nothing yet.
   }
 };
@@ -63,49 +57,37 @@ public:
 /**
  *  @brief A basic clipboard object with a "type"
  *
- *  This object encapsulates any type into a clipboard 
+ *  This object encapsulates any type into a clipboard
  *  object for retrieval from the clipboard.
  */
-template <class Value>
-class ClipboardValue 
-  : public ClipboardObject
-{
+template <class Value> class ClipboardValue : public ClipboardObject {
 public:
   /**
-   *  @brief Create a clipboard object that can be stored using the default constructor of the value
+   *  @brief Create a clipboard object that can be stored using the default
+   * constructor of the value
    */
-  ClipboardValue ()
-    : ClipboardObject (), m_value ()
-  {
+  ClipboardValue() : ClipboardObject(), m_value() {
     //  nothing yet.
   }
 
   /**
    *  @brief Create a clipboard object that can be stored
-   *  
+   *
    *  @param value The value to store
    */
-  ClipboardValue (const Value &value)
-    : ClipboardObject (), m_value (value)
-  {
+  ClipboardValue(const Value &value) : ClipboardObject(), m_value(value) {
     //  nothing yet.
   }
 
   /**
    *  @brief Accessor the the value
    */
-  const Value &get () const
-  {
-    return m_value;
-  }
+  const Value &get() const { return m_value; }
 
   /**
    *  @brief Accessor the the value (non-const)
    */
-  Value &get () 
-  {
-    return m_value;
-  }
+  Value &get() { return m_value; }
 
 private:
   Value m_value;
@@ -120,81 +102,64 @@ private:
  *  There is a static instance of the clipboard that should be used
  *  by the applications.
  */
-class DB_PUBLIC Clipboard
-{
+class DB_PUBLIC Clipboard {
 public:
-  typedef std::vector <const ClipboardObject *>::const_iterator iterator;
+  typedef std::vector<const ClipboardObject *>::const_iterator iterator;
 
   /**
    *  @brief The singleton instance
    */
-  static Clipboard &instance ()
-  {
-    return m_instance;
-  }
+  static Clipboard &instance() { return m_instance; }
 
   /**
    *  @brief The constructor
    */
-  Clipboard ();
+  Clipboard();
 
   /**
    *  @brief The destructor
    */
-  ~Clipboard ();
+  ~Clipboard();
 
   /**
    *  @brief Add a new object
    */
-  Clipboard &operator+= (ClipboardObject *object);
+  Clipboard &operator+=(ClipboardObject *object);
 
   /**
    *  @brief Clear the clipboard
    */
-  void clear ();
+  void clear();
 
   /**
    *  @brief Access to the objects: start iterator
    */
-  iterator begin () 
-  {
-    return m_objects.begin ();
-  }
+  iterator begin() { return m_objects.begin(); }
 
   /**
    *  @brief Access to the objects: end iterator
    */
-  iterator end () 
-  {
-    return m_objects.end ();
-  }
+  iterator end() { return m_objects.end(); }
 
   /**
    *  @brief Tell if the clipboard has any data
    */
-  bool empty () const
-  {
-    return m_objects.empty ();
-  }
+  bool empty() const { return m_objects.empty(); }
 
   /**
    *  @brief Swap the objects in the clipboard object with another one
    */
-  void swap (Clipboard &other)
-  {
-    m_objects.swap (other.m_objects);
-  }
+  void swap(Clipboard &other) { m_objects.swap(other.m_objects); }
 
 private:
-  std::vector <const ClipboardObject *> m_objects;
+  std::vector<const ClipboardObject *> m_objects;
   static Clipboard m_instance;
 
   //  no copying
-  Clipboard (const Clipboard &);
+  Clipboard(const Clipboard &);
   Clipboard &operator=(const Clipboard &);
 };
 
 } // namespace db
 
 #endif
-

@@ -20,58 +20,57 @@
 
 */
 
-
 #include "gsiDecl.h"
 #include "tlLog.h"
 #include "tlTimer.h"
 #include <cstdio>
 
-namespace gsi
-{
+namespace gsi {
 
 // --------------------------------------------------------------------------------
 //  Implementation of gsi::initialize
 
-void GSI_PUBLIC 
-initialize ()
-{
+void GSI_PUBLIC initialize() {
   //  do something only if there are new classes
-  if (gsi::ClassBase::begin_new_classes () == gsi::ClassBase::end_new_classes ()) {
+  if (gsi::ClassBase::begin_new_classes() ==
+      gsi::ClassBase::end_new_classes()) {
     return;
   }
 
-  tl::SelfTimer timer (tl::verbosity () >= 21, "Initializing script environment");
+  tl::SelfTimer timer(tl::verbosity() >= 21, "Initializing script environment");
 
-  //  Do a first initialization of the new classes because they might add more classes
-  for (gsi::ClassBase::class_iterator c = gsi::ClassBase::begin_new_classes (); c != gsi::ClassBase::end_new_classes (); ++c) {
+  //  Do a first initialization of the new classes because they might add more
+  //  classes
+  for (gsi::ClassBase::class_iterator c = gsi::ClassBase::begin_new_classes();
+       c != gsi::ClassBase::end_new_classes(); ++c) {
     //  TODO: get rid of that const cast
-    (const_cast<gsi::ClassBase *> (&*c))->initialize ();
+    (const_cast<gsi::ClassBase *>(&*c))->initialize();
   }
 
   //  merge the extensions to the main declaration
-  gsi::ClassBase::merge_declarations ();
+  gsi::ClassBase::merge_declarations();
 
   //  build or rebuild the variant user class table
-  //  NOTE: as the variant classes are tied to the gsi::Class objects, we can rebuild the table
-  //  and will get the same pointers for the classes that have been there before
-  tl::VariantUserClassBase::clear_class_table ();
+  //  NOTE: as the variant classes are tied to the gsi::Class objects, we can
+  //  rebuild the table and will get the same pointers for the classes that have
+  //  been there before
+  tl::VariantUserClassBase::clear_class_table();
 
-  for (gsi::ClassBase::class_iterator c = gsi::ClassBase::begin_classes (); c != gsi::ClassBase::end_classes (); ++c) {
+  for (gsi::ClassBase::class_iterator c = gsi::ClassBase::begin_classes();
+       c != gsi::ClassBase::end_classes(); ++c) {
 
-    if (! c->is_external ()) {
+    if (!c->is_external()) {
 
       //  Note: for backward compatibility we use lower case names
-      std::string lc = tl::to_lower_case (c->name ());
-      std::string lc_trans = tl::VariantUserClassBase::translate_class_name (lc);
-      tl::VariantUserClassBase::register_user_class (lc, c->var_cls (false));
+      std::string lc = tl::to_lower_case(c->name());
+      std::string lc_trans = tl::VariantUserClassBase::translate_class_name(lc);
+      tl::VariantUserClassBase::register_user_class(lc, c->var_cls(false));
       if (lc != lc_trans) {
-        tl::VariantUserClassBase::register_user_class (lc_trans, c->var_cls (false));
+        tl::VariantUserClassBase::register_user_class(lc_trans,
+                                                      c->var_cls(false));
       }
-
     }
-
   }
 }
 
-}
-
+} // namespace gsi

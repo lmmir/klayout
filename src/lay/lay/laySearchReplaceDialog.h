@@ -20,47 +20,43 @@
 
 */
 
-
 #ifndef HDR_SearchReplaceDialog
 #define HDR_SearchReplaceDialog
 
 #include "ui_SearchReplaceDialog.h"
 
+#include "dbInstances.h"
+#include "dbLayout.h"
+#include "dbShape.h"
 #include "layBrowser.h"
 #include "layMargin.h"
 #include "rdb.h"
-#include "dbLayout.h"
-#include "dbShape.h"
-#include "dbInstances.h"
 
 #include <QAbstractItemModel>
 
-#include <vector>
 #include <set>
+#include <vector>
 
-namespace db
-{
-  class LayoutQuery;
-  class LayoutQueryIterator;
-}
+namespace db {
+class LayoutQuery;
+class LayoutQueryIterator;
+} // namespace db
 
-namespace lay
-{
+namespace lay {
 
 class LayoutView;
 class MarkerBase;
 
-class SearchReplaceResults
-  : public QAbstractItemModel
-{
-Q_OBJECT 
+class SearchReplaceResults : public QAbstractItemModel {
+  Q_OBJECT
 
 public:
-  struct QueryShapeResult
-  {
-    QueryShapeResult (const db::Shape &s, unsigned int l, const db::ICplxTrans &t, db::cell_index_type ci, db::cell_index_type ici)
-      : shape (s), layer_index (l), trans (t), cell_index (ci), initial_cell_index (ici)
-    { }
+  struct QueryShapeResult {
+    QueryShapeResult(const db::Shape &s, unsigned int l,
+                     const db::ICplxTrans &t, db::cell_index_type ci,
+                     db::cell_index_type ici)
+        : shape(s), layer_index(l), trans(t), cell_index(ci),
+          initial_cell_index(ici) {}
 
     db::Shape shape;
     unsigned int layer_index;
@@ -69,11 +65,10 @@ public:
     db::cell_index_type initial_cell_index;
   };
 
-  struct QueryInstResult
-  {
-    QueryInstResult (const db::Instance &i, const db::ICplxTrans &t, db::cell_index_type ci, db::cell_index_type ici)
-      : inst (i), trans (t), cell_index (ci), initial_cell_index (ici)
-    { }
+  struct QueryInstResult {
+    QueryInstResult(const db::Instance &i, const db::ICplxTrans &t,
+                    db::cell_index_type ci, db::cell_index_type ici)
+        : inst(i), trans(t), cell_index(ci), initial_cell_index(ici) {}
 
     db::Instance inst;
     db::ICplxTrans trans;
@@ -81,60 +76,48 @@ public:
     db::cell_index_type initial_cell_index;
   };
 
-  struct QueryCellResult
-  {
-    QueryCellResult (db::cell_index_type ci, db::cell_index_type pci)
-      : cell_index (ci), parent_cell_index (pci)
-    { }
+  struct QueryCellResult {
+    QueryCellResult(db::cell_index_type ci, db::cell_index_type pci)
+        : cell_index(ci), parent_cell_index(pci) {}
 
     db::cell_index_type cell_index;
     db::cell_index_type parent_cell_index;
   };
 
-  SearchReplaceResults ();
+  SearchReplaceResults();
 
-  void clear ();
-  void push_back (const tl::Variant &v);
-  void push_back (const QueryShapeResult &v);
-  void push_back (const QueryInstResult &v);
-  void push_back (const QueryCellResult &v);
-  void begin_changes (const db::Layout *layout);
-  void end_changes ();
+  void clear();
+  void push_back(const tl::Variant &v);
+  void push_back(const QueryShapeResult &v);
+  void push_back(const QueryInstResult &v);
+  void push_back(const QueryCellResult &v);
+  void begin_changes(const db::Layout *layout);
+  void end_changes();
 
-  const std::vector<tl::Variant> &data () const
-  {
-    return m_data_result;
-  }
+  const std::vector<tl::Variant> &data() const { return m_data_result; }
 
-  const std::vector<QueryShapeResult> &shapes () const
-  {
-    return m_shape_result;
-  }
+  const std::vector<QueryShapeResult> &shapes() const { return m_shape_result; }
 
-  const std::vector<QueryInstResult> &instances () const
-  {
+  const std::vector<QueryInstResult> &instances() const {
     return m_inst_result;
   }
 
-  const std::vector<QueryCellResult> &cells () const
-  {
-    return m_cell_result;
-  }
+  const std::vector<QueryCellResult> &cells() const { return m_cell_result; }
 
-  int columnCount (const QModelIndex &parent) const;
-  QVariant data (const QModelIndex &index, int role) const;
-  Qt::ItemFlags flags (const QModelIndex &index) const;
-  bool hasChildren (const QModelIndex &parent) const;
-  bool hasIndex (int row, int column, const QModelIndex &parent) const;
-  QVariant headerData (int section, Qt::Orientation orientation, int role) const;
-  QModelIndex index (int row, int column, const QModelIndex &parent) const;
-  QModelIndex parent (const QModelIndex &index) const;
-  int rowCount (const QModelIndex &parent) const;
-  void has_more (bool hm);
+  int columnCount(const QModelIndex &parent) const;
+  QVariant data(const QModelIndex &index, int role) const;
+  Qt::ItemFlags flags(const QModelIndex &index) const;
+  bool hasChildren(const QModelIndex &parent) const;
+  bool hasIndex(int row, int column, const QModelIndex &parent) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+  QModelIndex index(int row, int column, const QModelIndex &parent) const;
+  QModelIndex parent(const QModelIndex &index) const;
+  int rowCount(const QModelIndex &parent) const;
+  void has_more(bool hm);
 
-  void export_csv (const std::string &file);
-  void export_layout (db::Layout &layout);
-  void export_rdb (rdb::Database &rdb, double dbu);
+  void export_csv(const std::string &file);
+  void export_layout(db::Layout &layout);
+  void export_rdb(rdb::Database &rdb, double dbu);
 
 private:
   std::vector<tl::Variant> m_data_result;
@@ -147,33 +130,30 @@ private:
   std::map<unsigned int, db::LayerProperties> m_lp_map;
   bool m_has_more;
 
-  size_t size () const;
+  size_t size() const;
 };
 
-class SearchReplaceDialog
-  : public lay::Browser,
-    private Ui::SearchReplaceDialog
-{
-Q_OBJECT 
+class SearchReplaceDialog : public lay::Browser,
+                            private Ui::SearchReplaceDialog {
+  Q_OBJECT
 
 public:
   enum window_type { DontChange = 0, FitCell, FitMarker, Center, CenterSize };
 
-  struct SavedQuery
-  {
+  struct SavedQuery {
     std::string description;
     std::string text;
   };
 
-  SearchReplaceDialog (lay::Dispatcher *root, lay::LayoutViewBase *view);
-  ~SearchReplaceDialog ();
+  SearchReplaceDialog(lay::Dispatcher *root, lay::LayoutViewBase *view);
+  ~SearchReplaceDialog();
 
 private:
   //  implementation of the lay::Plugin interface
-  virtual bool configure (const std::string &name, const std::string &value);
+  virtual bool configure(const std::string &name, const std::string &value);
 
   //  implementation of the lay::Plugin interface
-  void menu_activated (const std::string &symbol);
+  void menu_activated(const std::string &symbol);
 
   lay::LayoutViewBase *mp_view;
   std::vector<std::string> m_mru;
@@ -193,51 +173,55 @@ private:
   SearchReplaceResults m_model;
 
 private slots:
-  void find_all_button_clicked ();
-  void delete_button_clicked ();
-  void delete_all_button_clicked ();
-  void replace_button_clicked ();
-  void replace_all_button_clicked ();
-  void configure_button_clicked ();
-  void execute_all_button_clicked ();
-  void execute_selected_button_clicked ();
-  void add_saved_button_clicked ();
-  void replace_saved_button_clicked ();
-  void delete_saved_button_clicked ();
-  void rename_saved_button_clicked ();
-  void tab_index_changed (int index);
-  void saved_query_double_clicked ();
-  void recent_query_index_changed (int);
-  void result_selection_changed ();
-  void header_columns_changed (int from, int to);
-  void cancel ();
-  void cancel_exec ();
-  void export_csv ();
-  void export_rdb ();
-  void export_layout ();
+  void find_all_button_clicked();
+  void delete_button_clicked();
+  void delete_all_button_clicked();
+  void replace_button_clicked();
+  void replace_all_button_clicked();
+  void configure_button_clicked();
+  void execute_all_button_clicked();
+  void execute_selected_button_clicked();
+  void add_saved_button_clicked();
+  void replace_saved_button_clicked();
+  void delete_saved_button_clicked();
+  void rename_saved_button_clicked();
+  void tab_index_changed(int index);
+  void saved_query_double_clicked();
+  void recent_query_index_changed(int);
+  void result_selection_changed();
+  void header_columns_changed(int from, int to);
+  void cancel();
+  void cancel_exec();
+  void export_csv();
+  void export_rdb();
+  void export_layout();
 
 private:
-  std::string build_find_expression (QStackedWidget *prop_page, QComboBox *context);
-  std::string build_delete_expression ();
-  std::string build_replace_expression ();
-  void update_saved_list ();
-  void update_mru_list ();
-  void restore_state ();
-  void save_state ();
-  void issue_query (const std::string &q, const std::set<size_t> *selected_items, bool with_results);
-  void update_results (const std::string &q);
-  void remove_markers ();
-  bool fill_model (const db::LayoutQuery &lq, db::LayoutQueryIterator &iq, const db::Layout *layout, bool all);
-  bool query_to_model (SearchReplaceResults &model, const db::LayoutQuery &lq, db::LayoutQueryIterator &iq, size_t max_item_count, bool all);
-  void attach_layout (db::Layout *layout);
-  void layout_changed ();
+  std::string build_find_expression(QStackedWidget *prop_page,
+                                    QComboBox *context);
+  std::string build_delete_expression();
+  std::string build_replace_expression();
+  void update_saved_list();
+  void update_mru_list();
+  void restore_state();
+  void save_state();
+  void issue_query(const std::string &q, const std::set<size_t> *selected_items,
+                   bool with_results);
+  void update_results(const std::string &q);
+  void remove_markers();
+  bool fill_model(const db::LayoutQuery &lq, db::LayoutQueryIterator &iq,
+                  const db::Layout *layout, bool all);
+  bool query_to_model(SearchReplaceResults &model, const db::LayoutQuery &lq,
+                      db::LayoutQueryIterator &iq, size_t max_item_count,
+                      bool all);
+  void attach_layout(db::Layout *layout);
+  void layout_changed();
 
   //  implementation of the lay::Browser interface
-  virtual void activated ();
-  virtual void deactivated ();
+  virtual void activated();
+  virtual void deactivated();
 };
 
-}
+} // namespace lay
 
 #endif
-

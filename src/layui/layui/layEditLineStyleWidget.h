@@ -30,57 +30,45 @@
 
 #include "dbObject.h"
 
-namespace lay
-{
+namespace lay {
 
-class EditLineStyleWidget
-  : public QFrame, public db::Object
-{
-  Q_OBJECT 
+class EditLineStyleWidget : public QFrame, public db::Object {
+  Q_OBJECT
 
 public:
-  EditLineStyleWidget (QWidget *parent);
+  EditLineStyleWidget(QWidget *parent);
 
-  virtual QSize sizeHint () const;
-  virtual QSize minimumSize () const;
+  virtual QSize sizeHint() const;
+  virtual QSize minimumSize() const;
 
-  void set_style (uint32_t s, unsigned int sx);
+  void set_style(uint32_t s, unsigned int sx);
 
-  void undo (db::Op *op);
-  void redo (db::Op *op);
+  void undo(db::Op *op);
+  void redo(db::Op *op);
 
-  uint32_t style () const
-  {
-    return m_style;
-  }
+  uint32_t style() const { return m_style; }
 
-  virtual void paintEvent (QPaintEvent *event);
-  virtual void mouseMoveEvent (QMouseEvent *event);
-  virtual void mousePressEvent (QMouseEvent *event);
-  virtual void mouseReleaseEvent (QMouseEvent *event);
+  virtual void paintEvent(QPaintEvent *event);
+  virtual void mouseMoveEvent(QMouseEvent *event);
+  virtual void mousePressEvent(QMouseEvent *event);
+  virtual void mouseReleaseEvent(QMouseEvent *event);
 
-  void set_size (unsigned int sx);
+  void set_size(unsigned int sx);
 
-  void set_readonly (bool ro);
+  void set_readonly(bool ro);
 
-  bool readonly () const
-  {
-    return m_readonly;
-  }
+  bool readonly() const { return m_readonly; }
 
-  void clear ();
-  void invert ();
-  void fliph ();
-  void shift (int dx);
+  void clear();
+  void invert();
+  void fliph();
+  void shift(int dx);
 
-  unsigned int sx () const
-  {
-    return m_sx;
-  }
+  unsigned int sx() const { return m_sx; }
 
 signals:
-  void changed ();
-  void size_changed ();
+  void changed();
+  void size_changed();
 
 private:
   unsigned int m_last_mx;
@@ -92,14 +80,14 @@ private:
   bool m_readonly;
   unsigned int m_sx;
 
-  void set_pixel (unsigned int x, bool value);
-  bool get_pixel (int x);
-  bool mouse_to_pixel (const QPoint &pt, unsigned int &x);
-  void expand_style ();
+  void set_pixel(unsigned int x, bool value);
+  bool get_pixel(int x);
+  bool mouse_to_pixel(const QPoint &pt, unsigned int &x);
+  void expand_style();
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

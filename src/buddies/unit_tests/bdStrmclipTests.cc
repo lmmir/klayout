@@ -25,80 +25,78 @@
 #include "dbTestSupport.h"
 #include "tlUnitTest.h"
 
-BD_PUBLIC int strmclip (int argc, char *argv[]);
+BD_PUBLIC int strmclip(int argc, char *argv[]);
 
-TEST(1A)
-{
-  std::string input = tl::testdata ();
+TEST(1A) {
+  std::string input = tl::testdata();
   input += "/bd/strm2clip_in.gds";
 
-  std::string au = tl::testdata ();
+  std::string au = tl::testdata();
   au += "/bd/strm2clip_au1.gds";
 
-  std::string output = this->tmp_file ();
+  std::string output = this->tmp_file();
 
-  const char *argv[] = { "x", input.c_str (), output.c_str (), "-r=0,-2,9,5", "-r=13,-2,16,3", "-r=13,5,16,7" };
+  const char *argv[] = {"x",           input.c_str(),   output.c_str(),
+                        "-r=0,-2,9,5", "-r=13,-2,16,3", "-r=13,5,16,7"};
 
-  EXPECT_EQ (strmclip (sizeof (argv) / sizeof (argv[0]), (char **) argv), 0);
+  EXPECT_EQ(strmclip(sizeof(argv) / sizeof(argv[0]), (char **)argv), 0);
 
   db::Layout layout;
 
   {
-    tl::InputStream stream (output);
-    db::Reader reader (stream);
-    reader.read (layout);
+    tl::InputStream stream(output);
+    db::Reader reader(stream);
+    reader.read(layout);
   }
 
-  db::compare_layouts (this, layout, au, db::NoNormalization);
+  db::compare_layouts(this, layout, au, db::NoNormalization);
 }
 
-TEST(1B)
-{
-  std::string input = tl::testdata ();
+TEST(1B) {
+  std::string input = tl::testdata();
   input += "/bd/strm2clip_in.gds";
 
-  std::string au = tl::testdata ();
+  std::string au = tl::testdata();
   au += "/bd/strm2clip_au1.gds";
 
-  std::string output = this->tmp_file ();
+  std::string output = this->tmp_file();
 
-  const char *argv[] = { "x", input.c_str (), output.c_str (), "-l=100/0" };
+  const char *argv[] = {"x", input.c_str(), output.c_str(), "-l=100/0"};
 
-  EXPECT_EQ (strmclip (sizeof (argv) / sizeof (argv[0]), (char **) argv), 0);
+  EXPECT_EQ(strmclip(sizeof(argv) / sizeof(argv[0]), (char **)argv), 0);
 
   db::Layout layout;
 
   {
-    tl::InputStream stream (output);
-    db::Reader reader (stream);
-    reader.read (layout);
+    tl::InputStream stream(output);
+    db::Reader reader(stream);
+    reader.read(layout);
   }
 
-  db::compare_layouts (this, layout, au, db::NoNormalization);
+  db::compare_layouts(this, layout, au, db::NoNormalization);
 }
 
-TEST(2)
-{
-  std::string input = tl::testdata ();
+TEST(2) {
+  std::string input = tl::testdata();
   input += "/bd/strm2clip_in.gds";
 
-  std::string au = tl::testdata ();
+  std::string au = tl::testdata();
   au += "/bd/strm2clip_au2.gds";
 
-  std::string output = this->tmp_file ();
+  std::string output = this->tmp_file();
 
-  const char *argv[] = { "x", input.c_str (), output.c_str (), "-r=0,-2,9,5", "-t", "INV2", "-x=CLIP_OUT" };
+  const char *argv[] = {"x",  input.c_str(), output.c_str(), "-r=0,-2,9,5",
+                        "-t", "INV2",        "-x=CLIP_OUT"};
 
-  EXPECT_EQ (strmclip (sizeof (argv) / sizeof (argv[0]), (char **) argv), 0);
+  EXPECT_EQ(strmclip(sizeof(argv) / sizeof(argv[0]), (char **)argv), 0);
 
   db::Layout layout;
 
   {
-    tl::InputStream stream (output);
-    db::Reader reader (stream);
-    reader.read (layout);
+    tl::InputStream stream(output);
+    db::Reader reader(stream);
+    reader.read(layout);
   }
 
-  db::compare_layouts (this, layout, au, db::NoNormalization);
+  db::compare_layouts(this, layout, au, db::NoNormalization);
 }
-

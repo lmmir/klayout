@@ -21,41 +21,42 @@
 */
 
 #include "layHelpAboutDialog.h"
-#include "layApplication.h"
-#include "layVersion.h"
-#include "layHelpSource.h" // because of escape_xml
-#include "layInit.h"
 #include "dbInit.h"
 #include "gsiInterpreter.h"
+#include "layApplication.h"
+#include "layHelpSource.h" // because of escape_xml
+#include "layInit.h"
+#include "layVersion.h"
 
 #include "ui_HelpAboutDialog.h"
 
 #include <list>
 
-namespace lay
-{
+namespace lay {
 
 // ------------------------------------------------------------
 //  Implementation of the "help about" dialog
 
-HelpAboutDialog::HelpAboutDialog (QWidget *parent)
-  : QDialog (parent)
-{
-  mp_ui = new Ui::HelpAboutDialog ();
-  mp_ui->setupUi (this);
+HelpAboutDialog::HelpAboutDialog(QWidget *parent) : QDialog(parent) {
+  mp_ui = new Ui::HelpAboutDialog();
+  mp_ui->setupUi(this);
 
   std::vector<std::string> build_options;
-  if (lay::ApplicationBase::instance ()->ruby_interpreter ().available ()) {
-    build_options.push_back (tl::to_string (tr ("Ruby interpreter ")) + lay::ApplicationBase::instance ()->ruby_interpreter ().version ());
+  if (lay::ApplicationBase::instance()->ruby_interpreter().available()) {
+    build_options.push_back(
+        tl::to_string(tr("Ruby interpreter ")) +
+        lay::ApplicationBase::instance()->ruby_interpreter().version());
   }
-  if (lay::ApplicationBase::instance ()->python_interpreter ().available ()) {
-    build_options.push_back (tl::to_string (tr ("Python interpreter ")) + lay::ApplicationBase::instance ()->python_interpreter ().version ());
+  if (lay::ApplicationBase::instance()->python_interpreter().available()) {
+    build_options.push_back(
+        tl::to_string(tr("Python interpreter ")) +
+        lay::ApplicationBase::instance()->python_interpreter().version());
   }
 #if defined(HAVE_QTBINDINGS)
-  build_options.push_back (tl::to_string (tr ("Qt bindings for scripts")));
+  build_options.push_back(tl::to_string(tr("Qt bindings for scripts")));
 #endif
 #if defined(HAVE_64BIT_COORD)
-  build_options.push_back (tl::to_string (tr ("Wide coordinates (64 bit)")));
+  build_options.push_back(tl::to_string(tr("Wide coordinates (64 bit)")));
 #endif
 
   std::string s;
@@ -63,78 +64,84 @@ HelpAboutDialog::HelpAboutDialog (QWidget *parent)
   s = "<html><body>";
 
   s += "<h1>";
-  s += escape_xml (std::string (lay::Version::name ()) + " " + lay::Version::version ());
+  s += escape_xml(std::string(lay::Version::name()) + " " +
+                  lay::Version::version());
   s += "</h1>";
 
-  std::vector<std::string> about_paras = tl::split (lay::Version::about_text (), "\n\n");
-  for (std::vector<std::string>::const_iterator p = about_paras.begin (); p != about_paras.end (); ++p) {
-    s += std::string ("<p>") + escape_xml (*p) + "</p>";
+  std::vector<std::string> about_paras =
+      tl::split(lay::Version::about_text(), "\n\n");
+  for (std::vector<std::string>::const_iterator p = about_paras.begin();
+       p != about_paras.end(); ++p) {
+    s += std::string("<p>") + escape_xml(*p) + "</p>";
   }
 
-  if (! build_options.empty ()) {
+  if (!build_options.empty()) {
     s += "<p>";
     s += "<h4>";
-    s += escape_xml (tl::to_string (QObject::tr ("Build options:")));
+    s += escape_xml(tl::to_string(QObject::tr("Build options:")));
     s += "</h4><ul>";
-    for (std::vector<std::string>::const_iterator bo = build_options.begin (); bo != build_options.end (); ++bo) {
+    for (std::vector<std::string>::const_iterator bo = build_options.begin();
+         bo != build_options.end(); ++bo) {
       s += "<li>";
-      s += escape_xml (*bo);
+      s += escape_xml(*bo);
       s += "</li>";
     }
     s += "</ul>";
   }
 
-  if (! lay::plugins ().empty () || ! db::plugins ().empty ()) {
+  if (!lay::plugins().empty() || !db::plugins().empty()) {
 
     s += "<p>";
     s += "<h4>";
-    s += escape_xml (tl::to_string (QObject::tr ("Binary extensions:")));
+    s += escape_xml(tl::to_string(QObject::tr("Binary extensions:")));
     s += "</h4><ul>";
 
-    for (std::list<lay::PluginDescriptor>::const_iterator pd = lay::plugins ().begin (); pd != lay::plugins ().end (); ++pd) {
+    for (std::list<lay::PluginDescriptor>::const_iterator pd =
+             lay::plugins().begin();
+         pd != lay::plugins().end(); ++pd) {
       s += "<li>";
-      if (! pd->description.empty ()) {
-        s += escape_xml (pd->description);
+      if (!pd->description.empty()) {
+        s += escape_xml(pd->description);
       } else {
-        s += escape_xml (pd->path);
+        s += escape_xml(pd->path);
       }
-      if (! pd->version.empty ()) {
-        s += " (" + escape_xml (pd->version) + ")";
+      if (!pd->version.empty()) {
+        s += " (" + escape_xml(pd->version) + ")";
       }
       s += "</li>";
     }
 
-    for (std::list<db::PluginDescriptor>::const_iterator pd = db::plugins ().begin (); pd != db::plugins ().end (); ++pd) {
+    for (std::list<db::PluginDescriptor>::const_iterator pd =
+             db::plugins().begin();
+         pd != db::plugins().end(); ++pd) {
       s += "<li>";
-      if (! pd->description.empty ()) {
-        s += escape_xml (pd->description);
+      if (!pd->description.empty()) {
+        s += escape_xml(pd->description);
       } else {
-        s += escape_xml (pd->path);
+        s += escape_xml(pd->path);
       }
-      if (! pd->version.empty ()) {
-        s += " (" + escape_xml (pd->version) + ")";
+      if (!pd->version.empty()) {
+        s += " (" + escape_xml(pd->version) + ")";
       }
       s += "</li>";
     }
 
     s += "</ul>";
-
   }
 
   s += "</body></html>";
 
-  std::string t = tl::to_string (QObject::tr ("About ")) + lay::Version::name ();
+  std::string t = tl::to_string(QObject::tr("About ")) + lay::Version::name();
 
-  setWindowTitle (tl::to_qstring (t));
+  setWindowTitle(tl::to_qstring(t));
 
-  mp_ui->main->setWordWrap (true);
-  mp_ui->main->setText (tl::to_qstring (s));
+  mp_ui->main->setWordWrap(true);
+  mp_ui->main->setText(tl::to_qstring(s));
 }
 
-HelpAboutDialog::~HelpAboutDialog ()
-{
+HelpAboutDialog::~HelpAboutDialog() {
   delete mp_ui;
   mp_ui = 0;
 }
 
-}
+} // namespace lay

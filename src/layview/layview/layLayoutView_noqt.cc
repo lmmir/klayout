@@ -24,64 +24,55 @@
 
 #include "layLayoutView.h"
 
-namespace lay
-{
+namespace lay {
 
-LayoutView::LayoutView (db::Manager *mgr, bool editable, lay::Plugin *plugin_parent, unsigned int options)
-  : LayoutViewBase (this, mgr, editable, plugin_parent, options)
-{
-  //  NOTE: it's important to call LayoutViewBase::init from a fully constructed LayoutView (issue #1360)
-  LayoutViewBase::init (mgr);
-  config_setup ();
-  finish ();
+LayoutView::LayoutView(db::Manager *mgr, bool editable,
+                       lay::Plugin *plugin_parent, unsigned int options)
+    : LayoutViewBase(this, mgr, editable, plugin_parent, options) {
+  //  NOTE: it's important to call LayoutViewBase::init from a fully constructed
+  //  LayoutView (issue #1360)
+  LayoutViewBase::init(mgr);
+  config_setup();
+  finish();
 }
 
-LayoutView::LayoutView (lay::LayoutView *source, db::Manager *mgr, bool editable, lay::Plugin *plugin_parent, unsigned int options)
-  : LayoutViewBase (this, mgr, editable, plugin_parent, options)
-{
-  //  NOTE: it's important to call LayoutViewBase::init from a fully constructed LayoutView (issue #1360)
-  LayoutViewBase::init (mgr);
-  copy_from (source);
-  config_setup ();
-  finish ();
+LayoutView::LayoutView(lay::LayoutView *source, db::Manager *mgr, bool editable,
+                       lay::Plugin *plugin_parent, unsigned int options)
+    : LayoutViewBase(this, mgr, editable, plugin_parent, options) {
+  //  NOTE: it's important to call LayoutViewBase::init from a fully constructed
+  //  LayoutView (issue #1360)
+  LayoutViewBase::init(mgr);
+  copy_from(source);
+  config_setup();
+  finish();
 }
 
 //  NOTE: this methods needs to be called "frequently"
-void
-LayoutView::timer ()
-{
-  LayoutViewBase::timer ();
+void LayoutView::timer() {
+  LayoutViewBase::timer();
 
   //  Without Qt, this is also the opportunity to execute deferred methods
-  tl::DeferredMethodScheduler::execute ();
+  tl::DeferredMethodScheduler::execute();
 
-  //  We also issue the "image_updated" event if the image ("screenshot") has been updated
-  if (canvas ()->image_updated ()) {
-    image_updated_event ();
+  //  We also issue the "image_updated" event if the image ("screenshot") has
+  //  been updated
+  if (canvas()->image_updated()) {
+    image_updated_event();
   }
 
   //  And also the drawing_finished event
-  if (canvas ()->drawing_finished ()) {
-    drawing_finished_event ();
+  if (canvas()->drawing_finished()) {
+    drawing_finished_event();
   }
 }
 
 static tl::weak_ptr<lay::LayoutView> s_current_view;
 
-LayoutView *LayoutView::current ()
-{
-  return s_current_view.get ();
-}
+LayoutView *LayoutView::current() { return s_current_view.get(); }
 
-void LayoutView::set_current (LayoutView *view)
-{
-  s_current_view.reset (view);
-}
+void LayoutView::set_current(LayoutView *view) { s_current_view.reset(view); }
 
-void LayoutView::set_current ()
-{
-  s_current_view.reset (this);
-}
+void LayoutView::set_current() { s_current_view.reset(this); }
 
 } // namespace lay
 

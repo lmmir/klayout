@@ -26,16 +26,15 @@
 #include "dbCommon.h"
 #include "dbNetlistReader.h"
 
-#include "tlStream.h"
 #include "tlObject.h"
+#include "tlStream.h"
 #include "tlVariant.h"
 
 #include <map>
-#include <string>
 #include <memory>
+#include <string>
 
-namespace db
-{
+namespace db {
 
 class Netlist;
 class NetlistSpiceReaderDelegate;
@@ -43,25 +42,21 @@ class NetlistSpiceReaderDelegate;
 /**
  *  @brief A SPICE format reader for netlists
  */
-class DB_PUBLIC NetlistSpiceReader
-  : public NetlistReader
-{
+class DB_PUBLIC NetlistSpiceReader : public NetlistReader {
 public:
   typedef std::map<std::string, tl::Variant> parameters_type;
 
-  NetlistSpiceReader (NetlistSpiceReaderDelegate *delegate = 0);
-  virtual ~NetlistSpiceReader ();
+  NetlistSpiceReader(NetlistSpiceReaderDelegate *delegate = 0);
+  virtual ~NetlistSpiceReader();
 
-  virtual void read (tl::InputStream &stream, db::Netlist &netlist);
+  virtual void read(tl::InputStream &stream, db::Netlist &netlist);
 
   /**
    *  @brief Sets or resets strict mode
-   *  In strict mode, all subcircuits need to be present in the net list for example.
+   *  In strict mode, all subcircuits need to be present in the net list for
+   * example.
    */
-  void set_strict (bool s)
-  {
-    m_strict = s;
-  }
+  void set_strict(bool s) { m_strict = s; }
 
 private:
   tl::weak_ptr<NetlistSpiceReaderDelegate> mp_delegate;
@@ -69,6 +64,6 @@ private:
   bool m_strict;
 };
 
-}
+} // namespace db
 
 #endif

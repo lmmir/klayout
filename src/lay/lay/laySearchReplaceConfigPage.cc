@@ -20,47 +20,45 @@
 
 */
 
-
 #include "laySearchReplaceConfigPage.h"
 #include "layDispatcher.h"
 
-namespace lay
-{
+namespace lay {
 
-const std::string cfg_sr_window_state ("sr-window-state");
-const std::string cfg_sr_window_mode ("sr-window-mode");
-const std::string cfg_sr_window_dim ("sr-window-dim");
-const std::string cfg_sr_max_item_count ("sr-max-item-count");
+const std::string cfg_sr_window_state("sr-window-state");
+const std::string cfg_sr_window_mode("sr-window-mode");
+const std::string cfg_sr_window_dim("sr-window-dim");
+const std::string cfg_sr_max_item_count("sr-max-item-count");
 
 static struct {
   SearchReplaceDialog::window_type mode;
   const char *string;
-} window_modes [] = {
-  { SearchReplaceDialog::DontChange,    "dont-change" },
-  { SearchReplaceDialog::FitCell,       "fit-cell"    },
-  { SearchReplaceDialog::FitMarker,     "fit-marker"  },
-  { SearchReplaceDialog::Center,        "center"      },
-  { SearchReplaceDialog::CenterSize,    "center-size" }
-};
+} window_modes[] = {{SearchReplaceDialog::DontChange, "dont-change"},
+                    {SearchReplaceDialog::FitCell, "fit-cell"},
+                    {SearchReplaceDialog::FitMarker, "fit-marker"},
+                    {SearchReplaceDialog::Center, "center"},
+                    {SearchReplaceDialog::CenterSize, "center-size"}};
 
-void
-SearchReplaceWindowModeConverter::from_string (const std::string &value, SearchReplaceDialog::window_type &mode)
-{
-  for (unsigned int i = 0; i < sizeof (window_modes) / sizeof (window_modes [0]); ++i) {
-    if (value == window_modes [i].string) {
-      mode = window_modes [i].mode;
+void SearchReplaceWindowModeConverter::from_string(
+    const std::string &value, SearchReplaceDialog::window_type &mode) {
+  for (unsigned int i = 0; i < sizeof(window_modes) / sizeof(window_modes[0]);
+       ++i) {
+    if (value == window_modes[i].string) {
+      mode = window_modes[i].mode;
       return;
     }
   }
-  throw tl::Exception (tl::to_string (QObject::tr ("Invalid search result browser window mode: ")) + value);
+  throw tl::Exception(tl::to_string(QObject::tr(
+                          "Invalid search result browser window mode: ")) +
+                      value);
 }
 
-std::string 
-SearchReplaceWindowModeConverter::to_string (SearchReplaceDialog::window_type mode)
-{
-  for (unsigned int i = 0; i < sizeof (window_modes) / sizeof (window_modes [0]); ++i) {
-    if (mode == window_modes [i].mode) {
-      return window_modes [i].string;
+std::string SearchReplaceWindowModeConverter::to_string(
+    SearchReplaceDialog::window_type mode) {
+  for (unsigned int i = 0; i < sizeof(window_modes) / sizeof(window_modes[0]);
+       ++i) {
+    if (mode == window_modes[i].mode) {
+      return window_modes[i].string;
     }
   }
   return "";
@@ -68,56 +66,53 @@ SearchReplaceWindowModeConverter::to_string (SearchReplaceDialog::window_type mo
 
 // ------------------------------------------------------------
 
-SearchReplaceConfigPage::SearchReplaceConfigPage (QWidget *parent)
-  : lay::ConfigPage (parent)
-{
-  Ui::SearchReplaceConfigPage::setupUi (this);
+SearchReplaceConfigPage::SearchReplaceConfigPage(QWidget *parent)
+    : lay::ConfigPage(parent) {
+  Ui::SearchReplaceConfigPage::setupUi(this);
 
-  connect (cbx_window, SIGNAL (currentIndexChanged (int)), this, SLOT (window_changed (int)));
+  connect(cbx_window, SIGNAL(currentIndexChanged(int)), this,
+          SLOT(window_changed(int)));
 }
 
-void 
-SearchReplaceConfigPage::setup (lay::Dispatcher *root)
-{
+void SearchReplaceConfigPage::setup(lay::Dispatcher *root) {
   std::string value;
 
   //  window mode
   SearchReplaceDialog::window_type wmode = SearchReplaceDialog::FitMarker;
-  root->config_get (cfg_sr_window_mode, wmode, SearchReplaceWindowModeConverter ());
-  cbx_window->setCurrentIndex (int (wmode));
+  root->config_get(cfg_sr_window_mode, wmode,
+                   SearchReplaceWindowModeConverter());
+  cbx_window->setCurrentIndex(int(wmode));
 
   //  window dimension
   std::string wdim_str;
-  root->config_get (cfg_sr_window_dim, wdim_str);
-  mrg_window->set_margin (lay::Margin::from_string (wdim_str));
-    
+  root->config_get(cfg_sr_window_dim, wdim_str);
+  mrg_window->set_margin(lay::Margin::from_string(wdim_str));
+
   //  max. instance count
   unsigned int max_item_count = 1000;
-  root->config_get (cfg_sr_max_item_count, max_item_count);
-  le_max_items->setText (tl::to_qstring (tl::to_string (max_item_count)));
+  root->config_get(cfg_sr_max_item_count, max_item_count);
+  le_max_items->setText(tl::to_qstring(tl::to_string(max_item_count)));
 
   //  enable controls
-  window_changed (int (wmode));
+  window_changed(int(wmode));
 }
 
-void
-SearchReplaceConfigPage::window_changed (int m)
-{
-  mrg_window->setEnabled (m == int (SearchReplaceDialog::FitMarker) || m == int (SearchReplaceDialog::CenterSize));
+void SearchReplaceConfigPage::window_changed(int m) {
+  mrg_window->setEnabled(m == int(SearchReplaceDialog::FitMarker) ||
+                         m == int(SearchReplaceDialog::CenterSize));
 }
 
-void 
-SearchReplaceConfigPage::commit (lay::Dispatcher *root)
-{
-  lay::Margin dim = mrg_window->get_margin ();
+void SearchReplaceConfigPage::commit(lay::Dispatcher *root) {
+  lay::Margin dim = mrg_window->get_margin();
 
   unsigned int max_item_count = 1000;
-  tl::from_string_ext (tl::to_string (le_max_items->text ()), max_item_count);
+  tl::from_string_ext(tl::to_string(le_max_items->text()), max_item_count);
 
-  root->config_set (cfg_sr_window_mode, SearchReplaceDialog::window_type (cbx_window->currentIndex ()), SearchReplaceWindowModeConverter ());
-  root->config_set (cfg_sr_window_dim, dim.to_string ());
-  root->config_set (cfg_sr_max_item_count, max_item_count);
+  root->config_set(cfg_sr_window_mode,
+                   SearchReplaceDialog::window_type(cbx_window->currentIndex()),
+                   SearchReplaceWindowModeConverter());
+  root->config_set(cfg_sr_window_dim, dim.to_string());
+  root->config_set(cfg_sr_max_item_count, max_item_count);
 }
 
-}
-
+} // namespace lay

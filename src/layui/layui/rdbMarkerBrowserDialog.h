@@ -25,55 +25,51 @@
 #ifndef HDR_rdbMarkerBrowserDialog
 #define HDR_rdbMarkerBrowserDialog
 
-#include "layuiCommon.h"
 #include "layBrowser.h"
 #include "layMargin.h"
-#include "tlColor.h"
+#include "layuiCommon.h"
 #include "rdbMarkerBrowser.h"
+#include "tlColor.h"
 
-namespace Ui
-{
-  class MarkerBrowserDialog;
+namespace Ui {
+class MarkerBrowserDialog;
 }
 
-namespace rdb
-{
+namespace rdb {
 
-class LAYUI_PUBLIC MarkerBrowserDialog
-  : public lay::Browser
-{
+class LAYUI_PUBLIC MarkerBrowserDialog : public lay::Browser {
   Q_OBJECT
 
 public:
-  MarkerBrowserDialog (lay::Dispatcher *root, lay::LayoutViewBase *view);
-  ~MarkerBrowserDialog ();
+  MarkerBrowserDialog(lay::Dispatcher *root, lay::LayoutViewBase *view);
+  ~MarkerBrowserDialog();
 
-  void load (int rdb_index, int cv_index);
+  void load(int rdb_index, int cv_index);
 
 private:
   //  implementation of the lay::Browser interface
-  virtual void activated ();
-  virtual void deactivated ();
+  virtual void activated();
+  virtual void deactivated();
 
-  bool configure (const std::string &name, const std::string &value);
+  bool configure(const std::string &name, const std::string &value);
 
   //  implementation of the lay::Plugin interface
-  virtual void menu_activated (const std::string &symbol);
+  virtual void menu_activated(const std::string &symbol);
 
-  void cellviews_changed ();
-  void cellview_changed (int index);
-  void rdbs_changed ();
+  void cellviews_changed();
+  void cellview_changed(int index);
+  void rdbs_changed();
 
 public slots:
-  void cv_index_changed (int);
-  void rdb_index_changed (int);
-  void saveas_clicked ();
-  void export_clicked ();
-  void reload_clicked ();
-  void open_clicked ();
-  void unload_clicked ();
-  void unload_all_clicked ();
-  void configure_clicked ();
+  void cv_index_changed(int);
+  void rdb_index_changed(int);
+  void saveas_clicked();
+  void export_clicked();
+  void reload_clicked();
+  void open_clicked();
+  void unload_clicked();
+  void unload_all_clicked();
+  void configure_clicked();
 
 private:
   Ui::MarkerBrowserDialog *mp_ui;
@@ -98,13 +94,13 @@ private:
   QAction *m_unload_all_action;
   QAction *m_reload_action;
 
-  void update_content ();
-  void scan_layer ();
-  void scan_layer_flat ();
+  void update_content();
+  void scan_layer();
+  void scan_layer_flat();
 };
 
-}
+} // namespace rdb
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

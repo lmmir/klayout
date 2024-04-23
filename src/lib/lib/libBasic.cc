@@ -20,51 +20,44 @@
 
 */
 
-
-#include "libBasicText.h"
+#include "dbLibrary.h"
 #include "libBasicArc.h"
 #include "libBasicCircle.h"
+#include "libBasicDonut.h"
 #include "libBasicEllipse.h"
 #include "libBasicPie.h"
-#include "libBasicDonut.h"
 #include "libBasicRoundPath.h"
 #include "libBasicRoundPolygon.h"
 #include "libBasicStrokedPolygon.h"
-#include "dbLibrary.h"
+#include "libBasicText.h"
 
-namespace lib
-{
+namespace lib {
 
 /**
- *  @brief Declaration of the Basic library 
+ *  @brief Declaration of the Basic library
  */
-class Basic
-  : public db::Library
-{
+class Basic : public db::Library {
 public:
-  Basic ()
-    : db::Library ()
-  {
+  Basic() : db::Library() {
     //  basic initialization
-    set_name ("Basic");
-    set_description ("Basic layout objects");
+    set_name("Basic");
+    set_description("Basic layout objects");
 
     //  register all the PCells:
-    layout ().register_pcell ("TEXT", new BasicText ());
-    layout ().register_pcell ("CIRCLE", new BasicCircle ());
-    layout ().register_pcell ("ELLIPSE", new BasicEllipse ());
-    layout ().register_pcell ("PIE", new BasicPie ());
-    layout ().register_pcell ("ARC", new BasicArc ());
-    layout ().register_pcell ("DONUT", new BasicDonut ());
-    layout ().register_pcell ("ROUND_PATH", new BasicRoundPath ());
-    layout ().register_pcell ("ROUND_POLYGON", new BasicRoundPolygon ());
-    layout ().register_pcell ("STROKED_BOX", new BasicStrokedPolygon (true));
-    layout ().register_pcell ("STROKED_POLYGON", new BasicStrokedPolygon (false));
+    layout().register_pcell("TEXT", new BasicText());
+    layout().register_pcell("CIRCLE", new BasicCircle());
+    layout().register_pcell("ELLIPSE", new BasicEllipse());
+    layout().register_pcell("PIE", new BasicPie());
+    layout().register_pcell("ARC", new BasicArc());
+    layout().register_pcell("DONUT", new BasicDonut());
+    layout().register_pcell("ROUND_PATH", new BasicRoundPath());
+    layout().register_pcell("ROUND_POLYGON", new BasicRoundPolygon());
+    layout().register_pcell("STROKED_BOX", new BasicStrokedPolygon(true));
+    layout().register_pcell("STROKED_POLYGON", new BasicStrokedPolygon(false));
   }
 };
 
 //  register the library
-static tl::RegisteredClass<db::Library> basic_lib_registration (new Basic ());
+static tl::RegisteredClass<db::Library> basic_lib_registration(new Basic());
 
-}
-
+} // namespace lib

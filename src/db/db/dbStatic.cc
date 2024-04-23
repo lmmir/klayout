@@ -20,36 +20,32 @@
 
 */
 
-
 #include "dbStatic.h"
 #include "tlException.h"
 
 #include <cstdio>
 
-namespace db
-{
+namespace db {
 
 // -----------------------------------------------------------
 //  editable mode
 
 DB_PUBLIC bool ms_editable = false;
 
-void set_default_editable_mode (bool editable)
-{
-  ms_editable = editable;
-}
+void set_default_editable_mode(bool editable) { ms_editable = editable; }
 
-void check_editable_mode (const char *f_str)
-{
-  if (! ms_editable) {
-    throw tl::Exception (tl::to_string (tr ("Function '%s' is permitted only in editable mode")), f_str);
+void check_editable_mode(const char *f_str) {
+  if (!ms_editable) {
+    throw tl::Exception(
+        tl::to_string(tr("Function '%s' is permitted only in editable mode")),
+        f_str);
   }
 }
 
-void check_editable_mode ()
-{
-  if (! ms_editable) {
-    throw tl::Exception (tl::to_string (tr ("Operation is permitted only in editable mode")));
+void check_editable_mode() {
+  if (!ms_editable) {
+    throw tl::Exception(
+        tl::to_string(tr("Operation is permitted only in editable mode")));
   }
 }
 
@@ -58,20 +54,13 @@ void check_editable_mode ()
 
 DB_PUBLIC unsigned int ms_num_circle_points = 32;
 
-void set_num_circle_points (unsigned int n)
-{
-  ms_num_circle_points = n;
-}
+void set_num_circle_points(unsigned int n) { ms_num_circle_points = n; }
 
 // -----------------------------------------------------------
-//  undo enable 
+//  undo enable
 
 DB_PUBLIC bool ms_transactions_enabled = true;
 
-void enable_transactions (bool enable)
-{
-  ms_transactions_enabled = enable;
-}
+void enable_transactions(bool enable) { ms_transactions_enabled = enable; }
 
-}
-
+} // namespace db

@@ -22,11 +22,6 @@
 
 #include "layForceLink.h"
 
-namespace lay
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace lay {
+int _force_link_f() { return 0; }
+} // namespace lay

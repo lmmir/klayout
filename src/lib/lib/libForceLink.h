@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_libForceLink
 #define HDR_libForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the lib module
  */
 
-namespace lib
-{
-  LIB_PUBLIC int _force_link_f ();
-  int _force_link_target = _force_link_f ();
-}
+namespace lib {
+LIB_PUBLIC int _force_link_f();
+int _force_link_target = _force_link_f();
+} // namespace lib
 
 #endif
-

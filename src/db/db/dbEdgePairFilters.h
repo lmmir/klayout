@@ -20,15 +20,13 @@
 
 */
 
-
 #ifndef HDR_dbEdgePairFilters
 #define HDR_dbEdgePairFilters
 
 #include "dbEdgePairs.h"
 #include "dbEdgesUtils.h"
 
-namespace db
-{
+namespace db {
 
 class EdgeFilterBase;
 
@@ -36,20 +34,20 @@ class EdgeFilterBase;
  *  @brief A base class for edge pair filters based on edge filters
  *
  *  If "one_must_match" is true, it is sufficient for one edge to be selected.
- *  If it is false, both edges need to be selected to make the edge pair selected.
+ *  If it is false, both edges need to be selected to make the edge pair
+ * selected.
  *
  *  NOTE: the edge filter is not owned by the edge pair filter object.
  */
-class DB_PUBLIC EdgeFilterBasedEdgePairFilter
-  : public EdgePairFilterBase
-{
+class DB_PUBLIC EdgeFilterBasedEdgePairFilter : public EdgePairFilterBase {
 public:
-  EdgeFilterBasedEdgePairFilter (EdgeFilterBase *edge_filter, bool one_must_match);
-  virtual ~EdgeFilterBasedEdgePairFilter ();
+  EdgeFilterBasedEdgePairFilter(EdgeFilterBase *edge_filter,
+                                bool one_must_match);
+  virtual ~EdgeFilterBasedEdgePairFilter();
 
-  virtual bool selected (const db::EdgePair &edge_pair) const;
-  virtual const TransformationReducer *vars () const;
-  virtual bool wants_variants () const;
+  virtual bool selected(const db::EdgePair &edge_pair) const;
+  virtual const TransformationReducer *vars() const;
+  virtual bool wants_variants() const;
 
 private:
   EdgeFilterBase *mp_edge_filter;
@@ -59,19 +57,19 @@ private:
 /**
  *  @brief Filters edge pairs based on the distance of the edges.
  *
- *  The distance is measured as the smallest distance between each of the points of the two edges.
+ *  The distance is measured as the smallest distance between each of the points
+ * of the two edges.
  */
-class DB_PUBLIC EdgePairFilterByDistance
-  : public EdgePairFilterBase
-{
+class DB_PUBLIC EdgePairFilterByDistance : public EdgePairFilterBase {
 public:
   typedef db::coord_traits<db::Coord>::distance_type distance_type;
 
-  EdgePairFilterByDistance (distance_type min_distance, distance_type max_distance, bool inverted);
+  EdgePairFilterByDistance(distance_type min_distance,
+                           distance_type max_distance, bool inverted);
 
-  virtual bool selected (const db::EdgePair &edge_pair) const;
-  virtual const TransformationReducer *vars () const { return &m_vars; }
-  virtual bool wants_variants () const { return true; }
+  virtual bool selected(const db::EdgePair &edge_pair) const;
+  virtual const TransformationReducer *vars() const { return &m_vars; }
+  virtual bool wants_variants() const { return true; }
 
 private:
   distance_type m_min_distance, m_max_distance;
@@ -82,19 +80,18 @@ private:
 /**
  *  @brief Filters edge pairs based on the distance of the edges.
  *
- *  The distance is measured as the smallest distance between each of the points of the two edges.
+ *  The distance is measured as the smallest distance between each of the points
+ * of the two edges.
  */
-class DB_PUBLIC EdgePairFilterByArea
-  : public EdgePairFilterBase
-{
+class DB_PUBLIC EdgePairFilterByArea : public EdgePairFilterBase {
 public:
   typedef db::coord_traits<db::Coord>::area_type area_type;
 
-  EdgePairFilterByArea (area_type min_area, area_type max_area, bool inverted);
+  EdgePairFilterByArea(area_type min_area, area_type max_area, bool inverted);
 
-  virtual bool selected (const db::EdgePair &edge_pair) const;
-  virtual const TransformationReducer *vars () const { return &m_vars; }
-  virtual bool wants_variants () const { return true; }
+  virtual bool selected(const db::EdgePair &edge_pair) const;
+  virtual const TransformationReducer *vars() const { return &m_vars; }
+  virtual bool wants_variants() const { return true; }
 
 private:
   area_type m_min_area, m_max_area;
@@ -105,24 +102,24 @@ private:
 /**
  *  @brief Filters edge pairs based on the distance of the edges.
  *
- *  The distance is measured as the smallest distance between each of the points of the two edges.
+ *  The distance is measured as the smallest distance between each of the points
+ * of the two edges.
  */
-class DB_PUBLIC InternalAngleEdgePairFilter
-  : public EdgePairFilterBase
-{
+class DB_PUBLIC InternalAngleEdgePairFilter : public EdgePairFilterBase {
 public:
-  InternalAngleEdgePairFilter (double a, bool inverted);
-  InternalAngleEdgePairFilter (double amin, bool include_amin, double amax, bool include_amax, bool inverted);
+  InternalAngleEdgePairFilter(double a, bool inverted);
+  InternalAngleEdgePairFilter(double amin, bool include_amin, double amax,
+                              bool include_amax, bool inverted);
 
-  virtual bool selected (const db::EdgePair &edge_pair) const;
-  virtual const TransformationReducer *vars () const { return 0; }
-  virtual bool wants_variants () const { return false; }
+  virtual bool selected(const db::EdgePair &edge_pair) const;
+  virtual const TransformationReducer *vars() const { return 0; }
+  virtual bool wants_variants() const { return false; }
 
 private:
   bool m_inverted;
   db::EdgeAngleChecker m_checker;
 };
 
-}
+} // namespace db
 
 #endif

@@ -20,10 +20,8 @@
 
 */
 
-
 #include "tlLongInt.h"
 
-namespace tl
-{
-  //  .. nothing yet ..
+namespace tl {
+//  .. nothing yet ..
 }

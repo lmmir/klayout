@@ -20,186 +20,189 @@
 
 */
 
-
 #ifndef _HDR_rba
 #define _HDR_rba
 
 #include "gsi.h"
 #include "gsiInterpreter.h"
-#include "tlScriptError.h"
 #include "rbaCommon.h"
+#include "tlScriptError.h"
 
-namespace rba
-{
+namespace rba {
 
 struct RubyInterpreterPrivateData;
 
 /**
  *  @brief The ruby interpreter wrapper class
  */
-class RBA_PUBLIC RubyInterpreter
-  : public gsi::Interpreter
-{
+class RBA_PUBLIC RubyInterpreter : public gsi::Interpreter {
 public:
   /**
    *  @brief Constructor
    *
-   *  Creates and initializes the Interpreter. The static "initialize" method must have been called before.
+   *  Creates and initializes the Interpreter. The static "initialize" method
+   * must have been called before.
    */
-  RubyInterpreter ();
+  RubyInterpreter();
 
   /**
    *  @brief Destructor
    */
-  ~RubyInterpreter ();
+  ~RubyInterpreter();
 
   /**
    *  @brief Add the given path to the search path ($: in ruby)
    */
-  void add_path (const std::string &path);
+  void add_path(const std::string &path);
 
   /**
    *  @brief Adds a package location to this interpreter
    */
-  void add_package_location (const std::string &package_path);
+  void add_package_location(const std::string &package_path);
 
   /**
    *  @brief Removes a package location from this interpreter
    */
-  void remove_package_location (const std::string &package_path);
+  void remove_package_location(const std::string &package_path);
 
   /**
    *  @brief Requires the given module (ruby "require")
    */
-  void require (const std::string &filename);
+  void require(const std::string &filename);
 
   /**
    *  @brief Set the given debugger scope
    *
    *  The debugger scope is the element to which the back trace will be reduced.
-   *  Specifically this suppresses calls from inner functions called from that file.
-   *  This is useful for DSL implementations.
+   *  Specifically this suppresses calls from inner functions called from that
+   * file. This is useful for DSL implementations.
    */
-  void set_debugger_scope (const std::string &filename);
+  void set_debugger_scope(const std::string &filename);
 
   /**
    *  @brief Removes the debugger scope
    */
-  void remove_debugger_scope ();
+  void remove_debugger_scope();
 
   /**
    *  @brief Gets the current debugger scope
    */
-  const std::string &debugger_scope () const;
+  const std::string &debugger_scope() const;
 
   /**
    *  @brief Ignores the next exception
    *
    *  This is useful for suppressing re-raised exceptions in the debugger.
    */
-  void ignore_next_exception ();
+  void ignore_next_exception();
 
   /**
    *  @brief Load the given file (ruby "load")
    */
-  void load_file (const std::string &filename);
+  void load_file(const std::string &filename);
 
   /**
    *  @brief Implementation of gsi::Interpreter::eval_string
    */
-  void eval_string (const char *string, const char *filename = 0, int line = 1, int context = -1);
+  void eval_string(const char *string, const char *filename = 0, int line = 1,
+                   int context = -1);
 
   /**
    *  @brief Implementation of gsi::Interpreter::eval_expr
    */
-  tl::Variant eval_expr (const char *string, const char *filename = 0, int line = 1, int context = -1);
- 
+  tl::Variant eval_expr(const char *string, const char *filename = 0,
+                        int line = 1, int context = -1);
+
   /**
    *  @brief Implementation of gsi::Interpreter::eval_string_and_print
-   */ 
-  void eval_string_and_print (const char *string, const char *filename = 0, int line = 1, int context = -1);
+   */
+  void eval_string_and_print(const char *string, const char *filename = 0,
+                             int line = 1, int context = -1);
 
   /**
    *  @brief Returns an inspector for the given context
    */
-  virtual gsi::Inspector *inspector (int context = -1);
+  virtual gsi::Inspector *inspector(int context = -1);
 
   /**
-   *  @brief Defines a global variable with the given name and value 
+   *  @brief Defines a global variable with the given name and value
    */
-  void define_variable (const std::string &name, const tl::Variant &value);
+  void define_variable(const std::string &name, const tl::Variant &value);
 
   /**
    *  @brief Gets a value indicating whether the interpreter is available
    */
-  bool available () const;
+  bool available() const;
 
   /**
    *  @brief Installs the given console for output
    */
-  void push_console (gsi::Console *console);
+  void push_console(gsi::Console *console);
 
   /**
    *  @brief Removes the given console
    */
-  void remove_console (gsi::Console *console);
+  void remove_console(gsi::Console *console);
 
   /**
    *  @brief Gets the current console
    */
-  gsi::Console *current_console ();
+  gsi::Console *current_console();
 
   /**
    *  @brief Installs the given execution handler
    *
-   *  The execution handler is informed when the interpreter enters code execution (also
-   *  from the outside, i.e. a method reimplementing a C++ method or a event handler).
-   *  During execution, the handler receives trace events which allow him to intercept
-   *  execution.
+   *  The execution handler is informed when the interpreter enters code
+   * execution (also from the outside, i.e. a method reimplementing a C++ method
+   * or a event handler). During execution, the handler receives trace events
+   * which allow him to intercept execution.
    */
-  void push_exec_handler (gsi::ExecutionHandler *exec_handler);
+  void push_exec_handler(gsi::ExecutionHandler *exec_handler);
 
   /**
    *  @brief Removes the given execution handler
    */
-  void remove_exec_handler (gsi::ExecutionHandler *exec_handler);
+  void remove_exec_handler(gsi::ExecutionHandler *exec_handler);
 
   /**
    *  @brief Indicates the start of a callback section
    *  This method will be called when C++ triggers Ruby execution.
    *  (see BEGIN_EXEC/END_EXEC macros)
    */
-  void begin_exec ();
+  void begin_exec();
 
   /**
    *  @brief Indicates the end of a callback section
    *  This method will be called when Ruby returns into C++ code.
    *  (see BEGIN_EXEC/END_EXEC macros)
    */
-  void end_exec ();
+  void end_exec();
 
   /**
-   *  @brief Gets a flag indicating whether exceptions are blocked from being seen in the debugger
+   *  @brief Gets a flag indicating whether exceptions are blocked from being
+   * seen in the debugger
    */
-  bool exceptions_blocked ();
+  bool exceptions_blocked();
 
   /**
-   *  @brief Sets a flag indicating whether exceptions are blocked from being seen in the debugger
+   *  @brief Sets a flag indicating whether exceptions are blocked from being
+   * seen in the debugger
    */
-  void block_exceptions (bool f);
+  void block_exceptions(bool f);
 
   /**
    *  @brief Fetch the version string
    *
    *  Returns an empty string when no Ruby interpreter is installed.
    */
-  std::string version () const;
+  std::string version() const;
 
   /**
    *  @brief Provide a first (basic) initialization
    *
-   *  This method must be called with a continuation main function since the Ruby
-   *  interpreter want's to install itself atop of other functions on the stack:
+   *  This method must be called with a continuation main function since the
+   * Ruby interpreter want's to install itself atop of other functions on the
+   * stack:
    *
    *  @code
    *  int main_cont (int, char **)
@@ -213,12 +216,13 @@ public:
    *  }
    *  @endcode
    */
-  static int initialize (int &argc, char **argv, int (*main_func) (int &, char **));
+  static int initialize(int &argc, char **argv,
+                        int (*main_func)(int &, char **));
 
   /**
    *  @brief The instance of the Ruby interpreter of 0 if there is none.
    */
-  static RubyInterpreter *instance ();
+  static RubyInterpreter *instance();
 
   /**
    *  @brief Stores internal data - do not use this!
@@ -226,17 +230,16 @@ public:
   RubyInterpreterPrivateData *d;
 };
 
-class RBA_PUBLIC RubyStackTraceProvider
-  : public gsi::StackTraceProvider
-{
+class RBA_PUBLIC RubyStackTraceProvider : public gsi::StackTraceProvider {
 public:
-  RubyStackTraceProvider (const std::string &scope);
+  RubyStackTraceProvider(const std::string &scope);
 
-  virtual std::vector<tl::BacktraceElement> stack_trace () const;
-  virtual size_t scope_index () const;
-  virtual int stack_depth () const;
+  virtual std::vector<tl::BacktraceElement> stack_trace() const;
+  virtual size_t scope_index() const;
+  virtual int stack_depth() const;
 
-  static size_t scope_index (const std::vector<tl::BacktraceElement> &bt, const std::string &scope);
+  static size_t scope_index(const std::vector<tl::BacktraceElement> &bt,
+                            const std::string &scope);
 
   //  we could use this for ruby >= 1.9.3
 #if 0
@@ -249,7 +252,6 @@ private:
   const std::string &m_scope;
 };
 
-}
+} // namespace rba
 
 #endif
-

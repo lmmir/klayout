@@ -20,24 +20,22 @@
 
 */
 
-
 #ifndef HDR_dbTextWriter
 #define HDR_dbTextWriter
 
 #include "dbCommon.h"
 
 #include "tlException.h"
-#include "tlStream.h"
 #include "tlInternational.h"
 #include "tlProgress.h"
+#include "tlStream.h"
 #include "tlString.h"
 
 #include "dbStreamLayers.h"
 
 #include <memory>
 
-namespace db
-{
+namespace db {
 
 class Layout;
 
@@ -45,45 +43,43 @@ class Layout;
  *  @brief A Text writer abstraction
  */
 
-class DB_PUBLIC TextWriter
-{
+class DB_PUBLIC TextWriter {
 public:
   /**
    *  @brief Instantiate the writer
    */
-  TextWriter (tl::OutputStream &stream);
+  TextWriter(tl::OutputStream &stream);
 
   /**
    *  @brief Write the layout object
    */
-  void write (const db::Layout &layout);
+  void write(const db::Layout &layout);
 
 protected:
-  struct endl_t { };
+  struct endl_t {};
 
-  TextWriter &operator<< (endl_t em);
-  TextWriter &operator<< (const std::string &s);
-  TextWriter &operator<< (const char *s);
-  TextWriter &operator<< (int64_t n);
-  TextWriter &operator<< (int32_t n);
-  TextWriter &operator<< (double d);
-  TextWriter &operator<< (db::Point p);
-  TextWriter &operator<< (db::Vector p);
-  endl_t endl ();
-  const char *endl_str ();
+  TextWriter &operator<<(endl_t em);
+  TextWriter &operator<<(const std::string &s);
+  TextWriter &operator<<(const char *s);
+  TextWriter &operator<<(int64_t n);
+  TextWriter &operator<<(int32_t n);
+  TextWriter &operator<<(double d);
+  TextWriter &operator<<(db::Point p);
+  TextWriter &operator<<(db::Vector p);
+  endl_t endl();
+  const char *endl_str();
 
 private:
   tl::OutputStream &m_stream;
   std::vector<std::string> m_cc;
   std::string m_cc_line;
   bool m_in_cell;
-  
-  void write_props (const db::Layout &layout, size_t prop_id);
-  void begin_sorted_section ();
-  void end_sorted_section ();
+
+  void write_props(const db::Layout &layout, size_t prop_id);
+  void begin_sorted_section();
+  void end_sorted_section();
 };
 
 } // namespace db
 
 #endif
-

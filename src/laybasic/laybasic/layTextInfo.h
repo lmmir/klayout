@@ -20,17 +20,15 @@
 
 */
 
-
 #ifndef HDR_layTextInfo
 #define HDR_layTextInfo
 
 #include "laybasicCommon.h"
 
-#include "dbText.h"
 #include "dbBox.h"
+#include "dbText.h"
 
-namespace lay
-{
+namespace lay {
 
 class LayoutViewBase;
 
@@ -39,15 +37,14 @@ class LayoutViewBase;
  *
  *  The class can act as a BoxConverter.
  */
-class LAYBASIC_PUBLIC TextInfo
-{
+class LAYBASIC_PUBLIC TextInfo {
 public:
   /**
    *  @brief Constructor
    *
    *  @param view The LayoutView from which to take the text display parameters
    */
-  TextInfo (const LayoutViewBase *view);
+  TextInfo(const LayoutViewBase *view);
 
   /**
    *  @brief Gets the visual bounding box of the given DText object
@@ -59,18 +56,15 @@ public:
    *  @param text The text object
    *  @param vp_trans The effective micron-to-pixel transformation
    */
-  db::DBox bbox (const db::DText &text, const db::DCplxTrans &vp_trans) const;
+  db::DBox bbox(const db::DText &text, const db::DCplxTrans &vp_trans) const;
 
   /**
    *  @brief Gets a value indicating whether the text info uses point mode
    *
    *  In point mode, a text is considered a point-like object.
    */
-  bool point_mode () const
-  {
-    return m_point_mode;
-  }
-  
+  bool point_mode() const { return m_point_mode; }
+
 private:
   double m_default_text_size;
   db::Font m_default_font;
@@ -79,7 +73,6 @@ private:
   bool m_point_mode;
 };
 
-}
+} // namespace lay
 
 #endif
-

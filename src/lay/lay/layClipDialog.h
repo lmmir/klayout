@@ -20,46 +20,39 @@
 
 */
 
-
 #ifndef HDR_layClipDialog
 #define HDR_layClipDialog
 
 #include "ui_ClipDialog.h"
 
-#include "layLayoutView.h"
 #include "layBrowser.h"
+#include "layLayoutView.h"
 #include "layMarker.h"
 
-namespace lay
-{
+namespace lay {
 
-class ClipDialog
-  : public lay::Browser,
-    private Ui::ClipDialog
-{
-Q_OBJECT 
+class ClipDialog : public lay::Browser, private Ui::ClipDialog {
+  Q_OBJECT
 
 public:
-  ClipDialog (lay::Dispatcher *root, lay::LayoutViewBase *view);
-  ~ClipDialog ();
+  ClipDialog(lay::Dispatcher *root, lay::LayoutViewBase *view);
+  ~ClipDialog();
 
 public slots:
-  void box1_clicked ();
-  void box2_clicked ();
-  void rulers_clicked ();
-  void shapes_clicked ();
-  void ok_pressed ();
+  void box1_clicked();
+  void box2_clicked();
+  void rulers_clicked();
+  void shapes_clicked();
+  void ok_pressed();
 
 private:
   //  implementation of the lay::Plugin interface
-  virtual bool configure (const std::string &name, const std::string &value);
+  virtual bool configure(const std::string &name, const std::string &value);
 
   //  implementation of the lay::Plugin interface
-  void menu_activated (const std::string &symbol);
-
+  void menu_activated(const std::string &symbol);
 };
 
-}
+} // namespace lay
 
 #endif
-

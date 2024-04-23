@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_tlWebDAV
 #define HDR_tlWebDAV
 
@@ -31,35 +30,31 @@
 #include <vector>
 
 #if !defined(HAVE_CURL) && !defined(HAVE_QT)
-#  error "tlWebDAV.h can only be used with either curl or Qt enabled"
+#error "tlWebDAV.h can only be used with either curl or Qt enabled"
 #endif
 
-namespace tl
-{
+namespace tl {
 
 class InputHttpStreamCallback;
 
 /**
  *  @brief Represents an item in a WebDAV collection
  */
-class TL_PUBLIC WebDAVItem
-{
+class TL_PUBLIC WebDAVItem {
 public:
   /**
    *  @brief Default constructor
    */
-  WebDAVItem ()
-    : m_is_collection (false)
-  {
+  WebDAVItem() : m_is_collection(false) {
     //  .. nothing yet ..
   }
 
   /**
    *  @brief Constructor
    */
-  WebDAVItem (bool is_collection, const std::string &url, const std::string &name)
-    : m_is_collection (is_collection), m_url (url), m_name (name)
-  {
+  WebDAVItem(bool is_collection, const std::string &url,
+             const std::string &name)
+      : m_is_collection(is_collection), m_url(url), m_name(name) {
     //  .. nothing yet ..
   }
 
@@ -67,27 +62,18 @@ public:
    *  @brief Gets a value indicating whether this item is a collection
    *  If false, it's a file.
    */
-  bool is_collection () const
-  {
-    return m_is_collection;
-  }
+  bool is_collection() const { return m_is_collection; }
 
   /**
    *  @brief Gets the URL of this item
    */
-  const std::string &url () const
-  {
-    return m_url;
-  }
+  const std::string &url() const { return m_url; }
 
   /**
    *  @brief Gets the name of this item
    *  The name is only valid for sub-items.
    */
-  const std::string &name () const
-  {
-    return m_name;
-  }
+  const std::string &name() const { return m_name; }
 
 protected:
   bool m_is_collection;
@@ -99,9 +85,7 @@ protected:
  *  @brief Represents an object from a WebDAV URL
  *  This object can be a file or collection
  */
-class TL_PUBLIC WebDAVObject
-  : public WebDAVItem
-{
+class TL_PUBLIC WebDAVObject : public WebDAVItem {
 public:
   typedef std::vector<WebDAVItem> container;
   typedef container::const_iterator iterator;
@@ -109,29 +93,24 @@ public:
   /**
    *  @brief Open a stream with the given URL
    */
-  WebDAVObject ();
+  WebDAVObject();
 
   /**
    *  @brief Populates the collection from the given URL
    *  The depth value can be 0 (self only) or 1 (self + collection members).
    */
-  void read (const std::string &url, int depth, double timeout = 60.0, tl::InputHttpStreamCallback *callback = 0);
+  void read(const std::string &url, int depth, double timeout = 60.0,
+            tl::InputHttpStreamCallback *callback = 0);
 
   /**
    *  @brief Gets the items of this collection (begin iterator)
    */
-  iterator begin () const
-  {
-    return m_items.begin ();
-  }
+  iterator begin() const { return m_items.begin(); }
 
   /**
    *  @brief Gets the items of this collection (begin iterator)
    */
-  iterator end () const
-  {
-    return m_items.end ();
-  }
+  iterator end() const { return m_items.end(); }
 
   /**
    *  @brief Downloads the collection or file with the given URL
@@ -148,20 +127,24 @@ public:
    *  This method throws an exception if the directory structure could
    *  not be obtained or downloading of one file failed.
    */
-  static bool download (const std::string &url, const std::string &target, double timeout = 60.0, tl::InputHttpStreamCallback *callback = 0);
+  static bool download(const std::string &url, const std::string &target,
+                       double timeout = 60.0,
+                       tl::InputHttpStreamCallback *callback = 0);
 
   /**
-   *  @brief Gets a stream object for downloading the single item of the given URL
+   *  @brief Gets a stream object for downloading the single item of the given
+   * URL
    *
    *  The stream object returned needs to be deleted by the caller.
    */
-  static tl::InputStream *download_item (const std::string &url, double timeout = 60.0, tl::InputHttpStreamCallback *callback = 0);
+  static tl::InputStream *
+  download_item(const std::string &url, double timeout = 60.0,
+                tl::InputHttpStreamCallback *callback = 0);
 
 private:
   container m_items;
 };
 
-}
+} // namespace tl
 
 #endif
-

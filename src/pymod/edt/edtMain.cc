@@ -23,6 +23,6 @@
 #include "../pymodHelper.h"
 
 //  to force linking of the edt module
-#  include "../../edt/edt/edtForceLink.h"
+#include "../../edt/edt/edtForceLink.h"
 
 DEFINE_PYMOD(edtcore, "edt", "KLayout core module 'edt'")

@@ -26,30 +26,25 @@
 #include "dbNetlistDeviceExtractor.h"
 #include "gsiObject.h"
 
-namespace db
-{
+namespace db {
 
 /**
  *  @brief A device class factory base class
  */
-class DB_PUBLIC DeviceClassFactory
-  : public gsi::ObjectBase
-{
+class DB_PUBLIC DeviceClassFactory : public gsi::ObjectBase {
 public:
-  DeviceClassFactory () { }
-  ~DeviceClassFactory () { }
-  virtual db::DeviceClass *create_class () const = 0;
+  DeviceClassFactory() {}
+  ~DeviceClassFactory() {}
+  virtual db::DeviceClass *create_class() const = 0;
 };
 
 /**
  *  @brief A specific factory
  */
 template <class C>
-class DB_PUBLIC_TEMPLATE device_class_factory
-  : public DeviceClassFactory
-{
+class DB_PUBLIC_TEMPLATE device_class_factory : public DeviceClassFactory {
 public:
-  virtual db::DeviceClass *create_class () const { return new C (); }
+  virtual db::DeviceClass *create_class() const { return new C(); }
 };
 
 /**
@@ -61,22 +56,18 @@ public:
  *  The NetlistDeviceExtractorImplBase object will own the factory object.
  */
 class DB_PUBLIC NetlistDeviceExtractorImplBase
-  : public db::NetlistDeviceExtractor
-{
+    : public db::NetlistDeviceExtractor {
 public:
-  NetlistDeviceExtractorImplBase (const std::string &name, DeviceClassFactory *factory)
-    : db::NetlistDeviceExtractor (name), mp_factory (factory)
-  {
-    mp_factory->keep ();
+  NetlistDeviceExtractorImplBase(const std::string &name,
+                                 DeviceClassFactory *factory)
+      : db::NetlistDeviceExtractor(name), mp_factory(factory) {
+    mp_factory->keep();
   }
 
   /**
    *  @brief Creates the device class object
    */
-  db::DeviceClass *make_class ()
-  {
-    return mp_factory->create_class ();
-  }
+  db::DeviceClass *make_class() { return mp_factory->create_class(); }
 
 private:
   std::unique_ptr<DeviceClassFactory> mp_factory;
@@ -99,35 +90,37 @@ private:
  *  the particular source or drain area.
  */
 class DB_PUBLIC NetlistDeviceExtractorMOS3Transistor
-  : public db::NetlistDeviceExtractorImplBase
-{
+    : public db::NetlistDeviceExtractorImplBase {
 public:
-  NetlistDeviceExtractorMOS3Transistor (const std::string &name, bool strict = false, DeviceClassFactory *factory = 0);
+  NetlistDeviceExtractorMOS3Transistor(const std::string &name,
+                                       bool strict = false,
+                                       DeviceClassFactory *factory = 0);
 
-  virtual void setup ();
-  virtual db::Connectivity get_connectivity (const db::Layout &layout, const std::vector<unsigned int> &layers) const;
-  virtual void extract_devices (const std::vector<db::Region> &layer_geometry);
+  virtual void setup();
+  virtual db::Connectivity
+  get_connectivity(const db::Layout &layout,
+                   const std::vector<unsigned int> &layers) const;
+  virtual void extract_devices(const std::vector<db::Region> &layer_geometry);
 
-  bool is_strict () const
-  {
-    return m_strict;
-  }
+  bool is_strict() const { return m_strict; }
 
 protected:
   /**
    *  @brief A callback when the device is produced
    *  This callback is provided as a debugging port
    */
-  virtual void device_out (const db::Device * /*device*/, const db::Region & /*diff*/, const db::Region & /*gate*/)
-  {
+  virtual void device_out(const db::Device * /*device*/,
+                          const db::Region & /*diff*/,
+                          const db::Region & /*gate*/) {
     //  .. no specific implementation ..
   }
 
   /**
    *  @brief Allow derived classes to modify the device
    */
-  virtual void modify_device (const db::Polygon & /*rgate*/, const std::vector<db::Region> & /*layer_geometry*/, db::Device * /*device*/)
-  {
+  virtual void modify_device(const db::Polygon & /*rgate*/,
+                             const std::vector<db::Region> & /*layer_geometry*/,
+                             db::Device * /*device*/) {
     //  .. no specific implementation ..
   }
 
@@ -145,15 +138,18 @@ private:
  *  The extractor extracts the four parameters of this class: L, W, AS and AD.
  */
 class DB_PUBLIC NetlistDeviceExtractorMOS4Transistor
-  : public NetlistDeviceExtractorMOS3Transistor
-{
+    : public NetlistDeviceExtractorMOS3Transistor {
 public:
-  NetlistDeviceExtractorMOS4Transistor (const std::string &name, bool strict = false, DeviceClassFactory *factory = 0);
+  NetlistDeviceExtractorMOS4Transistor(const std::string &name,
+                                       bool strict = false,
+                                       DeviceClassFactory *factory = 0);
 
-  virtual void setup ();
+  virtual void setup();
 
 private:
-  virtual void modify_device (const db::Polygon &rgate, const std::vector<db::Region> &layer_geometry, db::Device *device);
+  virtual void modify_device(const db::Polygon &rgate,
+                             const std::vector<db::Region> &layer_geometry,
+                             db::Device *device);
 };
 
 /**
@@ -175,30 +171,34 @@ private:
  *  terminals are produced.
  */
 class DB_PUBLIC NetlistDeviceExtractorResistor
-  : public db::NetlistDeviceExtractorImplBase
-{
+    : public db::NetlistDeviceExtractorImplBase {
 public:
-  NetlistDeviceExtractorResistor (const std::string &name, double sheet_rho, DeviceClassFactory *factory = 0);
+  NetlistDeviceExtractorResistor(const std::string &name, double sheet_rho,
+                                 DeviceClassFactory *factory = 0);
 
-  virtual void setup ();
-  virtual db::Connectivity get_connectivity (const db::Layout &layout, const std::vector<unsigned int> &layers) const;
-  virtual void extract_devices (const std::vector<db::Region> &layer_geometry);
+  virtual void setup();
+  virtual db::Connectivity
+  get_connectivity(const db::Layout &layout,
+                   const std::vector<unsigned int> &layers) const;
+  virtual void extract_devices(const std::vector<db::Region> &layer_geometry);
 
 protected:
   /**
    *  @brief A callback when the device is produced
    *  This callback is provided as a debugging port
    */
-  virtual void device_out (const db::Device * /*device*/, const db::Region & /*res*/, const db::Region & /*contacts*/)
-  {
+  virtual void device_out(const db::Device * /*device*/,
+                          const db::Region & /*res*/,
+                          const db::Region & /*contacts*/) {
     //  .. no specific implementation ..
   }
 
   /**
    *  @brief Allow derived classes to modify the device
    */
-  virtual void modify_device (const db::Polygon & /*res*/, const std::vector<db::Region> & /*layer_geometry*/, db::Device * /*device*/)
-  {
+  virtual void modify_device(const db::Polygon & /*res*/,
+                             const std::vector<db::Region> & /*layer_geometry*/,
+                             db::Device * /*device*/) {
     //  .. no specific implementation ..
   }
 
@@ -209,17 +209,20 @@ private:
 /**
  *  @brief A device extractor for a two-terminal resistor with a bulk terminal
  *
- *  Extracts a resistor like NetlistDeviceExtractorResistor, but adds one more terminal
- *  for the bulk or well the resistor is embedded in.
+ *  Extracts a resistor like NetlistDeviceExtractorResistor, but adds one more
+ * terminal for the bulk or well the resistor is embedded in.
  */
 class DB_PUBLIC NetlistDeviceExtractorResistorWithBulk
-  : public db::NetlistDeviceExtractorResistor
-{
+    : public db::NetlistDeviceExtractorResistor {
 public:
-  NetlistDeviceExtractorResistorWithBulk (const std::string &name, double sheet_rho, DeviceClassFactory *factory = 0);
+  NetlistDeviceExtractorResistorWithBulk(const std::string &name,
+                                         double sheet_rho,
+                                         DeviceClassFactory *factory = 0);
 
-  virtual void setup ();
-  virtual void modify_device (const db::Polygon &res, const std::vector<db::Region> & /*layer_geometry*/, db::Device *device);
+  virtual void setup();
+  virtual void modify_device(const db::Polygon &res,
+                             const std::vector<db::Region> & /*layer_geometry*/,
+                             db::Device *device);
 };
 
 /**
@@ -240,30 +243,33 @@ public:
  *  the terminals for A and B are produced respectively.
  */
 class DB_PUBLIC NetlistDeviceExtractorCapacitor
-  : public db::NetlistDeviceExtractorImplBase
-{
+    : public db::NetlistDeviceExtractorImplBase {
 public:
-  NetlistDeviceExtractorCapacitor (const std::string &name, double area_cap, DeviceClassFactory *factory = 0);
+  NetlistDeviceExtractorCapacitor(const std::string &name, double area_cap,
+                                  DeviceClassFactory *factory = 0);
 
-  virtual void setup ();
-  virtual db::Connectivity get_connectivity (const db::Layout &layout, const std::vector<unsigned int> &layers) const;
-  virtual void extract_devices (const std::vector<db::Region> &layer_geometry);
+  virtual void setup();
+  virtual db::Connectivity
+  get_connectivity(const db::Layout &layout,
+                   const std::vector<unsigned int> &layers) const;
+  virtual void extract_devices(const std::vector<db::Region> &layer_geometry);
 
 protected:
   /**
    *  @brief A callback when the device is produced
    *  This callback is provided as a debugging port
    */
-  virtual void device_out (const db::Device * /*device*/, const db::Polygon & /*cap_area*/)
-  {
+  virtual void device_out(const db::Device * /*device*/,
+                          const db::Polygon & /*cap_area*/) {
     //  .. no specific implementation ..
   }
 
   /**
    *  @brief Allow derived classes to modify the device
    */
-  virtual void modify_device (const db::Polygon & /*cap_area*/, const std::vector<db::Region> & /*layer_geometry*/, db::Device * /*device*/)
-  {
+  virtual void modify_device(const db::Polygon & /*cap_area*/,
+                             const std::vector<db::Region> & /*layer_geometry*/,
+                             db::Device * /*device*/) {
     //  .. no specific implementation ..
   }
 
@@ -274,66 +280,77 @@ private:
 /**
  *  @brief A device extractor for a two-terminal capacitor with a bulk terminal
  *
- *  Extracts a resistor like NetlistDeviceExtractorCapacitor, but adds one more terminal
- *  for the bulk or well the capacitor is embedded in.
+ *  Extracts a resistor like NetlistDeviceExtractorCapacitor, but adds one more
+ * terminal for the bulk or well the capacitor is embedded in.
  */
 class DB_PUBLIC NetlistDeviceExtractorCapacitorWithBulk
-  : public db::NetlistDeviceExtractorCapacitor
-{
+    : public db::NetlistDeviceExtractorCapacitor {
 public:
-  NetlistDeviceExtractorCapacitorWithBulk (const std::string &name, double cap_area, DeviceClassFactory *factory = 0);
+  NetlistDeviceExtractorCapacitorWithBulk(const std::string &name,
+                                          double cap_area,
+                                          DeviceClassFactory *factory = 0);
 
-  virtual void setup ();
-  virtual void modify_device (const db::Polygon &cap, const std::vector<db::Region> & /*layer_geometry*/, db::Device *device);
+  virtual void setup();
+  virtual void modify_device(const db::Polygon &cap,
+                             const std::vector<db::Region> & /*layer_geometry*/,
+                             db::Device *device);
 };
 
 /**
  *  @brief A device extractor for a bipolar transistor
  *
  *  This class supplies the generic extractor for a bipolar transistor device.
- *  Extraction of vertical and lateral transistors is supported through a generic geometry model:
+ *  Extraction of vertical and lateral transistors is supported through a
+ * generic geometry model:
  *
- *  The basic area is the base area. A marker shape must be provided for this area.
- *  The emitter of the transistor is defined by emitter layer shapes inside the base area.
- *  Multiple emitter shapes can be present. In this case, multiple transistor devices sharing the
- *  same base and collector are generated.
+ *  The basic area is the base area. A marker shape must be provided for this
+ * area. The emitter of the transistor is defined by emitter layer shapes inside
+ * the base area. Multiple emitter shapes can be present. In this case, multiple
+ * transistor devices sharing the same base and collector are generated.
  *
- *  Finally, a collector layer can be given. If non-empty, the parts inside the base region will define
- *  the collector terminals. If empty, the collector is formed by the substrate. In this case, the base
- *  region will be output to the 'tC' terminal output layer. This layer then needs to be connected to a global net
- *  to form the net connection.
+ *  Finally, a collector layer can be given. If non-empty, the parts inside the
+ * base region will define the collector terminals. If empty, the collector is
+ * formed by the substrate. In this case, the base region will be output to the
+ * 'tC' terminal output layer. This layer then needs to be connected to a global
+ * net to form the net connection.
  *
  *  The device class produced by this extractor is \\DeviceClassBJT3Transistor.
  *  The extractor extracts the two parameters of this class: AE and PE.
  *
- *  The device recognition layer names are 'C' (collector), 'B' (base) and 'E' (emitter).
- *  The terminal output layer names are 'tC' (collector), 'tB' (base) and 'tE' (emitter).
+ *  The device recognition layer names are 'C' (collector), 'B' (base) and 'E'
+ * (emitter). The terminal output layer names are 'tC' (collector), 'tB' (base)
+ * and 'tE' (emitter).
  */
 class DB_PUBLIC NetlistDeviceExtractorBJT3Transistor
-  : public db::NetlistDeviceExtractorImplBase
-{
+    : public db::NetlistDeviceExtractorImplBase {
 public:
-  NetlistDeviceExtractorBJT3Transistor (const std::string &name, DeviceClassFactory *factory = 0);
+  NetlistDeviceExtractorBJT3Transistor(const std::string &name,
+                                       DeviceClassFactory *factory = 0);
 
-  virtual void setup ();
-  virtual db::Connectivity get_connectivity (const db::Layout &layout, const std::vector<unsigned int> &layers) const;
-  virtual void extract_devices (const std::vector<db::Region> &layer_geometry);
+  virtual void setup();
+  virtual db::Connectivity
+  get_connectivity(const db::Layout &layout,
+                   const std::vector<unsigned int> &layers) const;
+  virtual void extract_devices(const std::vector<db::Region> &layer_geometry);
 
 protected:
   /**
    *  @brief A callback when the device is produced
    *  This callback is provided as a debugging port
    */
-  virtual void device_out (const db::Device * /*device*/, const db::Region & /*collector*/, const db::Region & /*base*/, const db::Polygon & /*emitter*/)
-  {
+  virtual void device_out(const db::Device * /*device*/,
+                          const db::Region & /*collector*/,
+                          const db::Region & /*base*/,
+                          const db::Polygon & /*emitter*/) {
     //  .. no specific implementation ..
   }
 
   /**
    *  @brief Allow derived classes to modify the device
    */
-  virtual void modify_device (const db::Polygon & /*emitter*/, const std::vector<db::Region> & /*layer_geometry*/, db::Device * /*device*/)
-  {
+  virtual void modify_device(const db::Polygon & /*emitter*/,
+                             const std::vector<db::Region> & /*layer_geometry*/,
+                             db::Device * /*device*/) {
     //  .. no specific implementation ..
   }
 };
@@ -342,20 +359,23 @@ protected:
  *  @brief A device extractor for a four-terminal BJT transistor
  *
  *  This class is like the BJT3Transistor extractor, but requires a forth
- *  input layer (Substrate). This layer will be used to output the substrate terminal.
+ *  input layer (Substrate). This layer will be used to output the substrate
+ * terminal.
  *
  *  The device class produced by this extractor is DeviceClassBJT4Transistor.
  */
 class DB_PUBLIC NetlistDeviceExtractorBJT4Transistor
-  : public NetlistDeviceExtractorBJT3Transistor
-{
+    : public NetlistDeviceExtractorBJT3Transistor {
 public:
-  NetlistDeviceExtractorBJT4Transistor (const std::string &name, DeviceClassFactory *factory = 0);
+  NetlistDeviceExtractorBJT4Transistor(const std::string &name,
+                                       DeviceClassFactory *factory = 0);
 
-  virtual void setup ();
+  virtual void setup();
 
 private:
-  virtual void modify_device (const db::Polygon &emitter, const std::vector<db::Region> &layer_geometry, db::Device *device);
+  virtual void modify_device(const db::Polygon &emitter,
+                             const std::vector<db::Region> &layer_geometry,
+                             db::Device *device);
 };
 
 /**
@@ -375,34 +395,37 @@ private:
  *  cathode respectively.
  */
 class DB_PUBLIC NetlistDeviceExtractorDiode
-  : public db::NetlistDeviceExtractorImplBase
-{
+    : public db::NetlistDeviceExtractorImplBase {
 public:
-  NetlistDeviceExtractorDiode (const std::string &name, DeviceClassFactory *factory = 0);
+  NetlistDeviceExtractorDiode(const std::string &name,
+                              DeviceClassFactory *factory = 0);
 
-  virtual void setup ();
-  virtual db::Connectivity get_connectivity (const db::Layout &layout, const std::vector<unsigned int> &layers) const;
-  virtual void extract_devices (const std::vector<db::Region> &layer_geometry);
+  virtual void setup();
+  virtual db::Connectivity
+  get_connectivity(const db::Layout &layout,
+                   const std::vector<unsigned int> &layers) const;
+  virtual void extract_devices(const std::vector<db::Region> &layer_geometry);
 
 protected:
   /**
    *  @brief A callback when the device is produced
    *  This callback is provided as a debugging port
    */
-  virtual void device_out (const db::Device * /*device*/, const db::Polygon & /*diode_area*/)
-  {
+  virtual void device_out(const db::Device * /*device*/,
+                          const db::Polygon & /*diode_area*/) {
     //  .. no specific implementation ..
   }
 
   /**
    *  @brief Allow derived classes to modify the device
    */
-  virtual void modify_device (const db::Polygon & /*diode_area*/, const std::vector<db::Region> & /*layer_geometry*/, db::Device * /*device*/)
-  {
+  virtual void modify_device(const db::Polygon & /*diode_area*/,
+                             const std::vector<db::Region> & /*layer_geometry*/,
+                             db::Device * /*device*/) {
     //  .. no specific implementation ..
   }
 };
 
-}
+} // namespace db
 
 #endif

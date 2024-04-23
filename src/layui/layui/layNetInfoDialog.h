@@ -32,33 +32,30 @@
 
 #include <QDialog>
 
-namespace Ui
-{
-  class NetInfoDialog;
+namespace Ui {
+class NetInfoDialog;
 }
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief A dialog showing the details of a net
  */
-class NetInfoDialog
-  : public QDialog
-{
+class NetInfoDialog : public QDialog {
   Q_OBJECT
 
 public:
-  NetInfoDialog (QWidget *parent);
-  ~NetInfoDialog ();
+  NetInfoDialog(QWidget *parent);
+  ~NetInfoDialog();
 
-  void set_nets (const db::LayoutToNetlist *l2ndb, const std::vector<const db::Net *> &nets);
+  void set_nets(const db::LayoutToNetlist *l2ndb,
+                const std::vector<const db::Net *> &nets);
 
 private slots:
-  void detailed_checkbox_clicked ();
+  void detailed_checkbox_clicked();
 
 protected:
-  void showEvent (QShowEvent *);
+  void showEvent(QShowEvent *);
 
 private:
   tl::weak_ptr<db::LayoutToNetlist> mp_l2ndb;
@@ -66,12 +63,12 @@ private:
   bool m_needs_update;
   Ui::NetInfoDialog *ui;
 
-  void update_info_text ();
-  void needs_update ();
+  void update_info_text();
+  void needs_update();
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_gsiInspector
 #define HDR_gsiInspector
 
@@ -30,8 +29,7 @@
 
 #include <string>
 
-namespace gsi
-{
+namespace gsi {
 
 /**
  *  @brief The inspector allows navigating the elements of a variable context
@@ -39,17 +37,15 @@ namespace gsi
  *  GSI interpreters will deliver an inspector to iterate the elements.
  *  It interfaces with the tree view of the macro editor.
  */
-class GSI_PUBLIC Inspector
-{
+class GSI_PUBLIC Inspector {
 public:
   /**
    *  @brief An enum describing the visiblity of items
    *
-   *  The item's visibility controls under which circumstances an item will become visible 
-   *  in the list of variables.
+   *  The item's visibility controls under which circumstances an item will
+   * become visible in the list of variables.
    */
-  enum Visibility
-  {
+  enum Visibility {
     /**
      *  @brief The entry is never visible
      */
@@ -69,44 +65,46 @@ public:
   /**
    *  @brief Constructor
    */
-  Inspector ();
+  Inspector();
 
   /**
    *  @brief Destructor
    */
-  virtual ~Inspector ();
+  virtual ~Inspector();
 
   /**
    *  @brief Returns a text describing the namespace the inspector will deliver
    *  This method will be used to label the node if "has_children" is true.
    */
-  virtual std::string description () const;
+  virtual std::string description() const;
 
   /**
-   *  @brief Returns true if the inspector does not deliver keys but indexes only
+   *  @brief Returns true if the inspector does not deliver keys but indexes
+   * only
    */
-  virtual bool has_keys () const;
+  virtual bool has_keys() const;
 
   /**
    *  @brief Gets the key (name) of the element given by the index
    */
-  virtual std::string key (size_t /*index*/) const;
-  
+  virtual std::string key(size_t /*index*/) const;
+
   /**
-   *  @brief Gets the key (name) of the element given by the index as a tl::Variant
-   *  If the string key returns an empty value, the evaluation will fall back to the tl::Variant.
+   *  @brief Gets the key (name) of the element given by the index as a
+   * tl::Variant If the string key returns an empty value, the evaluation will
+   * fall back to the tl::Variant.
    */
-  virtual tl::Variant keyv (size_t /*index*/) const;
+  virtual tl::Variant keyv(size_t /*index*/) const;
 
   /**
    *  @brief Gets the value indicating the type of the entry
    */
-  virtual std::string type (size_t /*index*/) const;
+  virtual std::string type(size_t /*index*/) const;
 
   /**
    *  @brief Gets the value indicating the visibility of the entry
    */
-  virtual Visibility visibility (size_t /*index*/) const;
+  virtual Visibility visibility(size_t /*index*/) const;
 
   /**
    *  @brief Gets the value for the element given by the index
@@ -114,35 +112,36 @@ public:
    *  This method needs to deliver a value when the node is a leaf
    *  node (i.e. has_children is false).
    */
-  virtual tl::Variant value (size_t /*index*/) const;
+  virtual tl::Variant value(size_t /*index*/) const;
 
   /**
    *  @brief Returns the number of elements this inspector can deliver
    *
-   *  The index values for the methods of the inspector must be between 0 and count-1.
+   *  The index values for the methods of the inspector must be between 0 and
+   * count-1.
    */
-  virtual size_t count () const;
+  virtual size_t count() const;
 
   /**
    *  @brief Returns a value indicating whether the given element has children
    */
-  virtual bool has_children (size_t /*index*/) const;
+  virtual bool has_children(size_t /*index*/) const;
 
   /**
-   *  @brief Returns an inspector object for the children of the element given by index
-   *  The child inspector is used if has_children is true.
-   *  The returned object must be deleted by the caller.
+   *  @brief Returns an inspector object for the children of the element given
+   * by index The child inspector is used if has_children is true. The returned
+   * object must be deleted by the caller.
    */
-  virtual Inspector *child_inspector (size_t /*index*/) const;
+  virtual Inspector *child_inspector(size_t /*index*/) const;
 
   /**
    *  @brief Returns a value indicating whether the inspectors are equivalent
-   *  The system uses this information to determine whether to update the full variable
-   *  list or just the changed information.
+   *  The system uses this information to determine whether to update the full
+   * variable list or just the changed information.
    */
-  virtual bool equiv (const gsi::Inspector * /*other*/) const;
+  virtual bool equiv(const gsi::Inspector * /*other*/) const;
 };
 
-}
+} // namespace gsi
 
 #endif

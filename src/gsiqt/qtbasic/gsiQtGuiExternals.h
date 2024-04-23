@@ -21,9 +21,9 @@
 */
 
 #if QT_VERSION >= 0x060000
-#  include "../qt6/QtGui/gsiQtExternals.h"
+#include "../qt6/QtGui/gsiQtExternals.h"
 #elif QT_VERSION >= 0x050000
-#  include "../qt5/QtGui/gsiQtExternals.h"
+#include "../qt5/QtGui/gsiQtExternals.h"
 #else
-#  include "../qt4/QtGui/gsiQtExternals.h"
+#include "../qt4/QtGui/gsiQtExternals.h"
 #endif

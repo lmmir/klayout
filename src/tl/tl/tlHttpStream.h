@@ -23,56 +23,55 @@
 #ifndef HDR_tlHttpStream
 #define HDR_tlHttpStream
 
-#include "tlObject.h"
-#include "tlException.h"
-#include "tlStream.h"
 #include "tlEvents.h"
+#include "tlException.h"
+#include "tlObject.h"
+#include "tlStream.h"
 
 class QNetworkReply;
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief A callback interface to provide the authentication data
  */
-class TL_PUBLIC HttpCredentialProvider
-  : public tl::Object
-{
+class TL_PUBLIC HttpCredentialProvider : public tl::Object {
 public:
-  HttpCredentialProvider () { }
-  virtual ~HttpCredentialProvider () { }
+  HttpCredentialProvider() {}
+  virtual ~HttpCredentialProvider() {}
 
   /**
-   *  @brief Gets the user name and password for the given URL and authentication realm
+   *  @brief Gets the user name and password for the given URL and
+   * authentication realm
    */
-  virtual bool user_password (const std::string &url, const std::string &realm, bool proxy, int attempt, std::string &user, std::string &passwd) = 0;
+  virtual bool user_password(const std::string &url, const std::string &realm,
+                             bool proxy, int attempt, std::string &user,
+                             std::string &passwd) = 0;
 };
 
 /**
  *  @brief An exception class for HTTP errors
  */
-class TL_PUBLIC HttpErrorException
-  : public tl::Exception
-{
+class TL_PUBLIC HttpErrorException : public tl::Exception {
 public:
-  HttpErrorException (const std::string &f, int ec, const std::string &url, const std::string &body = std::string ())
-    : tl::Exception (format_error (f, ec, url, body))
-  { }
+  HttpErrorException(const std::string &f, int ec, const std::string &url,
+                     const std::string &body = std::string())
+      : tl::Exception(format_error(f, ec, url, body)) {}
 
-  static std::string format_error (const std::string &em, int ec, const std::string &url, const std::string &body);
+  static std::string format_error(const std::string &em, int ec,
+                                  const std::string &url,
+                                  const std::string &body);
 };
 
 /**
  *  @brief A callback function during waiting for a response
  */
-class TL_PUBLIC InputHttpStreamCallback
-{
+class TL_PUBLIC InputHttpStreamCallback {
 public:
-  InputHttpStreamCallback () { }
-  virtual ~InputHttpStreamCallback () { }
+  InputHttpStreamCallback() {}
+  virtual ~InputHttpStreamCallback() {}
 
-  virtual void wait_for_input () { }
+  virtual void wait_for_input() {}
 };
 
 class InputHttpStreamPrivateData;
@@ -82,39 +81,37 @@ class InputHttpStreamPrivateData;
  *
  *  Implements the reader from a server using the HTTP protocol
  */
-class TL_PUBLIC InputHttpStream
-  : public InputStreamBase
-{
+class TL_PUBLIC InputHttpStream : public InputStreamBase {
 public:
   /**
    *  @brief Open a stream with the given URL
    */
-  InputHttpStream (const std::string &url);
+  InputHttpStream(const std::string &url);
 
   /**
    *  @brief Close the file
    *
    *  The destructor will automatically close the connection.
    */
-  virtual ~InputHttpStream ();
+  virtual ~InputHttpStream();
 
   /**
    *  @brief Sets the credential provider
    */
-  static void set_credential_provider (HttpCredentialProvider *cp);
+  static void set_credential_provider(HttpCredentialProvider *cp);
 
   /**
    *  @brief Returns true, if HTTP support is compiled in
    */
-  static bool is_available ();
+  static bool is_available();
 
   /**
-   *  @brief Polling: call this function regularly to explicitly establish polling
-   *  (in the Qt framework, this is done automatically within the event loop)
-   *  May throw a tl::CancelException to stop.
-   *  Returns true if a message has arrived.
+   *  @brief Polling: call this function regularly to explicitly establish
+   * polling (in the Qt framework, this is done automatically within the event
+   * loop) May throw a tl::CancelException to stop. Returns true if a message
+   * has arrived.
    */
-  void tick ();
+  void tick();
 
   /**
    *  @brief Sets a timeout callback
@@ -122,20 +119,19 @@ public:
    *  waits for HTTP responses.
    *  The implementation may throw a tl::CancelException to stop the polling.
    */
-  void set_callback (tl::InputHttpStreamCallback *callback)
-  {
+  void set_callback(tl::InputHttpStreamCallback *callback) {
     mp_callback = callback;
   }
 
   /**
    *  @brief Sets the timeout in seconds
    */
-  void set_timeout (double to);
+  void set_timeout(double to);
 
   /**
    *  @brief Gets the timeout in seconds or zero if no timeout is set.
    */
-  double timeout () const;
+  double timeout() const;
 
   /**
    *  @brief Sends the request for data
@@ -148,37 +144,37 @@ public:
    *  is available.
    *  If a request has already been sent, this method will do nothing.
    */
-  void send ();
+  void send();
 
   /**
    *  @brief Closes the connection
    */
-  void close ();
+  void close();
 
   /**
    *  @brief Sets the request verb
    *  The default verb is "GET"
    */
-  void set_request (const char *r);
+  void set_request(const char *r);
 
   /**
    *  @brief Sets data to be sent with the request
    *  If data is given, it is sent along with the request.
    *  This version takes a null-terminated string.
    */
-  void set_data (const char *data);
+  void set_data(const char *data);
 
   /**
    *  @brief Sets data to be sent with the request
    *  If data is given, it is sent along with the request.
    *  This version takes a data plus length.
    */
-  void set_data (const char *data, size_t n);
+  void set_data(const char *data, size_t n);
 
   /**
    *  @brief Sets a header field
    */
-  void add_header (const std::string &name, const std::string &value);
+  void add_header(const std::string &name, const std::string &value);
 
   /**
    *  @brief Gets the "ready" event
@@ -186,30 +182,29 @@ public:
    *  This event is fired when data becomes available or the
    *  connection has terminated with an error.
    */
-  tl::Event &ready ();
+  tl::Event &ready();
 
   /**
    *  @brief Gets a value indicating whether data is available
    */
-  bool data_available ();
+  bool data_available();
 
   /**
    *  @brief Read from the stream
    *  Implements the basic read method.
    */
-  virtual size_t read (char *b, size_t n);
+  virtual size_t read(char *b, size_t n);
 
-  virtual void reset ();
-  virtual std::string source () const;
-  virtual std::string absolute_path () const;
-  virtual std::string filename () const;
+  virtual void reset();
+  virtual std::string source() const;
+  virtual std::string absolute_path() const;
+  virtual std::string filename() const;
 
 private:
   InputHttpStreamPrivateData *mp_data;
   InputHttpStreamCallback *mp_callback;
 };
 
-}
+} // namespace tl
 
 #endif
-

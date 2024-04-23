@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layForceLink
 #define HDR_layForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the lay module
  */
 
-namespace lay
-{
-  LAY_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace lay {
+LAY_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace lay
 
 #endif
-

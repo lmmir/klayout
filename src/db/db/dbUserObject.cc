@@ -20,19 +20,11 @@
 
 */
 
-
 #include "dbUserObject.h"
 #include "tlClassRegistry.h"
 
-namespace db
-{
-  static unsigned int s_class_id = 1;
+namespace db {
+static unsigned int s_class_id = 1;
 
-  unsigned int 
-  get_unique_user_object_class_id ()
-  {
-    return s_class_id++;
-  }
-}
-
-
+unsigned int get_unique_user_object_class_id() { return s_class_id++; }
+} // namespace db

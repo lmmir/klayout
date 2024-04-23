@@ -20,26 +20,25 @@
 
 */
 
-
 #ifndef _HDR_gsiSignals
 #define _HDR_gsiSignals
 
-#include "tlTypeTraits.h"
-#include "tlObject.h"
-#include "tlEvents.h"
-#include "gsiTypes.h"
-#include "gsiIterators.h"
 #include "gsiCallback.h"
+#include "gsiIterators.h"
 #include "gsiMethods.h"
 #include "gsiSerialisation.h"
+#include "gsiTypes.h"
+#include "tlEvents.h"
+#include "tlObject.h"
+#include "tlTypeTraits.h"
 
 //  On MinGW, the "access" macro will interfere with QMetaMethod's access method
 #if defined(access)
-#  undef access
+#undef access
 #endif
 
 #if defined(HAVE_QT)
-#  include <QMetaMethod>
+#include <QMetaMethod>
 #endif
 
 /**
@@ -109,11 +108,10 @@
  *  @endcode
  */
 
-namespace gsi
-{
+namespace gsi {
 
-struct empty_list_t { };
-template <class T, class H> struct type_pair_t { };
+struct empty_list_t {};
+template <class T, class H> struct type_pair_t {};
 
 class SignalAdaptor;
 
@@ -124,40 +122,37 @@ class SignalAdaptor;
  *  It is owned by the client. The adaptor implements the strategy how a signal
  *  is generated on the C++ side. The adaptor is owned by the handler.
  */
-class GSI_PUBLIC SignalHandler
-  : public tl::Object
-{
+class GSI_PUBLIC SignalHandler : public tl::Object {
 public:
   /**
    *  @brief Constructor
    */
-  SignalHandler () { }
+  SignalHandler() {}
 
   /**
    *  @brief Destructor
    */
-  virtual ~SignalHandler () { }
+  virtual ~SignalHandler() {}
 
   /**
    *  @brief Provides the implementation for the call of the signal
-   *  The client-side implementation needs to reimplement this method to provide the mechanism
-   *  how a signal is called. The implementation is supposed to take the arguments, call the
-   *  function associated with this handler and place the return value in the ret serial buffer.
+   *  The client-side implementation needs to reimplement this method to provide
+   * the mechanism how a signal is called. The implementation is supposed to
+   * take the arguments, call the function associated with this handler and
+   * place the return value in the ret serial buffer.
    *  @param method The method descriptor for the signal
    *  @param args The serialized arguments
    *  @param ret The return value
    */
-  virtual void call (const MethodBase *method, SerialArgs &args, SerialArgs &ret) const = 0;
+  virtual void call(const MethodBase *method, SerialArgs &args,
+                    SerialArgs &ret) const = 0;
 
   /**
    *  @brief Ties the lifetime of a signal adaptor to that of the handler
    *  The system will call this method to install an adaptor with this handler.
    *  If the handler is deleted, the adaptor will be deleted too.
    */
-  void set_adaptor (SignalAdaptor *adaptor)
-  {
-    mp_adaptor.reset (adaptor);
-  }
+  void set_adaptor(SignalAdaptor *adaptor) { mp_adaptor.reset(adaptor); }
 
 private:
   tl::shared_ptr<SignalAdaptor> mp_adaptor;
@@ -167,27 +162,20 @@ private:
  *  @brief A signal descriptor
  *  This is a specialization of the method descriptor for the signal.
  */
-class GSI_PUBLIC Signal
-  : public MethodBase
-{
+class GSI_PUBLIC Signal : public MethodBase {
 public:
   /**
    *  @brief Constructor
    *  @param name The name of the signal
    *  @param doc The documentation string
    */
-  Signal (const std::string &name, const std::string &doc)
-    : MethodBase (name, doc, false, false)
-  {
-  }
+  Signal(const std::string &name, const std::string &doc)
+      : MethodBase(name, doc, false, false) {}
 
   /**
    *  @brief Returns a value indicating whether this method is a signal
    */
-  bool is_signal () const
-  {
-    return true;
-  }
+  bool is_signal() const { return true; }
 
   /**
    *  @brief Registers a signal handler
@@ -199,7 +187,7 @@ public:
    *  for a return value.
    *  The signal will *not* take ownership over the handler object.
    */
-  virtual void add_handler (void *obj, SignalHandler *handler) const = 0;
+  virtual void add_handler(void *obj, SignalHandler *handler) const = 0;
 };
 
 /**
@@ -207,23 +195,19 @@ public:
  *  Signal adaptors provide the C++ side of the signal double dispatch scheme.
  *  They implement the way a signal is generated.
  */
-class GSI_PUBLIC SignalAdaptor
-  : public tl::Object
-{
+class GSI_PUBLIC SignalAdaptor : public tl::Object {
 public:
   /**
    *  @brief Constructor
    */
-  SignalAdaptor ()
-  {
+  SignalAdaptor() {
     //  .. nothing yet ..
   }
 
   /**
    *  @brief Destructor
    */
-  virtual ~SignalAdaptor ()
-  {
+  virtual ~SignalAdaptor() {
     //  .. nothing yet ..
   }
 };
@@ -235,90 +219,77 @@ public:
 
 /**
  *  @brief A base class for Qt signals
- *  This object will act as a connector for Qt signals: when a signal is bound, this adaptor
- *  will provide a generic slot to connect the Qt signal to. The specializations will then
- *  forward this signal to the signal handler which itself is responsible for calling the
- *  client-side code.
+ *  This object will act as a connector for Qt signals: when a signal is bound,
+ * this adaptor will provide a generic slot to connect the Qt signal to. The
+ * specializations will then forward this signal to the signal handler which
+ * itself is responsible for calling the client-side code.
  */
-class GSI_PUBLIC QtSignalAdaptorBase
-  : public QObject, public SignalAdaptor
-{
-Q_OBJECT
+class GSI_PUBLIC QtSignalAdaptorBase : public QObject, public SignalAdaptor {
+  Q_OBJECT
 
 public:
-  QtSignalAdaptorBase () { }
+  QtSignalAdaptorBase() {}
 
 public slots:
-  void generic ()
-  {
-    tl_assert (false);
-  }
+  void generic() { tl_assert(false); }
 };
 
-template <class T>
-class QtSignalAdaptor;
+template <class T> class QtSignalAdaptor;
 
 /**
  *  @brief A specialization for signals without arguments
  *  In addition, this object provides the generic slot implementation which
  *  forwards the call to the client.
  */
-template <>
-class QtSignalAdaptor<empty_list_t>
-  : public QtSignalAdaptorBase
-{
+template <> class QtSignalAdaptor<empty_list_t> : public QtSignalAdaptorBase {
 public:
   /**
    *  @brief Constructor
    *  @param method The method descriptor
    *  @param handler The signal handler to call
    */
-  QtSignalAdaptor (const MethodBase *method, const SignalHandler *handler)
-    : mp_method (method), mp_handler (handler)
-  {
+  QtSignalAdaptor(const MethodBase *method, const SignalHandler *handler)
+      : mp_method(method), mp_handler(handler) {
     //  .. nothing yet ..
   }
 
-  virtual ~QtSignalAdaptor ()
-  {
+  virtual ~QtSignalAdaptor() {
     //  .. nothing yet ..
   }
 
 protected:
   /**
    *  @brief Provides a generic implementation of the slot
-   *  This implementation basically hijacks the slot of QtSignalAdaptorBase. It won't call
-   *  the real base class but QObject and handle every method not handled by QObject.
+   *  This implementation basically hijacks the slot of QtSignalAdaptorBase. It
+   * won't call the real base class but QObject and handle every method not
+   * handled by QObject.
    */
-  virtual int qt_metacall (QMetaObject::Call c, int id, void **a)
-  {
-    id = QObject::qt_metacall (c, id, a);
+  virtual int qt_metacall(QMetaObject::Call c, int id, void **a) {
+    id = QObject::qt_metacall(c, id, a);
     if (id < 0) {
       return id;
     }
 
-    //  we consume every invoked method here. This is some kind of dirty trick to
-    //  override the moc-generated qt_metacall implementation by our custom one
-    //  in the base class.
+    //  we consume every invoked method here. This is some kind of dirty trick
+    //  to override the moc-generated qt_metacall implementation by our custom
+    //  one in the base class.
     if (c == QMetaObject::InvokeMetaMethod && mp_handler) {
-       SerialArgs args (mp_method->argsize ());
-       write_args (args, a);
-       //  .. further
-       SerialArgs ret (mp_method->retsize ());
-       mp_handler->call (mp_method, args, ret);
+      SerialArgs args(mp_method->argsize());
+      write_args(args, a);
+      //  .. further
+      SerialArgs ret(mp_method->retsize());
+      mp_handler->call(mp_method, args, ret);
     }
 
     return -1;
   }
 
 protected:
-  virtual void write_args (SerialArgs &, void **)
-  {
+  virtual void write_args(SerialArgs &, void **) {
     //  .. nothing for empty list ..
   }
 
-  inline void write_args_non_virtual (SerialArgs &, void **)
-  {
+  inline void write_args_non_virtual(SerialArgs &, void **) {
     //  .. nothing for empty list ..
   }
 
@@ -334,13 +305,10 @@ private:
  *  provided by the base class.
  */
 template <class H, class T>
-class QtSignalAdaptor<type_pair_t<H, T> >
-  : public QtSignalAdaptor<T>
-{
+class QtSignalAdaptor<type_pair_t<H, T>> : public QtSignalAdaptor<T> {
 public:
-  QtSignalAdaptor (const MethodBase *method, SignalHandler *handler)
-    : QtSignalAdaptor<T> (method, handler)
-  {
+  QtSignalAdaptor(const MethodBase *method, SignalHandler *handler)
+      : QtSignalAdaptor<T>(method, handler) {
     // ...
   }
 
@@ -351,47 +319,37 @@ protected:
    *  is required to avoid "taking pointer to reference" compiler
    *  errors.
    */
-  template <class X>
-  struct writer
-  {
-    void operator() (SerialArgs &args, void *a)
-    {
-      args.write<X> (*reinterpret_cast<X *> (a));
+  template <class X> struct writer {
+    void operator()(SerialArgs &args, void *a) {
+      args.write<X>(*reinterpret_cast<X *>(a));
     }
   };
 
   /**
    *  @brief A specialization of the argument writer for a const reference
    */
-  template <class X>
-  struct writer<const X &>
-  {
-    void operator() (SerialArgs &args, void *a)
-    {
-      args.write<const X &> (*reinterpret_cast<const X *> (a));
+  template <class X> struct writer<const X &> {
+    void operator()(SerialArgs &args, void *a) {
+      args.write<const X &>(*reinterpret_cast<const X *>(a));
     }
   };
 
   /**
    *  @brief A specialization of the argument writer for a non-const reference
    */
-  template <class X>
-  struct writer<X &>
-  {
-    void operator() (SerialArgs &args, void *a)
-    {
-      args.write<X &> (*reinterpret_cast<X *> (a));
+  template <class X> struct writer<X &> {
+    void operator()(SerialArgs &args, void *a) {
+      args.write<X &>(*reinterpret_cast<X *>(a));
     }
   };
 
   /**
-   *  @brief Serializes the arguments from the Qt argument stack to the argument buffer
-   *  Takes one argument from the stack of arguments and writes it to the argument buffer.
-   *  Then dispatches to the base class for the next arguments
+   *  @brief Serializes the arguments from the Qt argument stack to the argument
+   * buffer Takes one argument from the stack of arguments and writes it to the
+   * argument buffer. Then dispatches to the base class for the next arguments
    */
-  virtual void write_args (SerialArgs &args, void **a)
-  {
-    write_args_non_virtual (args, a);
+  virtual void write_args(SerialArgs &args, void **a) {
+    write_args_non_virtual(args, a);
   }
 
   /**
@@ -399,83 +357,76 @@ protected:
    *  To enable inlining of the argument serialization, this method is provided
    *  in a non-virtual way.
    */
-  inline void write_args_non_virtual (SerialArgs &args, void **a)
-  {
-    writer<H> () (args, *++a);
-    QtSignalAdaptor<T>::write_args_non_virtual (args, a);
+  inline void write_args_non_virtual(SerialArgs &args, void **a) {
+    writer<H>()(args, *++a);
+    QtSignalAdaptor<T>::write_args_non_virtual(args, a);
   }
 };
 
-template <class X>
-class QtSignalImpl;
+template <class X> class QtSignalImpl;
 
-template <>
-class QtSignalImpl<empty_list_t>
-  : public Signal
-{
+template <> class QtSignalImpl<empty_list_t> : public Signal {
 public:
-  QtSignalImpl (const char *signal, const std::string &name, const std::string &doc)
-    : Signal (name, doc), mp_signal (signal)
-  {
+  QtSignalImpl(const char *signal, const std::string &name,
+               const std::string &doc)
+      : Signal(name, doc), mp_signal(signal) {}
+
+  virtual MethodBase *clone() const {
+    return new QtSignalImpl<empty_list_t>(*this);
   }
 
-  virtual MethodBase *clone () const
-  {
-    return new QtSignalImpl<empty_list_t> (*this);
+  void add_handler(void *obj, SignalHandler *handler) const {
+    _add_handler<QtSignalAdaptor<empty_list_t>>(obj, handler);
   }
 
-  void add_handler (void *obj, SignalHandler *handler) const
-  {
-    _add_handler<QtSignalAdaptor<empty_list_t> > (obj, handler);
-  }
-
-  void initialize ()
-  {
-    this->clear ();
-    _initialize ();
+  void initialize() {
+    this->clear();
+    _initialize();
   }
 
 protected:
-  void _initialize ()
-  {
+  void _initialize() {
     //  .. nothing yet ..
   }
 
 #if QT_VERSION >= 0x40800
   template <class A>
-  void _add_handler (void *obj, SignalHandler *handler) const
-  {
+  void _add_handler(void *obj, SignalHandler *handler) const {
     //  NOTE: this scheme requires 4.8 at least
 
     QObject *qobj = (QObject *)obj;
 
-    A *adaptor = new A (this, handler);
+    A *adaptor = new A(this, handler);
     //  tie the lifetime of the adaptor to that of the handler
-    handler->set_adaptor (adaptor);
+    handler->set_adaptor(adaptor);
 
-    //  NOTE: by connecting through QMetaMethod we force Qt into using the virtual qt_metacall
-    //  rather than qt_static_metacall which we can't override ... Let's hope it stays like this ...
+    //  NOTE: by connecting through QMetaMethod we force Qt into using the
+    //  virtual qt_metacall rather than qt_static_metacall which we can't
+    //  override ... Let's hope it stays like this ...
 
-    QByteArray sig = QMetaObject::normalizedSignature (mp_signal);
-    int sig_index = qobj->metaObject ()->indexOfMethod (sig.constData ());
+    QByteArray sig = QMetaObject::normalizedSignature(mp_signal);
+    int sig_index = qobj->metaObject()->indexOfMethod(sig.constData());
     if (sig_index < 0) {
-      throw tl::Exception (tl::to_string (QObject::tr ("Not a valid signal: %1").arg (sig.constData ())));
+      throw tl::Exception(tl::to_string(
+          QObject::tr("Not a valid signal: %1").arg(sig.constData())));
     }
 
-    QByteArray slot = QMetaObject::normalizedSignature ("generic()");
-    int slot_index = adaptor->metaObject ()->indexOfMethod (slot.constData ());
+    QByteArray slot = QMetaObject::normalizedSignature("generic()");
+    int slot_index = adaptor->metaObject()->indexOfMethod(slot.constData());
     if (slot_index < 0) {
       //  NOTE: should not happen
-      throw tl::Exception (tl::to_string (QObject::tr ("Not a valid slot: %1").arg (slot.constData ())));
+      throw tl::Exception(tl::to_string(
+          QObject::tr("Not a valid slot: %1").arg(slot.constData())));
     }
 
-    QObject::connect (qobj, qobj->metaObject ()->method (sig_index), adaptor, adaptor->metaObject ()->method (slot_index));
+    QObject::connect(qobj, qobj->metaObject()->method(sig_index), adaptor,
+                     adaptor->metaObject()->method(slot_index));
   }
 #else
   template <class A>
-  void _add_handler (void * /*obj*/, SignalHandler * /*handler*/) const
-  {
-    throw tl::Exception (tl::to_string (QObject::tr ("Qt signal binding requires Qt version >= 4.8")));
+  void _add_handler(void * /*obj*/, SignalHandler * /*handler*/) const {
+    throw tl::Exception(tl::to_string(
+        QObject::tr("Qt signal binding requires Qt version >= 4.8")));
   }
 #endif
 
@@ -484,43 +435,35 @@ private:
 };
 
 template <class H, class T>
-class QtSignalImpl<type_pair_t<H, T> >
-  : public QtSignalImpl<T>
-{
+class QtSignalImpl<type_pair_t<H, T>> : public QtSignalImpl<T> {
 public:
-  QtSignalImpl (const char *signal, const std::string &name, const std::string &doc)
-    : QtSignalImpl<T> (signal, name, doc), m_s ()
-  {
-  }
+  QtSignalImpl(const char *signal, const std::string &name,
+               const std::string &doc)
+      : QtSignalImpl<T>(signal, name, doc), m_s() {}
 
-  template <class S>
-  QtSignalImpl<T> *def_arg (const gsi::ArgSpec<S> &s)
-  {
+  template <class S> QtSignalImpl<T> *def_arg(const gsi::ArgSpec<S> &s) {
     m_s = s;
     return this;
   }
 
-  virtual MethodBase *clone () const
-  {
-    return new QtSignalImpl<type_pair_t<H, T> > (*this);
+  virtual MethodBase *clone() const {
+    return new QtSignalImpl<type_pair_t<H, T>>(*this);
   }
 
-  void initialize ()
-  {
-    this->clear ();
-    _initialize ();
+  void initialize() {
+    this->clear();
+    _initialize();
   }
 
-  void add_handler (void *obj, SignalHandler *handler) const
-  {
-    QtSignalImpl<empty_list_t>::template _add_handler<QtSignalAdaptor<type_pair_t<H, T> > > (obj, handler);
+  void add_handler(void *obj, SignalHandler *handler) const {
+    QtSignalImpl<empty_list_t>::template _add_handler<
+        QtSignalAdaptor<type_pair_t<H, T>>>(obj, handler);
   }
 
 protected:
-  void _initialize ()
-  {
-    this->template add_arg<H> (m_s);
-    QtSignalImpl<T>::_initialize ();
+  void _initialize() {
+    this->template add_arg<H>(m_s);
+    QtSignalImpl<T>::_initialize();
   }
 
 private:
@@ -530,165 +473,345 @@ private:
 /**
  *  @brief Provides the qt_signal wrapper for zero arguments
  */
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc = std::string ())
-{
-  return Methods(new QtSignalImpl<empty_list_t> (signal, name, doc));
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc = std::string()) {
+  return Methods(new QtSignalImpl<empty_list_t>(signal, name, doc));
 }
 
 /**
  *  @brief Provides the qt_signal wrapper for one argument
  */
 template <class A1>
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc = std::string ())
-{
-  return Methods(new QtSignalImpl<type_pair_t<A1, empty_list_t> > (signal, name, doc));
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new QtSignalImpl<type_pair_t<A1, empty_list_t>>(signal, name, doc));
 }
 
 /**
  *  @brief Provides the qt_signal wrapper for one argument
  */
-template <class A1,
-          class S1>
-inline Methods qt_signal (const char *signal, const std::string &name,
-                          const ArgSpec<S1> &s1, const std::string &doc = std::string ())
-{
-  return Methods((new QtSignalImpl<type_pair_t<A1, empty_list_t> > (signal, name, doc))->def_arg (s1));
+template <class A1, class S1>
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const ArgSpec<S1> &s1,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      (new QtSignalImpl<type_pair_t<A1, empty_list_t>>(signal, name, doc))
+          ->def_arg(s1));
 }
 
 //  ...
 template <class A1, class A2>
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc = std::string ())
-{
-  return Methods(new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, empty_list_t> > > (signal, name, doc));
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, empty_list_t>>>(
+          signal, name, doc));
 }
 
 //  ...
-template <class A1, class A2,
-          class S1, class S2>
-inline Methods qt_signal (const char *signal, const std::string &name,
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const std::string &doc = std::string ())
-{
-  return Methods((new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, empty_list_t> > > (signal, name, doc))
-                  ->def_arg (s1)->def_arg (s2));
+template <class A1, class A2, class S1, class S2>
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const ArgSpec<S1> &s1, const ArgSpec<S2> &s2,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      (new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, empty_list_t>>>(
+           signal, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2));
 }
 
 //  ...
 template <class A1, class A2, class A3>
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc = std::string ())
-{
-  return Methods(new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t> > > > (signal, name, doc));
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new QtSignalImpl<
+          type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t>>>>(
+          signal, name, doc));
 }
 
 //  ...
-template <class A1, class A2, class A3,
-          class S1, class S2, class S3>
-inline Methods qt_signal (const char *signal, const std::string &name,
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const std::string &doc = std::string ())
-{
-  return Methods((new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t> > > > (signal, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3));
+template <class A1, class A2, class A3, class S1, class S2, class S3>
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const ArgSpec<S1> &s1, const ArgSpec<S2> &s2,
+                         const ArgSpec<S3> &s3,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      (new QtSignalImpl<
+           type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t>>>>(
+           signal, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3));
 }
 
 //  ...
 template <class A1, class A2, class A3, class A4>
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc = std::string ())
-{
-  return Methods(new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t> > > > > (signal, name, doc));
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new QtSignalImpl<type_pair_t<
+          A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t>>>>>(
+          signal, name, doc));
 }
 
 //  ...
-template <class A1, class A2, class A3, class A4,
-          class S1, class S2, class S3, class S4>
-inline Methods qt_signal (const char *signal, const std::string &name,
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4, const std::string &doc = std::string ())
-{
-  return Methods((new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t> > > > > (signal, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3)->def_arg (s4));
+template <class A1, class A2, class A3, class A4, class S1, class S2, class S3,
+          class S4>
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const ArgSpec<S1> &s1, const ArgSpec<S2> &s2,
+                         const ArgSpec<S3> &s3, const ArgSpec<S4> &s4,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      (new QtSignalImpl<type_pair_t<
+           A1,
+           type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t>>>>>(
+           signal, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3)
+          ->def_arg(s4));
 }
 
 //  ...
 template <class A1, class A2, class A3, class A4, class A5>
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc = std::string ())
-{
-  return Methods(new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, empty_list_t> > > > > > (signal, name, doc));
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new QtSignalImpl<type_pair_t<
+          A1,
+          type_pair_t<
+              A2, type_pair_t<
+                      A3, type_pair_t<A4, type_pair_t<A5, empty_list_t>>>>>>(
+          signal, name, doc));
 }
 
 //  ...
-template <class A1, class A2, class A3, class A4, class A5,
-          class S1, class S2, class S3, class S4, class S5>
-inline Methods qt_signal (const char *signal, const std::string &name,
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4, const ArgSpec<S5> &s5, const std::string &doc = std::string ())
-{
-  return Methods((new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, empty_list_t> > > > > > (signal, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3)->def_arg (s4)->def_arg (s5));
+template <class A1, class A2, class A3, class A4, class A5, class S1, class S2,
+          class S3, class S4, class S5>
+inline Methods
+qt_signal(const char *signal, const std::string &name, const ArgSpec<S1> &s1,
+          const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4,
+          const ArgSpec<S5> &s5, const std::string &doc = std::string()) {
+  return Methods(
+      (new QtSignalImpl<type_pair_t<
+           A1,
+           type_pair_t<
+               A2, type_pair_t<
+                       A3, type_pair_t<A4, type_pair_t<A5, empty_list_t>>>>>>(
+           signal, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3)
+          ->def_arg(s4)
+          ->def_arg(s5));
 }
 
 //  ...
 template <class A1, class A2, class A3, class A4, class A5, class A6>
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc = std::string ())
-{
-  return Methods(new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, type_pair_t<A6, empty_list_t> > > > > > > (signal, name, doc));
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new QtSignalImpl<type_pair_t<
+          A1,
+          type_pair_t<
+              A2, type_pair_t<
+                      A3, type_pair_t<
+                              A4, type_pair_t<
+                                      A5, type_pair_t<A6, empty_list_t>>>>>>>(
+          signal, name, doc));
 }
 
 //  ...
-template <class A1, class A2, class A3, class A4, class A5, class A6,
-          class S1, class S2, class S3, class S4, class S5, class S6>
-inline Methods qt_signal (const char *signal, const std::string &name,
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4, const ArgSpec<S5> &s5, const ArgSpec<S6> &s6, const std::string &doc = std::string ())
-{
-  return Methods((new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, type_pair_t<A6, empty_list_t> > > > > > > (signal, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3)->def_arg (s4)->def_arg (s5)->def_arg (s6));
+template <class A1, class A2, class A3, class A4, class A5, class A6, class S1,
+          class S2, class S3, class S4, class S5, class S6>
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const ArgSpec<S1> &s1, const ArgSpec<S2> &s2,
+                         const ArgSpec<S3> &s3, const ArgSpec<S4> &s4,
+                         const ArgSpec<S5> &s5, const ArgSpec<S6> &s6,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      (new QtSignalImpl<type_pair_t<
+           A1,
+           type_pair_t<
+               A2, type_pair_t<
+                       A3, type_pair_t<
+                               A4, type_pair_t<
+                                       A5, type_pair_t<A6, empty_list_t>>>>>>>(
+           signal, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3)
+          ->def_arg(s4)
+          ->def_arg(s5)
+          ->def_arg(s6));
 }
 
 //  ...
 template <class A1, class A2, class A3, class A4, class A5, class A6, class A7>
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc = std::string ())
-{
-  return Methods(new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, type_pair_t<A6, type_pair_t<A7, empty_list_t> > > > > > > > (signal, name, doc));
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new QtSignalImpl<type_pair_t<
+          A1,
+          type_pair_t<
+              A2,
+              type_pair_t<
+                  A3,
+                  type_pair_t<
+                      A4, type_pair_t<
+                              A5, type_pair_t<
+                                      A6, type_pair_t<A7, empty_list_t>>>>>>>>(
+          signal, name, doc));
 }
 
 //  ...
 template <class A1, class A2, class A3, class A4, class A5, class A6, class A7,
           class S1, class S2, class S3, class S4, class S5, class S6, class S7>
-inline Methods qt_signal (const char *signal, const std::string &name,
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4, const ArgSpec<S5> &s5, const ArgSpec<S6> &s6, const ArgSpec<S7> &s7, const std::string &doc = std::string ())
-{
-  return Methods((new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, type_pair_t<A6, type_pair_t<A7, empty_list_t> > > > > > > > (signal, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3)->def_arg (s4)->def_arg (s5)->def_arg (s6)->def_arg (s7));
+inline Methods
+qt_signal(const char *signal, const std::string &name, const ArgSpec<S1> &s1,
+          const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4,
+          const ArgSpec<S5> &s5, const ArgSpec<S6> &s6, const ArgSpec<S7> &s7,
+          const std::string &doc = std::string()) {
+  return Methods(
+      (new QtSignalImpl<type_pair_t<
+           A1,
+           type_pair_t<
+               A2,
+               type_pair_t<
+                   A3,
+                   type_pair_t<
+                       A4, type_pair_t<
+                               A5, type_pair_t<
+                                       A6, type_pair_t<A7, empty_list_t>>>>>>>>(
+           signal, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3)
+          ->def_arg(s4)
+          ->def_arg(s5)
+          ->def_arg(s6)
+          ->def_arg(s7));
 }
 
 //  ...
-template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8>
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc = std::string ())
-{
-  return Methods(new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, type_pair_t<A6, type_pair_t<A7, type_pair_t<A8, empty_list_t> > > > > > > > > (signal, name, doc));
+template <class A1, class A2, class A3, class A4, class A5, class A6, class A7,
+          class A8>
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new QtSignalImpl<type_pair_t<
+          A1,
+          type_pair_t<
+              A2,
+              type_pair_t<
+                  A3,
+                  type_pair_t<
+                      A4, type_pair_t<
+                              A5, type_pair_t<
+                                      A6, type_pair_t<
+                                              A7, type_pair_t<
+                                                      A8, empty_list_t>>>>>>>>>(
+          signal, name, doc));
 }
 
 //  ...
-template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8,
-          class S1, class S2, class S3, class S4, class S5, class S6, class S7, class S8>
-inline Methods qt_signal (const char *signal, const std::string &name,
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4, const ArgSpec<S5> &s5, const ArgSpec<S6> &s6, const ArgSpec<S7> &s7, const ArgSpec<S8> &s8, const std::string &doc = std::string ())
-{
-  return Methods((new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, type_pair_t<A6, type_pair_t<A7, type_pair_t<A8, empty_list_t> > > > > > > > > (signal, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3)->def_arg (s4)->def_arg (s5)->def_arg (s6)->def_arg (s7)->def_arg (s8));
+template <class A1, class A2, class A3, class A4, class A5, class A6, class A7,
+          class A8, class S1, class S2, class S3, class S4, class S5, class S6,
+          class S7, class S8>
+inline Methods
+qt_signal(const char *signal, const std::string &name, const ArgSpec<S1> &s1,
+          const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4,
+          const ArgSpec<S5> &s5, const ArgSpec<S6> &s6, const ArgSpec<S7> &s7,
+          const ArgSpec<S8> &s8, const std::string &doc = std::string()) {
+  return Methods(
+      (new QtSignalImpl<type_pair_t<
+           A1,
+           type_pair_t<
+               A2,
+               type_pair_t<
+                   A3,
+                   type_pair_t<
+                       A4,
+                       type_pair_t<
+                           A5, type_pair_t<
+                                   A6, type_pair_t<
+                                           A7, type_pair_t<
+                                                   A8, empty_list_t>>>>>>>>>(
+           signal, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3)
+          ->def_arg(s4)
+          ->def_arg(s5)
+          ->def_arg(s6)
+          ->def_arg(s7)
+          ->def_arg(s8));
 }
 
 //  ...
-template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9>
-inline Methods qt_signal (const char *signal, const std::string &name, const std::string &doc)
-{
-  return Methods(new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, type_pair_t<A6, type_pair_t<A7, type_pair_t<A8, type_pair_t<A9, empty_list_t> > > > > > > > > > (signal, name, doc));
+template <class A1, class A2, class A3, class A4, class A5, class A6, class A7,
+          class A8, class A9>
+inline Methods qt_signal(const char *signal, const std::string &name,
+                         const std::string &doc) {
+  return Methods(
+      new QtSignalImpl<type_pair_t<
+          A1,
+          type_pair_t<
+              A2,
+              type_pair_t<
+                  A3,
+                  type_pair_t<
+                      A4,
+                      type_pair_t<
+                          A5,
+                          type_pair_t<
+                              A6,
+                              type_pair_t<
+                                  A7, type_pair_t<
+                                          A8, type_pair_t<
+                                                  A9, empty_list_t>>>>>>>>>>(
+          signal, name, doc));
 }
 
 //  ...
-template <class A1, class A2, class A3, class A4, class A5, class A6, class A7, class A8, class A9,
-          class S1, class S2, class S3, class S4, class S5, class S6, class S7, class S8, class S9>
-inline Methods qt_signal (const char *signal, const std::string &name,
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4, const ArgSpec<S5> &s5, const ArgSpec<S6> &s6, const ArgSpec<S7> &s7, const ArgSpec<S8> &s8, const ArgSpec<S9> &s9, const std::string &doc = std::string ())
-{
-  return Methods((new QtSignalImpl<type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, type_pair_t<A5, type_pair_t<A6, type_pair_t<A7, type_pair_t<A8, type_pair_t<A9, empty_list_t> > > > > > > > > > (signal, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3)->def_arg (s4)->def_arg (s5)->def_arg (s6)->def_arg (s7)->def_arg (s8)->def_arg (s9));
+template <class A1, class A2, class A3, class A4, class A5, class A6, class A7,
+          class A8, class A9, class S1, class S2, class S3, class S4, class S5,
+          class S6, class S7, class S8, class S9>
+inline Methods
+qt_signal(const char *signal, const std::string &name, const ArgSpec<S1> &s1,
+          const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4,
+          const ArgSpec<S5> &s5, const ArgSpec<S6> &s6, const ArgSpec<S7> &s7,
+          const ArgSpec<S8> &s8, const ArgSpec<S9> &s9,
+          const std::string &doc = std::string()) {
+  return Methods(
+      (new QtSignalImpl<type_pair_t<
+           A1,
+           type_pair_t<
+               A2,
+               type_pair_t<
+                   A3,
+                   type_pair_t<
+                       A4,
+                       type_pair_t<
+                           A5,
+                           type_pair_t<
+                               A6,
+                               type_pair_t<
+                                   A7, type_pair_t<
+                                           A8, type_pair_t<
+                                                   A9, empty_list_t>>>>>>>>>>(
+           signal, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3)
+          ->def_arg(s4)
+          ->def_arg(s5)
+          ->def_arg(s6)
+          ->def_arg(s7)
+          ->def_arg(s8)
+          ->def_arg(s9));
 }
 
 #endif
@@ -696,53 +819,40 @@ inline Methods qt_signal (const char *signal, const std::string &name,
 // ---------------------------------------------------------------------------------------
 //  Adaptors for tl::event
 
-template <class T>
-class EventSignalAdaptor;
+template <class T> class EventSignalAdaptor;
 
 /**
  *  @brief A signal adaptor for tl::event signals without arguments
  */
-template <>
-class EventSignalAdaptor<empty_list_t>
-  : public SignalAdaptor
-{
+template <> class EventSignalAdaptor<empty_list_t> : public SignalAdaptor {
 public:
   /**
    *  @brief Constructor
    *  @param method The method descriptor
    *  @param handler The signal handler to call
    */
-  EventSignalAdaptor (const MethodBase *method, const SignalHandler *handler)
-    : mp_method (method), mp_handler (handler)
-  {
+  EventSignalAdaptor(const MethodBase *method, const SignalHandler *handler)
+      : mp_method(method), mp_handler(handler) {
     //  .. nothing yet ..
   }
 
   /**
    *  @brief The actual target for the signal
    */
-  void event_receiver (int /*argc*/, void ** /*args*/)
-  {
+  void event_receiver(int /*argc*/, void ** /*args*/) {
     if (mp_handler) {
-       SerialArgs args (mp_method->argsize ());
-       SerialArgs ret (mp_method->retsize ());
-       mp_handler->call (mp_method, args, ret);
+      SerialArgs args(mp_method->argsize());
+      SerialArgs ret(mp_method->retsize());
+      mp_handler->call(mp_method, args, ret);
     }
   }
 
 protected:
-  const SignalHandler *handler () const
-  {
-    return mp_handler;
-  }
+  const SignalHandler *handler() const { return mp_handler; }
 
-  const MethodBase *method () const
-  {
-    return mp_method;
-  }
+  const MethodBase *method() const { return mp_method; }
 
-  void write_args (SerialArgs &, void **)
-  {
+  void write_args(SerialArgs &, void **) {
     //  .. no arguments to write ..
   }
 
@@ -758,27 +868,23 @@ private:
  *  provided by the base class.
  */
 template <class H, class T>
-class EventSignalAdaptor<type_pair_t<H, T> >
-  : public EventSignalAdaptor<T>
-{
+class EventSignalAdaptor<type_pair_t<H, T>> : public EventSignalAdaptor<T> {
 public:
-  EventSignalAdaptor (const MethodBase *method, SignalHandler *handler)
-    : EventSignalAdaptor<T> (method, handler)
-  {
+  EventSignalAdaptor(const MethodBase *method, SignalHandler *handler)
+      : EventSignalAdaptor<T>(method, handler) {
     // ...
   }
 
   /**
    *  @brief The actual target for the signal
    */
-  void event_receiver (int /*argc*/, void **a)
-  {
-    if (this->handler ()) {
-       SerialArgs args (this->method ()->argsize ());
-       write_args (args, a);
-       //  .. further
-       SerialArgs ret (this->method ()->retsize ());
-       this->handler ()->call (this->method (), args, ret);
+  void event_receiver(int /*argc*/, void **a) {
+    if (this->handler()) {
+      SerialArgs args(this->method()->argsize());
+      write_args(args, a);
+      //  .. further
+      SerialArgs ret(this->method()->retsize());
+      this->handler()->call(this->method(), args, ret);
     }
   }
 
@@ -789,96 +895,77 @@ protected:
    *  is required to avoid "taking pointer to reference" compiler
    *  errors.
    */
-  template <class X>
-  struct writer
-  {
-    void operator() (SerialArgs &args, void *a)
-    {
-      args.write<X> (*reinterpret_cast<X *> (a));
+  template <class X> struct writer {
+    void operator()(SerialArgs &args, void *a) {
+      args.write<X>(*reinterpret_cast<X *>(a));
     }
   };
 
   /**
    *  @brief A specialization of the argument writer for a const reference
    */
-  template <class X>
-  struct writer<const X &>
-  {
-    void operator() (SerialArgs &args, void *a)
-    {
-      args.write<const X &> (*reinterpret_cast<const X *> (a));
+  template <class X> struct writer<const X &> {
+    void operator()(SerialArgs &args, void *a) {
+      args.write<const X &>(*reinterpret_cast<const X *>(a));
     }
   };
 
   /**
    *  @brief A specialization of the argument writer for a non-const reference
    */
-  template <class X>
-  struct writer<X &>
-  {
-    void operator() (SerialArgs &args, void *a)
-    {
-      args.write<X &> (*reinterpret_cast<X *> (a));
+  template <class X> struct writer<X &> {
+    void operator()(SerialArgs &args, void *a) {
+      args.write<X &>(*reinterpret_cast<X *>(a));
     }
   };
 
   /**
-   *  @brief Serializes the arguments from the Qt argument stack to the argument buffer
-   *  Takes one argument from the stack of arguments and writes it to the argument buffer.
-   *  Then dispatches to the base class for the next arguments
+   *  @brief Serializes the arguments from the Qt argument stack to the argument
+   * buffer Takes one argument from the stack of arguments and writes it to the
+   * argument buffer. Then dispatches to the base class for the next arguments
    */
-  void write_args (SerialArgs &args, void **a)
-  {
-    writer<H> () (args, *a++);
-    EventSignalAdaptor<T>::write_args (args, a);
+  void write_args(SerialArgs &args, void **a) {
+    writer<H>()(args, *a++);
+    EventSignalAdaptor<T>::write_args(args, a);
   }
 };
 
-template <class X, class E, class TL>
-class EventSignalImpl;
+template <class X, class E, class TL> class EventSignalImpl;
 
 template <class X, class E>
-class EventSignalImpl<X, E, empty_list_t>
-  : public Signal
-{
+class EventSignalImpl<X, E, empty_list_t> : public Signal {
 public:
   typedef E event_type;
 
-  EventSignalImpl (event_type (X::*event), const std::string &name, const std::string &doc)
-    : Signal (name, doc), mp_event (event)
-  {
+  EventSignalImpl(event_type(X::*event), const std::string &name,
+                  const std::string &doc)
+      : Signal(name, doc), mp_event(event) {}
+
+  virtual MethodBase *clone() const {
+    return new EventSignalImpl<X, E, empty_list_t>(*this);
   }
 
-  virtual MethodBase *clone () const
-  {
-    return new EventSignalImpl<X, E, empty_list_t> (*this);
+  void add_handler(void *obj, SignalHandler *handler) const {
+    _add_handler<EventSignalAdaptor<empty_list_t>>(obj, handler);
   }
 
-  void add_handler (void *obj, SignalHandler *handler) const
-  {
-    _add_handler<EventSignalAdaptor<empty_list_t> > (obj, handler);
-  }
-
-  void initialize ()
-  {
-    this->clear ();
-    _initialize ();
+  void initialize() {
+    this->clear();
+    _initialize();
   }
 
 protected:
   template <class A>
-  void _add_handler (void *obj, SignalHandler *handler) const
-  {
-    A *adaptor = new A (this, handler);
+  void _add_handler(void *obj, SignalHandler *handler) const {
+    A *adaptor = new A(this, handler);
     //  tie the lifetime of the adaptor to that of the handler
-    handler->set_adaptor (adaptor);
+    handler->set_adaptor(adaptor);
 
     X *x = (X *)obj;
-    (x->*mp_event).add (adaptor, &A::event_receiver);
+    (x->*mp_event).add(adaptor, &A::event_receiver);
   }
 
-  void _initialize ()
-  {
+  void _initialize() {
     //  .. nothing yet ..
   }
 
@@ -887,143 +974,122 @@ private:
 };
 
 template <class X, class E, class H, class T>
-class EventSignalImpl<X, E, type_pair_t<H, T> >
-  : public EventSignalImpl<X, E, T>
-{
+class EventSignalImpl<X, E, type_pair_t<H, T>>
+    : public EventSignalImpl<X, E, T> {
 public:
   typedef E event_type;
 
-  EventSignalImpl (event_type (X::*event), const std::string &name, const std::string &doc)
-    : EventSignalImpl<X, E, T> (event, name, doc)
-  {
+  EventSignalImpl(event_type(X::*event), const std::string &name,
+                  const std::string &doc)
+      : EventSignalImpl<X, E, T>(event, name, doc) {}
+
+  virtual MethodBase *clone() const {
+    return new EventSignalImpl<X, E, type_pair_t<H, T>>(*this);
   }
 
-  virtual MethodBase *clone () const
-  {
-    return new EventSignalImpl<X, E, type_pair_t<H, T> > (*this);
-  }
-
-  void add_handler (void *obj, SignalHandler *handler) const
-  {
-    EventSignalImpl<X, E, empty_list_t>::template _add_handler<EventSignalAdaptor<type_pair_t<H, T> > > (obj, handler);
+  void add_handler(void *obj, SignalHandler *handler) const {
+    EventSignalImpl<X, E, empty_list_t>::template _add_handler<
+        EventSignalAdaptor<type_pair_t<H, T>>>(obj, handler);
   }
 
   template <class S>
-  EventSignalImpl<X, E, T> *def_arg (const gsi::ArgSpec<S> &s)
-  {
+  EventSignalImpl<X, E, T> *def_arg(const gsi::ArgSpec<S> &s) {
     m_s = s;
     return this;
   }
 
-  void initialize ()
-  {
-    this->clear ();
-    _initialize ();
+  void initialize() {
+    this->clear();
+    _initialize();
   }
 
 protected:
-  void _initialize ()
-  {
-    this->template add_arg<H> (m_s);
-    EventSignalImpl<X, E, T>::_initialize ();
+  void _initialize() {
+    this->template add_arg<H>(m_s);
+    EventSignalImpl<X, E, T>::_initialize();
   }
 
 private:
   gsi::ArgSpec<H> m_s;
 };
 
-template <class X, class E, class TL>
-class EventSignalFuncImpl;
+template <class X, class E, class TL> class EventSignalFuncImpl;
 
 template <class X, class E>
-class EventSignalFuncImpl<X, E, empty_list_t>
-  : public Signal
-{
+class EventSignalFuncImpl<X, E, empty_list_t> : public Signal {
 public:
   typedef E event_type;
 
-  EventSignalFuncImpl (event_type &(*event) (X *), const std::string &name, const std::string &doc)
-    : Signal (name, doc), mp_event (event)
-  {
+  EventSignalFuncImpl(event_type &(*event)(X *), const std::string &name,
+                      const std::string &doc)
+      : Signal(name, doc), mp_event(event) {}
+
+  virtual MethodBase *clone() const {
+    return new EventSignalFuncImpl<X, E, empty_list_t>(*this);
   }
 
-  virtual MethodBase *clone () const
-  {
-    return new EventSignalFuncImpl<X, E, empty_list_t> (*this);
+  void add_handler(void *obj, SignalHandler *handler) const {
+    _add_handler<EventSignalAdaptor<empty_list_t>>(obj, handler);
   }
 
-  void add_handler (void *obj, SignalHandler *handler) const
-  {
-    _add_handler<EventSignalAdaptor<empty_list_t> > (obj, handler);
-  }
-
-  void initialize ()
-  {
-    this->clear ();
-    _initialize ();
+  void initialize() {
+    this->clear();
+    _initialize();
   }
 
 protected:
   template <class A>
-  void _add_handler (void *obj, SignalHandler *handler) const
-  {
-    A *adaptor = new A (this, handler);
+  void _add_handler(void *obj, SignalHandler *handler) const {
+    A *adaptor = new A(this, handler);
     //  tie the lifetime of the adaptor to that of the handler
-    handler->set_adaptor (adaptor);
+    handler->set_adaptor(adaptor);
 
     X *x = (X *)obj;
-    (*mp_event) (x).add (adaptor, &A::event_receiver);
+    (*mp_event)(x).add(adaptor, &A::event_receiver);
   }
 
-  void _initialize ()
-  {
+  void _initialize() {
     //  .. nothing yet ..
   }
 
 private:
-  event_type &(*mp_event) (X *x);
+  event_type &(*mp_event)(X *x);
 };
 
 template <class X, class E, class H, class T>
-class EventSignalFuncImpl<X, E, type_pair_t<H, T> >
-  : public EventSignalFuncImpl<X, E, T>
-{
+class EventSignalFuncImpl<X, E, type_pair_t<H, T>>
+    : public EventSignalFuncImpl<X, E, T> {
 public:
   typedef E event_type;
 
-  EventSignalFuncImpl (event_type &(*event) (X *), const std::string &name, const std::string &doc)
-    : EventSignalFuncImpl<X, E, T> (event, name, doc)
-  {
+  EventSignalFuncImpl(event_type &(*event)(X *), const std::string &name,
+                      const std::string &doc)
+      : EventSignalFuncImpl<X, E, T>(event, name, doc) {}
+
+  virtual MethodBase *clone() const {
+    return new EventSignalFuncImpl<X, E, type_pair_t<H, T>>(*this);
   }
 
-  virtual MethodBase *clone () const
-  {
-    return new EventSignalFuncImpl<X, E, type_pair_t<H, T> > (*this);
-  }
-
-  void add_handler (void *obj, SignalHandler *handler) const
-  {
-    EventSignalFuncImpl<X, E, empty_list_t>::template _add_handler<EventSignalAdaptor<type_pair_t<H, T> > > (obj, handler);
+  void add_handler(void *obj, SignalHandler *handler) const {
+    EventSignalFuncImpl<X, E, empty_list_t>::template _add_handler<
+        EventSignalAdaptor<type_pair_t<H, T>>>(obj, handler);
   }
 
   template <class S>
-  EventSignalFuncImpl<X, E, T> *def_arg (const gsi::ArgSpec<S> &s)
-  {
+  EventSignalFuncImpl<X, E, T> *def_arg(const gsi::ArgSpec<S> &s) {
     m_s = s;
     return this;
   }
 
-  void initialize ()
-  {
-    this->clear ();
-    _initialize ();
+  void initialize() {
+    this->clear();
+    _initialize();
   }
 
 protected:
-  void _initialize ()
-  {
-    this->template add_arg<H> (m_s);
-    EventSignalFuncImpl<X, E, T>::_initialize ();
+  void _initialize() {
+    this->template add_arg<H>(m_s);
+    EventSignalFuncImpl<X, E, T>::_initialize();
   }
 
 private:
@@ -1034,157 +1100,241 @@ private:
  *  @brief Provides the tl::event wrapper for zero arguments
  */
 template <class X>
-Methods event (const std::string &name, tl::event<> (X::*event), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalImpl<X, tl::event<>, empty_list_t> (event, name, doc));
+Methods event(const std::string &name, tl::event<>(X::*event),
+              const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalImpl<X, tl::event<>, empty_list_t>(event, name, doc));
 }
 
 /**
  *  @brief Provides the tl::event wrapper for one argument
  */
 template <class X, class A1>
-inline Methods event (const std::string &name, tl::event<A1> (X::*event), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalImpl<X, tl::event<A1>, type_pair_t<A1, empty_list_t> > (event, name, doc));
+inline Methods event(const std::string &name, tl::event<A1>(X::*event),
+                     const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalImpl<X, tl::event<A1>, type_pair_t<A1, empty_list_t>>(
+          event, name, doc));
 }
 
 /**
  *  @brief Provides the tl::event wrapper for one argument
  */
 template <class X, class A1, class S1>
-inline Methods event (const std::string &name, tl::event<A1> (X::*event),
-                      const ArgSpec<S1> &s1, const std::string &doc = std::string ())
-{
-  return Methods((new EventSignalImpl<X, tl::event<A1>, type_pair_t<A1, empty_list_t> > (event, name, doc))
-                  ->def_arg (s1));
+inline Methods event(const std::string &name, tl::event<A1>(X::*event),
+                     const ArgSpec<S1> &s1,
+                     const std::string &doc = std::string()) {
+  return Methods(
+      (new EventSignalImpl<X, tl::event<A1>, type_pair_t<A1, empty_list_t>>(
+           event, name, doc))
+          ->def_arg(s1));
 }
 
 //  ...
 template <class X, class A1, class A2>
-inline Methods event (const std::string &name, tl::event<A1, A2> (X::*event), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalImpl<X, tl::event<A1, A2>, type_pair_t<A1, type_pair_t<A2, empty_list_t> > > (event, name, doc));
+inline Methods event(const std::string &name, tl::event<A1, A2>(X::*event),
+                     const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalImpl<X, tl::event<A1, A2>,
+                          type_pair_t<A1, type_pair_t<A2, empty_list_t>>>(
+          event, name, doc));
 }
 
 //  ...
 template <class X, class A1, class A2, class S1, class S2>
-inline Methods event (const std::string &name, tl::event<A1, A2> (X::*event),
-                      const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const std::string &doc = std::string ())
-{
-  return Methods((new EventSignalImpl<X, tl::event<A1, A2>, type_pair_t<A1, type_pair_t<A2, empty_list_t> > > (event, name, doc))
-                  ->def_arg (s1)->def_arg (s2));
+inline Methods event(const std::string &name, tl::event<A1, A2>(X::*event),
+                     const ArgSpec<S1> &s1, const ArgSpec<S2> &s2,
+                     const std::string &doc = std::string()) {
+  return Methods(
+      (new EventSignalImpl<X, tl::event<A1, A2>,
+                           type_pair_t<A1, type_pair_t<A2, empty_list_t>>>(
+           event, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2));
 }
 
 //  ...
 template <class X, class A1, class A2, class A3>
-inline Methods event (const std::string &name, tl::event<A1, A2, A3> (X::*event), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalImpl<X, tl::event<A1, A2, A3>, type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t> > > > (event, name, doc));
+inline Methods event(const std::string &name, tl::event<A1, A2, A3>(X::*event),
+                     const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalImpl<
+          X, tl::event<A1, A2, A3>,
+          type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t>>>>(
+          event, name, doc));
 }
 
 //  ...
 template <class X, class A1, class A2, class A3, class S1, class S2, class S3>
-inline Methods event (const std::string &name, tl::event<A1, A2, A3> (X::*event),
-                      const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const std::string &doc = std::string ())
-{
-  return Methods((new EventSignalImpl<X, tl::event<A1, A2, A3>, type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t> > > > (event, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3));
+inline Methods event(const std::string &name, tl::event<A1, A2, A3>(X::*event),
+                     const ArgSpec<S1> &s1, const ArgSpec<S2> &s2,
+                     const ArgSpec<S3> &s3,
+                     const std::string &doc = std::string()) {
+  return Methods(
+      (new EventSignalImpl<
+           X, tl::event<A1, A2, A3>,
+           type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t>>>>(
+           event, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3));
 }
 
 //  ...
 template <class X, class A1, class A2, class A3, class A4>
-inline Methods event (const std::string &name, tl::event<A1, A2, A3, A4> (X::*event), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalImpl<X, tl::event<A1, A2, A3, A4>, type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t> > > > > (event, name, doc));
+inline Methods event(const std::string &name,
+                     tl::event<A1, A2, A3, A4>(X::*event),
+                     const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalImpl<
+          X, tl::event<A1, A2, A3, A4>,
+          type_pair_t<
+              A1,
+              type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t>>>>>(
+          event, name, doc));
 }
 
 //  ...
-template <class X, class A1, class A2, class A3, class A4, class S1, class S2, class S3, class S4>
-inline Methods event (const std::string &name, tl::event<A1, A2, A3, A4> (X::*event),
-                      const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4, const std::string &doc = std::string ())
-{
-  return Methods((new EventSignalImpl<X, tl::event<A1, A2, A3, A4>, type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t> > > > > (event, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3)->def_arg (s4));
+template <class X, class A1, class A2, class A3, class A4, class S1, class S2,
+          class S3, class S4>
+inline Methods
+event(const std::string &name, tl::event<A1, A2, A3, A4>(X::*event),
+      const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3,
+      const ArgSpec<S4> &s4, const std::string &doc = std::string()) {
+  return Methods(
+      (new EventSignalImpl<
+           X, tl::event<A1, A2, A3, A4>,
+           type_pair_t<
+               A1, type_pair_t<
+                       A2, type_pair_t<A3, type_pair_t<A4, empty_list_t>>>>>(
+           event, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3)
+          ->def_arg(s4));
 }
 
 /**
  *  @brief Provides the externalized tl::event wrapper for zero arguments
  */
 template <class X>
-Methods event_ext (const std::string &name, tl::event<> &(*event) (X *), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalFuncImpl<X, tl::event<>, empty_list_t> (event, name, doc));
+Methods event_ext(const std::string &name, tl::event<> &(*event)(X *),
+                  const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalFuncImpl<X, tl::event<>, empty_list_t>(event, name, doc));
 }
 
 /**
  *  @brief Provides the externalized tl::event wrapper for one argument
  */
 template <class X, class A1>
-inline Methods event_ext (const std::string &name, tl::event<A1> &(*event) (X *), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalFuncImpl<X, tl::event<A1>, type_pair_t<A1, empty_list_t> > (event, name, doc));
+inline Methods event_ext(const std::string &name, tl::event<A1> &(*event)(X *),
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalFuncImpl<X, tl::event<A1>, type_pair_t<A1, empty_list_t>>(
+          event, name, doc));
 }
 
 /**
  *  @brief Provides the externalized tl::event wrapper for one argument
  */
 template <class X, class A1, class S1>
-inline Methods event_ext (const std::string &name, tl::event<A1> &(*event) (X *),
-                          const ArgSpec<S1> &s1, const std::string &doc = std::string ())
-{
-  return Methods((new EventSignalFuncImpl<X, tl::event<A1>, type_pair_t<A1, empty_list_t> > (event, name, doc))
-                  ->def_arg (s1));
+inline Methods event_ext(const std::string &name, tl::event<A1> &(*event)(X *),
+                         const ArgSpec<S1> &s1,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      (new EventSignalFuncImpl<X, tl::event<A1>, type_pair_t<A1, empty_list_t>>(
+           event, name, doc))
+          ->def_arg(s1));
 }
 
 //  ...
 template <class X, class A1, class A2>
-inline Methods event_ext (const std::string &name, tl::event<A1, A2> &(*event) (X *), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalFuncImpl<X, tl::event<A1, A2>, type_pair_t<A1, type_pair_t<A2, empty_list_t> > > (event, name, doc));
+inline Methods event_ext(const std::string &name,
+                         tl::event<A1, A2> &(*event)(X *),
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalFuncImpl<X, tl::event<A1, A2>,
+                              type_pair_t<A1, type_pair_t<A2, empty_list_t>>>(
+          event, name, doc));
 }
 
 //  ...
 template <class X, class A1, class A2, class S1, class S2>
-inline Methods event_ext (const std::string &name, tl::event<A1, A2> &(*event) (X *),
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const std::string &doc = std::string ())
-{
-  return Methods((new EventSignalFuncImpl<X, tl::event<A1, A2>, type_pair_t<A1, type_pair_t<A2, empty_list_t> > > (event, name, doc))
-                  ->def_arg (s1)->def_arg (s2));
+inline Methods event_ext(const std::string &name,
+                         tl::event<A1, A2> &(*event)(X *),
+                         const ArgSpec<S1> &s1, const ArgSpec<S2> &s2,
+                         const std::string &doc = std::string()) {
+  return Methods(
+      (new EventSignalFuncImpl<X, tl::event<A1, A2>,
+                               type_pair_t<A1, type_pair_t<A2, empty_list_t>>>(
+           event, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2));
 }
 
 //  ...
 template <class X, class A1, class A2, class A3>
-inline Methods event_ext (const std::string &name, tl::event<A1, A2, A3> &(*event) (X *), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalFuncImpl<X, tl::event<A1, A2, A3>, type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t> > > > (event, name, doc));
+inline Methods event_ext(const std::string &name,
+                         tl::event<A1, A2, A3> &(*event)(X *),
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalFuncImpl<
+          X, tl::event<A1, A2, A3>,
+          type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t>>>>(
+          event, name, doc));
 }
 
 //  ...
 template <class X, class A1, class A2, class A3, class S1, class S2, class S3>
-inline Methods event_ext (const std::string &name, tl::event<A1, A2, A3> &(*event) (X *),
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const std::string &doc = std::string ())
-{
-  return Methods((new EventSignalFuncImpl<X, tl::event<A1, A2, A3>, type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t> > > > (event, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3));
+inline Methods
+event_ext(const std::string &name, tl::event<A1, A2, A3> &(*event)(X *),
+          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3,
+          const std::string &doc = std::string()) {
+  return Methods(
+      (new EventSignalFuncImpl<
+           X, tl::event<A1, A2, A3>,
+           type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, empty_list_t>>>>(
+           event, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3));
 }
 
 //  ...
 template <class X, class A1, class A2, class A3, class A4>
-inline Methods event_ext (const std::string &name, tl::event<A1, A2, A3, A4> &(*event) (X *), const std::string &doc = std::string ())
-{
-  return Methods(new EventSignalFuncImpl<X, tl::event<A1, A2, A3, A4>, type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t> > > > > (event, name, doc));
+inline Methods event_ext(const std::string &name,
+                         tl::event<A1, A2, A3, A4> &(*event)(X *),
+                         const std::string &doc = std::string()) {
+  return Methods(
+      new EventSignalFuncImpl<
+          X, tl::event<A1, A2, A3, A4>,
+          type_pair_t<
+              A1,
+              type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t>>>>>(
+          event, name, doc));
 }
 
 //  ...
-template <class X, class A1, class A2, class A3, class A4, class S1, class S2, class S3, class S4>
-inline Methods event_ext (const std::string &name, tl::event<A1, A2, A3, A4> &(*event) (X *),
-                          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3, const ArgSpec<S4> &s4, const std::string &doc = std::string ())
-{
-  return Methods((new EventSignalFuncImpl<X, tl::event<A1, A2, A3, A4>, type_pair_t<A1, type_pair_t<A2, type_pair_t<A3, type_pair_t<A4, empty_list_t> > > > > (event, name, doc))
-                  ->def_arg (s1)->def_arg (s2)->def_arg (s3)->def_arg (s4));
+template <class X, class A1, class A2, class A3, class A4, class S1, class S2,
+          class S3, class S4>
+inline Methods
+event_ext(const std::string &name, tl::event<A1, A2, A3, A4> &(*event)(X *),
+          const ArgSpec<S1> &s1, const ArgSpec<S2> &s2, const ArgSpec<S3> &s3,
+          const ArgSpec<S4> &s4, const std::string &doc = std::string()) {
+  return Methods(
+      (new EventSignalFuncImpl<
+           X, tl::event<A1, A2, A3, A4>,
+           type_pair_t<
+               A1, type_pair_t<
+                       A2, type_pair_t<A3, type_pair_t<A4, empty_list_t>>>>>(
+           event, name, doc))
+          ->def_arg(s1)
+          ->def_arg(s2)
+          ->def_arg(s3)
+          ->def_arg(s4));
 }
 
-}
+} // namespace gsi
 
 #endif
-

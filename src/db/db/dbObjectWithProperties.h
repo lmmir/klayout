@@ -20,45 +20,39 @@
 
 */
 
-
 #ifndef HDR_dbObjectWithProperties
 #define HDR_dbObjectWithProperties
 
-#include "tlException.h"
-#include "dbTypes.h"
-#include "dbPolygon.h"
-#include "dbPath.h"
+#include "dbArray.h"
+#include "dbBox.h"
+#include "dbCellInst.h"
 #include "dbEdge.h"
 #include "dbEdgePair.h"
-#include "dbText.h"
-#include "dbBox.h"
-#include "dbArray.h"
-#include "dbCellInst.h"
+#include "dbPath.h"
+#include "dbPolygon.h"
 #include "dbPropertiesRepository.h"
+#include "dbText.h"
+#include "dbTypes.h"
+#include "tlException.h"
 
-namespace db
-{
+namespace db {
 
 class ArrayRepository;
 
 /**
  *  @brief A object with properties template
  *
- *  This template provides some kind of "enhanced shape". A shape can be supplied
- *  with additional properties. For performance reasons, the properties are stored
- *  as an index within a lookup table. Each index refers to a set of properties.
- *  The "PropertiesRepository" class manages the properties available and associates
- *  a property set with an index. 
- *  The shape-with-properties template adds the properties repository index to a 
- *  shape and inherits all of the shape's methods.
- *  This template is not confined to be used with shapes. It can be used for
- *  instances as well.
+ *  This template provides some kind of "enhanced shape". A shape can be
+ * supplied with additional properties. For performance reasons, the properties
+ * are stored as an index within a lookup table. Each index refers to a set of
+ * properties. The "PropertiesRepository" class manages the properties available
+ * and associates a property set with an index. The shape-with-properties
+ * template adds the properties repository index to a shape and inherits all of
+ * the shape's methods. This template is not confined to be used with shapes. It
+ * can be used for instances as well.
  */
 
-template <class Obj>
-class object_with_properties
-  : public Obj
-{
+template <class Obj> class object_with_properties : public Obj {
 public:
   typedef Obj object_type;
 
@@ -66,42 +60,37 @@ public:
   typedef typename Obj::coord_type coord_type;
   typedef typename Obj::point_type point_type;
 
-  typedef db::object_tag< object_with_properties<Obj> > tag;
+  typedef db::object_tag<object_with_properties<Obj>> tag;
 
   /**
    *  @brief The default constructor
    */
-  object_with_properties ()
-    : Obj (), m_id (0)
-  {
+  object_with_properties() : Obj(), m_id(0) {
     //  .. nothing yet ..
   }
 
   /**
    *  @brief Create myself from a object and an id
    */
-  object_with_properties (const Obj &obj, properties_id_type id)
-    : Obj (obj), m_id (id)
-  {
+  object_with_properties(const Obj &obj, properties_id_type id)
+      : Obj(obj), m_id(id) {
     //  .. nothing yet ..
   }
 
   /**
    *  @brief The copy constructor
    */
-  object_with_properties (const object_with_properties<Obj> &d)
-    : Obj (d), m_id (d.m_id)
-  {
+  object_with_properties(const object_with_properties<Obj> &d)
+      : Obj(d), m_id(d.m_id) {
     //  .. nothing yet ..
   }
 
   /**
    *  @brief Assignment
    */
-  object_with_properties &operator= (const object_with_properties<Obj> &d)
-  {
+  object_with_properties &operator=(const object_with_properties<Obj> &d) {
     if (this != &d) {
-      Obj::operator= (d);
+      Obj::operator=(d);
       m_id = d.m_id;
     }
     return *this;
@@ -110,79 +99,70 @@ public:
   /**
    *  @brief Translation from a different repository space in a generic sense
    *
-   *  This is required since the translation basically acts as an assignment operator
-   *  whose sementics we have to provide here.
+   *  This is required since the translation basically acts as an assignment
+   * operator whose sementics we have to provide here.
    */
   template <class Rep>
-  void translate (const object_with_properties<Obj> &d, Rep &rep, db::ArrayRepository &array_rep)
-  {
-    Obj::translate (d, rep, array_rep);
+  void translate(const object_with_properties<Obj> &d, Rep &rep,
+                 db::ArrayRepository &array_rep) {
+    Obj::translate(d, rep, array_rep);
     m_id = d.m_id;
   }
 
   /**
-   *  @brief Translation with transformation from a different repository space in a generic sense
+   *  @brief Translation with transformation from a different repository space
+   * in a generic sense
    *
-   *  This is required since the translation basically acts as an assignment operator
-   *  whose sementics we have to provide here.
+   *  This is required since the translation basically acts as an assignment
+   * operator whose sementics we have to provide here.
    */
   template <class Rep, class Trans>
-  void translate (const object_with_properties<Obj> &d, const Trans &t, Rep &rep, db::ArrayRepository &array_rep)
-  {
-    Obj::translate (d, t, rep, array_rep);
+  void translate(const object_with_properties<Obj> &d, const Trans &t, Rep &rep,
+                 db::ArrayRepository &array_rep) {
+    Obj::translate(d, t, rep, array_rep);
     m_id = d.m_id;
   }
 
   /**
    *  @brief Equality
    */
-  bool operator== (const object_with_properties<Obj> &d) const
-  {
-    return Obj::operator== (d) && m_id == d.m_id;
+  bool operator==(const object_with_properties<Obj> &d) const {
+    return Obj::operator==(d) && m_id == d.m_id;
   }
 
   /**
    *  @brief Inequality
    */
-  bool operator!= (const object_with_properties<Obj> &d) const
-  {
-    return ! operator== (d);
+  bool operator!=(const object_with_properties<Obj> &d) const {
+    return !operator==(d);
   }
 
   /**
    *  @brief Comparison
    */
-  bool operator< (const object_with_properties<Obj> &d) const
-  {
-    if (! Obj::operator== (d)) {
-      return Obj::operator< (d);
-    } 
+  bool operator<(const object_with_properties<Obj> &d) const {
+    if (!Obj::operator==(d)) {
+      return Obj::operator<(d);
+    }
     return m_id < d.m_id;
   }
 
   /**
    *  @brief Properties Id read accessor
    */
-  properties_id_type properties_id () const
-  {
-    return m_id;
-  }
+  properties_id_type properties_id() const { return m_id; }
 
   /**
    *  @brief Properties Id write accessor
    */
-  void properties_id (properties_id_type id) 
-  {
-    m_id = id;
-  }
+  void properties_id(properties_id_type id) { m_id = id; }
 
   /**
    *  @brief Returns the transformed object
    */
   template <class Trans>
-  object_with_properties<Obj> transformed (const Trans &tr) const
-  {
-    return object_with_properties<Obj> (Obj::transformed (tr), m_id);
+  object_with_properties<Obj> transformed(const Trans &tr) const {
+    return object_with_properties<Obj>(Obj::transformed(tr), m_id);
   }
 
 private:
@@ -196,7 +176,8 @@ typedef object_with_properties<DSimplePolygon> DSimplePolygonWithProperties;
 typedef object_with_properties<PolygonRef> PolygonRefWithProperties;
 typedef object_with_properties<DPolygonRef> DPolygonRefWithProperties;
 typedef object_with_properties<SimplePolygonRef> SimplePolygonRefWithProperties;
-typedef object_with_properties<DSimplePolygonRef> DSimplePolygonRefWithProperties;
+typedef object_with_properties<DSimplePolygonRef>
+    DSimplePolygonRefWithProperties;
 
 typedef object_with_properties<Path> PathWithProperties;
 typedef object_with_properties<DPath> DPathWithProperties;
@@ -220,10 +201,11 @@ typedef object_with_properties<DTextRef> DTextRefWithProperties;
 typedef object_with_properties<Box> BoxWithProperties;
 typedef object_with_properties<DBox> DBoxWithProperties;
 
-typedef object_with_properties<db::array<db::CellInst, db::Trans> > CellInstArrayWithProperties;
-typedef object_with_properties<db::array<db::CellInst, db::DTrans> > DCellInstArrayWithProperties;
+typedef object_with_properties<db::array<db::CellInst, db::Trans>>
+    CellInstArrayWithProperties;
+typedef object_with_properties<db::array<db::CellInst, db::DTrans>>
+    DCellInstArrayWithProperties;
 
 } // namespace db
 
 #endif
-

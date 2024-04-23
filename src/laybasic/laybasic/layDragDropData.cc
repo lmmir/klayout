@@ -27,75 +27,66 @@
 #include <QDataStream>
 #include <QIODevice>
 
-namespace lay
-{
+namespace lay {
 
 // ---------------------------------------------------------------
 //  Implementation of DragDropDataBase
 
-const char *drag_drop_mime_type ()
-{
-  return "application/klayout-ddd";
-}
+const char *drag_drop_mime_type() { return "application/klayout-ddd"; }
 
-QMimeData *
-DragDropDataBase::to_mime_data () const
-{
+QMimeData *DragDropDataBase::to_mime_data() const {
   QMimeData *mimeData = new QMimeData();
-  mimeData->setData (QString::fromUtf8 (drag_drop_mime_type ()), serialized ());
+  mimeData->setData(QString::fromUtf8(drag_drop_mime_type()), serialized());
   return mimeData;
 }
 
 // ---------------------------------------------------------------
 //  Implementation of CellDragDropData
 
-QByteArray
-CellDragDropData::serialized () const
-{
+QByteArray CellDragDropData::serialized() const {
   QByteArray data;
-  QDataStream stream (&data, QIODevice::WriteOnly);
+  QDataStream stream(&data, QIODevice::WriteOnly);
 
-  stream << QString::fromUtf8 ("CellDragDropData");
-  stream << (quintptr) mp_layout;
-  stream << (quintptr) mp_library;
+  stream << QString::fromUtf8("CellDragDropData");
+  stream << (quintptr)mp_layout;
+  stream << (quintptr)mp_library;
   stream << m_cell_index;
   stream << m_is_pcell;
-  stream << int (m_pcell_params.size ());
-  for (std::vector<tl::Variant>::const_iterator i = m_pcell_params.begin (); i != m_pcell_params.end (); ++i) {
-    stream << tl::to_qstring (i->to_parsable_string ());
+  stream << int(m_pcell_params.size());
+  for (std::vector<tl::Variant>::const_iterator i = m_pcell_params.begin();
+       i != m_pcell_params.end(); ++i) {
+    stream << tl::to_qstring(i->to_parsable_string());
   }
 
   return data;
 }
 
-bool
-CellDragDropData::deserialize (const QByteArray &ba)
-{
-  QDataStream stream (const_cast<QByteArray *> (&ba), QIODevice::ReadOnly);
+bool CellDragDropData::deserialize(const QByteArray &ba) {
+  QDataStream stream(const_cast<QByteArray *>(&ba), QIODevice::ReadOnly);
 
   QString tag;
   stream >> tag;
 
-  if (tag == QString::fromUtf8 ("CellDragDropData")) {
+  if (tag == QString::fromUtf8("CellDragDropData")) {
 
     quintptr p = 0;
     stream >> p;
-    mp_layout = reinterpret_cast <const db::Layout *> (p);
+    mp_layout = reinterpret_cast<const db::Layout *>(p);
     stream >> p;
-    mp_library = reinterpret_cast <const db::Library *> (p);
+    mp_library = reinterpret_cast<const db::Library *>(p);
     stream >> m_cell_index;
     stream >> m_is_pcell;
 
-    m_pcell_params.clear ();
+    m_pcell_params.clear();
     int n = 0;
     stream >> n;
     while (n-- > 0) {
       QString s;
       stream >> s;
-      std::string stl_s = tl::to_string (s);
-      tl::Extractor ex (stl_s.c_str ());
-      m_pcell_params.push_back (tl::Variant ());
-      ex.read (m_pcell_params.back ());
+      std::string stl_s = tl::to_string(s);
+      tl::Extractor ex(stl_s.c_str());
+      m_pcell_params.push_back(tl::Variant());
+      ex.read(m_pcell_params.back());
     }
 
     return true;
@@ -103,10 +94,9 @@ CellDragDropData::deserialize (const QByteArray &ba)
   } else {
 
     return false;
-
   }
 }
 
-}
+} // namespace lay
 
 #endif

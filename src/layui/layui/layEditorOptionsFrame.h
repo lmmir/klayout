@@ -28,32 +28,26 @@
 #include "layuiCommon.h"
 #include <QFrame>
 
-namespace lay
-{
+namespace lay {
 
 class EditorOptionsPages;
 class LayoutViewBase;
 
-class LAYUI_PUBLIC EditorOptionsFrame
-  : public QFrame
-{
+class LAYUI_PUBLIC EditorOptionsFrame : public QFrame {
 public:
-  EditorOptionsFrame (QWidget *parent);
-  virtual ~EditorOptionsFrame ();
+  EditorOptionsFrame(QWidget *parent);
+  virtual ~EditorOptionsFrame();
 
-  void populate (lay::LayoutViewBase *view);
+  void populate(lay::LayoutViewBase *view);
 
-  EditorOptionsPages *pages_widget () const
-  {
-    return mp_pages;
-  }
+  EditorOptionsPages *pages_widget() const { return mp_pages; }
 
 public:
   EditorOptionsPages *mp_pages;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

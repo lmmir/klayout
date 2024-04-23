@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_dbObject
 #define HDR_dbObject
 
@@ -28,42 +27,40 @@
 
 #include "dbManager.h"
 
-namespace db
-{
+namespace db {
 
 /**
  *  @brief The base class of a database object
  *
  *  The main purpose of the db::Object class is to provide
- *  transaction and recall functionality. Basically this is 
+ *  transaction and recall functionality. Basically this is
  *  an implementation of the strategy pattern that is used
  *  to implement the recall functionality.
  */
 
-class DB_PUBLIC Object
-{
+class DB_PUBLIC Object {
 public:
   /**
    *  @brief Default ctor
    *
    *  Attach the object to a manager if required
    */
-  Object (db::Manager *manager = 0);
+  Object(db::Manager *manager = 0);
 
   /**
    *  @brief Destructor
    *
    *  Detaches the object from the manager
    */
-  virtual ~Object ();
+  virtual ~Object();
 
-  /** 
+  /**
    *  @brief Copy constructor
    *
    *  The copy constructor copies the attachment to
-   *  a manager object. 
+   *  a manager object.
    */
-  Object (const Object &);
+  Object(const Object &);
 
   /**
    *  @brief Manager object retrieval
@@ -71,10 +68,7 @@ public:
    *  Obtain the pointer to the management object this
    *  object is attached to. Returns 0 if not attached to a manager.
    */
-  db::Manager *manager () const
-  {
-    return mp_manager;
-  }
+  db::Manager *manager() const { return mp_manager; }
 
   /**
    *  @brief Attach to a different manager or detach
@@ -82,9 +76,9 @@ public:
    *  Changes the attachment of the object to any
    *  manager. Pass 0 to detach it from any manager.
    */
-  void manager (db::Manager *p_manager);
+  void manager(db::Manager *p_manager);
 
-  /** 
+  /**
    *  @brief The undo 'strategy'
    *
    *  For a detailed description of this method see db::Manager::queue.
@@ -92,10 +86,9 @@ public:
    *  assumed that once the operation is successfully queued it can be undone
    *  in every case.
    */
-  virtual void undo (db::Op * /*op*/) 
-  { }
+  virtual void undo(db::Op * /*op*/) {}
 
-  /** 
+  /**
    *  @brief The redo 'strategy'
    *
    *  For a detailed description of this method see db::Manager::queue.
@@ -103,50 +96,42 @@ public:
    *  assumed that once the operation is successfully queued it can be redone
    *  in every case.
    */
-  virtual void redo (db::Op * /*op*/)
-  { }
+  virtual void redo(db::Op * /*op*/) {}
 
   /**
    *  @brief The id getter method
    */
-  db::Manager::ident_t id () const 
-  {
-    return m_id;
-  }
+  db::Manager::ident_t id() const { return m_id; }
 
   /**
    *  @brief A convenience function to determine if we are transacting
    */
-  bool transacting () const
-  {
-    return manager () && manager ()->transacting ();
-  }
+  bool transacting() const { return manager() && manager()->transacting(); }
 
   /**
-   *  @brief A convenience function to determine if we are in an undo or redo replay operation
+   *  @brief A convenience function to determine if we are in an undo or redo
+   * replay operation
    */
-  bool replaying () const
-  {
-    return manager () && manager ()->replaying ();
-  }
+  bool replaying() const { return manager() && manager()->replaying(); }
 
   /**
-   *  @brief Begins a transaction (same as calling manager ()->transaction (), but safe against null manager ())
+   *  @brief Begins a transaction (same as calling manager ()->transaction (),
+   * but safe against null manager ())
    */
-  void transaction (const std::string &description, db::Manager::transaction_id_t join_with = 0)
-  {
-    if (manager ()) {
-      manager ()->transaction (description, join_with);
+  void transaction(const std::string &description,
+                   db::Manager::transaction_id_t join_with = 0) {
+    if (manager()) {
+      manager()->transaction(description, join_with);
     }
   }
 
   /**
-   *  @brief Ends a transaction (same as calling manager ()->commit (), but safe against null manager ())
+   *  @brief Ends a transaction (same as calling manager ()->commit (), but safe
+   * against null manager ())
    */
-  void commit ()
-  {
-    if (manager ()) {
-      manager ()->commit ();
+  void commit() {
+    if (manager()) {
+      manager()->commit();
     }
   }
 
@@ -156,10 +141,9 @@ private:
 
   //  The assignment operator is private in order to
   //  force a specific treatment of the manager object attachment
-  Object &operator= (const Object &);
+  Object &operator=(const Object &);
 };
 
 } // namespace db
 
 #endif
-

@@ -20,86 +20,74 @@
 
 */
 
-
 #include "dbShapeCollection.h"
 #include "dbPropertiesRepository.h"
 
-namespace db
-{
+namespace db {
 
 // -------------------------------------------------------------------------------------------------------------
 
-DeepShapeCollectionDelegateBase::DeepShapeCollectionDelegateBase ()
-{
+DeepShapeCollectionDelegateBase::DeepShapeCollectionDelegateBase() {
   //  .. nothing yet ..
 }
 
-DeepShapeCollectionDelegateBase::DeepShapeCollectionDelegateBase (const DeepShapeCollectionDelegateBase &other)
-{
-  m_deep_layer = other.m_deep_layer.copy ();
+DeepShapeCollectionDelegateBase::DeepShapeCollectionDelegateBase(
+    const DeepShapeCollectionDelegateBase &other) {
+  m_deep_layer = other.m_deep_layer.copy();
 }
 
-DeepShapeCollectionDelegateBase &
-DeepShapeCollectionDelegateBase::operator= (const DeepShapeCollectionDelegateBase &other)
-{
+DeepShapeCollectionDelegateBase &DeepShapeCollectionDelegateBase::operator=(
+    const DeepShapeCollectionDelegateBase &other) {
   if (this != &other) {
-    m_deep_layer = other.m_deep_layer.copy ();
+    m_deep_layer = other.m_deep_layer.copy();
   }
   return *this;
 }
 
-void
-DeepShapeCollectionDelegateBase::apply_property_translator (const db::PropertiesTranslator &pt)
-{
-  db::Layout &layout = m_deep_layer.layout ();
-  for (auto c = layout.begin (); c != layout.end (); ++c) {
+void DeepShapeCollectionDelegateBase::apply_property_translator(
+    const db::PropertiesTranslator &pt) {
+  db::Layout &layout = m_deep_layer.layout();
+  for (auto c = layout.begin(); c != layout.end(); ++c) {
 
-    db::Shapes &shapes = c->shapes (m_deep_layer.layer ());
-    if ((shapes.type_mask () & ShapeIterator::Properties) != 0) {
+    db::Shapes &shapes = c->shapes(m_deep_layer.layer());
+    if ((shapes.type_mask() & ShapeIterator::Properties) != 0) {
 
       //  properties are present - need to translate them
 
-      db::Shapes new_shapes (shapes.is_editable ());
-      shapes.swap (new_shapes);
+      db::Shapes new_shapes(shapes.is_editable());
+      shapes.swap(new_shapes);
 
-      shapes.assign (new_shapes, pt);
-
+      shapes.assign(new_shapes, pt);
     }
-
   }
 }
 
 // -------------------------------------------------------------------------------------------------------------
 //  ShapeCollection implementation
 
-const db::PropertiesRepository &
-ShapeCollection::properties_repository () const
-{
+const db::PropertiesRepository &ShapeCollection::properties_repository() const {
   static db::PropertiesRepository empty_prop_repo;
-  const db::PropertiesRepository *r = get_delegate () ? get_delegate ()->properties_repository () : 0;
+  const db::PropertiesRepository *r =
+      get_delegate() ? get_delegate()->properties_repository() : 0;
   return *(r ? r : &empty_prop_repo);
 }
 
-db::PropertiesRepository &
-ShapeCollection::properties_repository ()
-{
-  db::PropertiesRepository *r = get_delegate () ? get_delegate ()->properties_repository () : 0;
-  tl_assert (r != 0);
+db::PropertiesRepository &ShapeCollection::properties_repository() {
+  db::PropertiesRepository *r =
+      get_delegate() ? get_delegate()->properties_repository() : 0;
+  tl_assert(r != 0);
   return *r;
 }
 
-bool
-ShapeCollection::has_properties_repository () const
-{
-  return get_delegate () && get_delegate ()->properties_repository ();
+bool ShapeCollection::has_properties_repository() const {
+  return get_delegate() && get_delegate()->properties_repository();
 }
 
-void
-ShapeCollection::apply_property_translator (const db::PropertiesTranslator &pt)
-{
-  if (get_delegate ()) {
-    get_delegate ()->apply_property_translator (pt);
+void ShapeCollection::apply_property_translator(
+    const db::PropertiesTranslator &pt) {
+  if (get_delegate()) {
+    get_delegate()->apply_property_translator(pt);
   }
 }
 
-}
+} // namespace db

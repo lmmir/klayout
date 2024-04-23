@@ -25,8 +25,8 @@
 
 #include "layCommon.h"
 
-#include "lymMacro.h"
 #include "layGenericSyntaxHighlighter.h"
+#include "lymMacro.h"
 #include "tlVariant.h"
 
 #include <QDialog>
@@ -36,10 +36,10 @@
 #include <set>
 
 #if QT_VERSION >= 0x040400
-#  include <QPlainTextEdit>
+#include <QPlainTextEdit>
 typedef QPlainTextEdit TextEditWidget;
 #else
-#  include <QTextEdit>
+#include <QTextEdit>
 typedef QTextEdit TextEditWidget;
 #endif
 
@@ -50,110 +50,97 @@ class QWindow;
 class QListWidget;
 class QVBoxLayout;
 
-namespace lay
-{
+namespace lay {
 
 class MacroEditorPage;
 
 /**
- *  @brief A collection of highlighters 
+ *  @brief A collection of highlighters
  */
-class MacroEditorHighlighters
-{
+class MacroEditorHighlighters {
 public:
-  MacroEditorHighlighters (QObject *parent);
+  MacroEditorHighlighters(QObject *parent);
 
-  QSyntaxHighlighter *highlighter_for (QObject *parent, lym::Macro::Interpreter lang, const std::string &dsl_name, bool initialize);
+  QSyntaxHighlighter *highlighter_for(QObject *parent,
+                                      lym::Macro::Interpreter lang,
+                                      const std::string &dsl_name,
+                                      bool initialize);
 
-  GenericSyntaxHighlighterAttributes *attributes_for (lym::Macro::Interpreter lang, const std::string &dsl_name);
-  GenericSyntaxHighlighterAttributes *basic_attributes ();
+  GenericSyntaxHighlighterAttributes *
+  attributes_for(lym::Macro::Interpreter lang, const std::string &dsl_name);
+  GenericSyntaxHighlighterAttributes *basic_attributes();
 
-  std::string to_string () const;
-  void load (const std::string &s);
+  std::string to_string() const;
+  void load(const std::string &s);
 
-  typedef std::vector<std::pair<std::string, GenericSyntaxHighlighterAttributes> >::const_iterator const_iterator;
-  typedef std::vector<std::pair<std::string, GenericSyntaxHighlighterAttributes> >::iterator iterator;
+  typedef std::vector<std::pair<
+      std::string, GenericSyntaxHighlighterAttributes>>::const_iterator
+      const_iterator;
+  typedef std::vector<
+      std::pair<std::string, GenericSyntaxHighlighterAttributes>>::iterator
+      iterator;
 
-  const_iterator begin () const
-  {
-    return m_attributes.begin ();
-  }
+  const_iterator begin() const { return m_attributes.begin(); }
 
-  const_iterator end () const
-  {
-    return m_attributes.end ();
-  }
+  const_iterator end() const { return m_attributes.end(); }
 
-  iterator begin () 
-  {
-    return m_attributes.begin ();
-  }
+  iterator begin() { return m_attributes.begin(); }
 
-  iterator end () 
-  {
-    return m_attributes.end ();
-  }
+  iterator end() { return m_attributes.end(); }
 
 private:
-  std::vector<std::pair<std::string, GenericSyntaxHighlighterAttributes> > m_attributes;
+  std::vector<std::pair<std::string, GenericSyntaxHighlighterAttributes>>
+      m_attributes;
   GenericSyntaxHighlighterAttributes m_basic_attributes;
 
-  lay::GenericSyntaxHighlighter *highlighter_for_scheme (QObject *parent, const std::string &scheme, GenericSyntaxHighlighterAttributes *attributes, bool initialize);
-  std::string scheme_for (lym::Macro::Interpreter lang, const std::string &dsl_name);
+  lay::GenericSyntaxHighlighter *
+  highlighter_for_scheme(QObject *parent, const std::string &scheme,
+                         GenericSyntaxHighlighterAttributes *attributes,
+                         bool initialize);
+  std::string scheme_for(lym::Macro::Interpreter lang,
+                         const std::string &dsl_name);
 };
 
 /**
  *  @brief The execution model
  *
- *  The execution model stores the breakpoints and current execution line for a given 
- *  file.
+ *  The execution model stores the breakpoints and current execution line for a
+ * given file.
  */
-class MacroEditorExecutionModel
-  : public QObject
-{
-Q_OBJECT
+class MacroEditorExecutionModel : public QObject {
+  Q_OBJECT
 
 public:
-  MacroEditorExecutionModel (QObject *parent);
+  MacroEditorExecutionModel(QObject *parent);
 
-  const std::set<int> &breakpoints () const
-  {
-    return m_breakpoints;
+  const std::set<int> &breakpoints() const { return m_breakpoints; }
+
+  bool is_breakpoint(int line) const {
+    return m_breakpoints.find(line) != m_breakpoints.end();
   }
 
-  bool is_breakpoint (int line) const
-  {
-    return m_breakpoints.find (line) != m_breakpoints.end ();
-  }
+  void set_interpreter(lym::Macro::Interpreter lang);
 
-  void set_interpreter (lym::Macro::Interpreter lang);
+  void set_breakpoints(const std::set<int> &b);
 
-  void set_breakpoints (const std::set<int> &b);
+  void set_breakpoint(int line);
 
-  void set_breakpoint (int line);
+  void remove_breakpoint(int line);
 
-  void remove_breakpoint (int line);
+  void toggle_breakpoint(int line);
 
-  void toggle_breakpoint (int line); 
+  int current_line() const { return m_current_line; }
 
-  int current_line () const
-  {
-    return m_current_line;
-  }
+  void set_current_line(int l, bool force_event = false);
 
-  void set_current_line (int l, bool force_event = false);
+  bool run_mode() const { return m_run_mode; }
 
-  bool run_mode () const
-  {
-    return m_run_mode;
-  }
-
-  void set_run_mode (bool run_mode);
+  void set_run_mode(bool run_mode);
 
 signals:
-  void breakpoints_changed ();
-  void current_line_changed ();
-  void run_mode_changed ();
+  void breakpoints_changed();
+  void current_line_changed();
+  void run_mode_changed();
 
 private:
   std::set<int> m_breakpoints;
@@ -163,45 +150,44 @@ private:
 };
 
 /**
- *  @brief A specialization of TextEditWidget which catches the scroll events and generates signals from them
+ *  @brief A specialization of TextEditWidget which catches the scroll events
+ * and generates signals from them
  */
-class MacroEditorTextWidget
-  : public TextEditWidget
-{
-Q_OBJECT
+class MacroEditorTextWidget : public TextEditWidget {
+  Q_OBJECT
 
 public:
-  MacroEditorTextWidget (QWidget *parent);
+  MacroEditorTextWidget(QWidget *parent);
 
-  void paintEvent (QPaintEvent *event);
+  void paintEvent(QPaintEvent *event);
 
 signals:
-  void contentsChanged ();
+  void contentsChanged();
 
 private:
   QRect m_r;
 };
 
 /**
- *  @brief The side panel is the widget that shows the current line and the breakpoints
+ *  @brief The side panel is the widget that shows the current line and the
+ * breakpoints
  */
-class MacroEditorSidePanel
-  : public QWidget
-{
-Q_OBJECT 
+class MacroEditorSidePanel : public QWidget {
+  Q_OBJECT
 
 public:
-  MacroEditorSidePanel (QWidget *parent, MacroEditorTextWidget *text, MacroEditorExecutionModel *exec_model);
-  
-  QSize sizeHint () const;
-  void paintEvent (QPaintEvent *event);
-  void mousePressEvent (QMouseEvent *event);
+  MacroEditorSidePanel(QWidget *parent, MacroEditorTextWidget *text,
+                       MacroEditorExecutionModel *exec_model);
 
-  void set_watermark (const QString &wm);
-  void set_debugging_on (bool debugging_on);
+  QSize sizeHint() const;
+  void paintEvent(QPaintEvent *event);
+  void mousePressEvent(QMouseEvent *event);
+
+  void set_watermark(const QString &wm);
+  void set_debugging_on(bool debugging_on);
 
 private slots:
-  void redraw ();     
+  void redraw();
 
 private:
   MacroEditorTextWidget *mp_text;
@@ -216,81 +202,67 @@ private:
 /**
  *  @brief Descriptor for a notification inside the macro editor
  *
- *  Notifications are popups added at the top of the view to indicate need for reloading for example.
- *  Notifications have a name, a title, optional actions (id, title) and a parameter (e.g. file path to reload).
- *  Actions are mapped to QPushButtons.
+ *  Notifications are popups added at the top of the view to indicate need for
+ * reloading for example. Notifications have a name, a title, optional actions
+ * (id, title) and a parameter (e.g. file path to reload). Actions are mapped to
+ * QPushButtons.
  */
-class MacroEditorNotification
-{
+class MacroEditorNotification {
 public:
-  MacroEditorNotification (const std::string &name, const std::string &title, const tl::Variant &parameter = tl::Variant ())
-    : m_name (name), m_title (title), m_parameter (parameter)
-  {
+  MacroEditorNotification(const std::string &name, const std::string &title,
+                          const tl::Variant &parameter = tl::Variant())
+      : m_name(name), m_title(title), m_parameter(parameter) {
     //  .. nothing yet ..
   }
 
-  void add_action (const std::string &name, const std::string &title)
-  {
-    m_actions.push_back (std::make_pair (name, title));
+  void add_action(const std::string &name, const std::string &title) {
+    m_actions.push_back(std::make_pair(name, title));
   }
 
-  const std::vector<std::pair<std::string, std::string> > &actions () const
-  {
+  const std::vector<std::pair<std::string, std::string>> &actions() const {
     return m_actions;
   }
 
-  const std::string &name () const
-  {
-    return m_name;
-  }
+  const std::string &name() const { return m_name; }
 
-  const std::string &title () const
-  {
-    return m_title;
-  }
+  const std::string &title() const { return m_title; }
 
-  const tl::Variant &parameter () const
-  {
-    return m_parameter;
-  }
+  const tl::Variant &parameter() const { return m_parameter; }
 
-  bool operator<(const MacroEditorNotification &other) const
-  {
-    if (m_name != other.name ()) {
-      return m_name < other.name ();
+  bool operator<(const MacroEditorNotification &other) const {
+    if (m_name != other.name()) {
+      return m_name < other.name();
     }
-    return m_parameter < other.parameter ();
+    return m_parameter < other.parameter();
   }
 
-  bool operator==(const MacroEditorNotification &other) const
-  {
-    if (m_name != other.name ()) {
+  bool operator==(const MacroEditorNotification &other) const {
+    if (m_name != other.name()) {
       return false;
     }
-    return m_parameter == other.parameter ();
+    return m_parameter == other.parameter();
   }
 
 private:
   std::string m_name;
   std::string m_title;
   tl::Variant m_parameter;
-  std::vector<std::pair<std::string, std::string> > m_actions;
+  std::vector<std::pair<std::string, std::string>> m_actions;
 };
 
 /**
  *  @brief A widget representing a notification
  */
-class MacroEditorNotificationWidget
-  : public QFrame
-{
-Q_OBJECT
+class MacroEditorNotificationWidget : public QFrame {
+  Q_OBJECT
 
 public:
-  MacroEditorNotificationWidget (MacroEditorPage *parent, const MacroEditorNotification *notification);
+  MacroEditorNotificationWidget(MacroEditorPage *parent,
+                                const MacroEditorNotification *notification);
 
 private slots:
-  void action_triggered ();
-  void close_triggered ();
+  void action_triggered();
+  void close_triggered();
 
 private:
   MacroEditorPage *mp_parent;
@@ -298,100 +270,82 @@ private:
   std::map<QObject *, std::string> m_action_buttons;
 };
 
-class MacroEditorPage
-  : public QWidget
-{
-Q_OBJECT
+class MacroEditorPage : public QWidget {
+  Q_OBJECT
 
 public:
-  MacroEditorPage (QWidget *parent, MacroEditorHighlighters *highlighters);
+  MacroEditorPage(QWidget *parent, MacroEditorHighlighters *highlighters);
 
-  void connect_macro (lym::Macro *macro);
+  void connect_macro(lym::Macro *macro);
 
-  lym::Macro *macro () const
-  {
-    return mp_macro;
-  }
+  lym::Macro *macro() const { return mp_macro; }
 
-  const std::string path () const
-  {
-    return m_path;
-  }
+  const std::string path() const { return m_path; }
 
-  bool is_modified () const
-  {
-    return m_is_modified;
-  }
+  bool is_modified() const { return m_is_modified; }
 
-  void set_error_line (int line);
-  void goto_position (int line, int pos);
-  void goto_line (int line);
+  void set_error_line(int line);
+  void goto_position(int line, int pos);
+  void goto_line(int line);
 
-  void set_ntab (int n);
+  void set_ntab(int n);
 
-  void set_nindent (int n);
+  void set_nindent(int n);
 
-  void set_font (const std::string &family, int size);
+  void set_font(const std::string &family, int size);
 
-  MacroEditorExecutionModel *exec_model () const
-  {
-    return mp_exec_model;
-  }
+  MacroEditorExecutionModel *exec_model() const { return mp_exec_model; }
 
-  int current_line () const;
-  int current_pos () const;
-  bool has_multi_block_selection () const;
+  int current_line() const;
+  int current_pos() const;
+  bool has_multi_block_selection() const;
 
-  void set_debugging_on (bool debugging_on);
+  void set_debugging_on(bool debugging_on);
 
-  void set_search (const QRegExp &text);
+  void set_search(const QRegExp &text);
 
-  const QRegExp &get_search () const
-  {
-    return m_current_search;
-  }
+  const QRegExp &get_search() const { return m_current_search; }
 
-  void find_reset ();
-  bool find_next ();
-  bool find_prev ();
+  void find_reset();
+  bool find_next();
+  bool find_prev();
 
-  void replace_and_find_next (const QString &replace);
+  void replace_and_find_next(const QString &replace);
 
-  void replace_all (const QString &replace);
+  void replace_all(const QString &replace);
 
-  void apply_attributes ();
+  void apply_attributes();
 
-  void set_editor_focus ();
+  void set_editor_focus();
 
-  void add_notification (const MacroEditorNotification &notificaton);
-  void remove_notification (const MacroEditorNotification &notificaton);
+  void add_notification(const MacroEditorNotification &notificaton);
+  void remove_notification(const MacroEditorNotification &notificaton);
 
 signals:
-  void help_requested (const QString &s);
-  void search_requested (const QString &s, bool backward);
-  void edit_trace (bool);
-  void close_requested ();
+  void help_requested(const QString &s);
+  void search_requested(const QString &s, bool backward);
+  void edit_trace(bool);
+  void close_requested();
 
 public slots:
-  void commit ();
-  void update ();
+  void commit();
+  void update();
 
 protected slots:
-  void text_changed ();
-  void cursor_position_changed ();
-  void breakpoints_changed ();
-  void current_line_changed ();
-  void run_mode_changed ();
-  void completer_timer ();
-  void hide_completer ();
+  void text_changed();
+  void cursor_position_changed();
+  void breakpoints_changed();
+  void current_line_changed();
+  void run_mode_changed();
+  void completer_timer();
+  void hide_completer();
 
 private:
   friend class MacroEditorNotificationWidget;
 
-  struct CompareNotificationPointers
-  {
-    bool operator() (const MacroEditorNotification *a, const MacroEditorNotification *b) const
-    {
+  struct CompareNotificationPointers {
+    bool operator()(const MacroEditorNotification *a,
+                    const MacroEditorNotification *b) const {
       return *a < *b;
     }
   };
@@ -416,24 +370,26 @@ private:
   QWidget *mp_completer_popup;
   QListWidget *mp_completer_list;
   std::list<MacroEditorNotification> m_notifications;
-  std::map<const MacroEditorNotification *, QWidget *, CompareNotificationPointers> m_notification_widgets;
+  std::map<const MacroEditorNotification *, QWidget *,
+           CompareNotificationPointers>
+      m_notification_widgets;
 
-  void update_extra_selections ();
-  bool return_pressed ();
-  bool backspace_pressed ();
-  bool back_tab_key_pressed ();
-  bool tab_key_pressed ();
-  void fill_completer_list ();
-  void complete ();
-  QTextCursor get_completer_cursor (int &pos0, int &pos);
-  bool select_match_here ();
-  void replace_in_selection (const QString &replace, bool first);
-  void notification_action (const MacroEditorNotification &notification, const std::string &action);
+  void update_extra_selections();
+  bool return_pressed();
+  bool backspace_pressed();
+  bool back_tab_key_pressed();
+  bool tab_key_pressed();
+  void fill_completer_list();
+  void complete();
+  QTextCursor get_completer_cursor(int &pos0, int &pos);
+  bool select_match_here();
+  void replace_in_selection(const QString &replace, bool first);
+  void notification_action(const MacroEditorNotification &notification,
+                           const std::string &action);
 
-  bool eventFilter (QObject *watched, QEvent *event);
+  bool eventFilter(QObject *watched, QEvent *event);
 };
 
-}
+} // namespace lay
 
 #endif
-

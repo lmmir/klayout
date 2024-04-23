@@ -23,9 +23,9 @@
 #ifndef HDR_layMove
 #define HDR_layMove
 
-#include "laybasicCommon.h"
 #include "dbManager.h"
 #include "layViewObject.h"
+#include "laybasicCommon.h"
 
 #include <memory>
 
@@ -34,28 +34,34 @@ namespace lay {
 class Editables;
 class LayoutViewBase;
 
-class LAYBASIC_PUBLIC MoveService :
-    public lay::ViewService
-{
-public: 
-  MoveService (lay::LayoutViewBase *view);
-  ~MoveService ();
+class LAYBASIC_PUBLIC MoveService : public lay::ViewService {
+public:
+  MoveService(lay::LayoutViewBase *view);
+  ~MoveService();
 
-  virtual bool configure (const std::string &name, const std::string &value);
-  bool begin_move (db::Transaction *transaction = 0, bool transient_selection = false);
+  virtual bool configure(const std::string &name, const std::string &value);
+  bool begin_move(db::Transaction *transaction = 0,
+                  bool transient_selection = false);
 
 private:
-  virtual bool mouse_press_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool mouse_click_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool mouse_move_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool mouse_double_click_event (const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool mouse_release_event (const db::DPoint &p, unsigned int /*buttons*/, bool prio);
-  virtual bool wheel_event (int delta, bool horizontal, const db::DPoint &p, unsigned int buttons, bool prio);
-  virtual bool key_event (unsigned int key, unsigned int buttons);
-  virtual void drag_cancel ();
-  virtual void deactivated ();
+  virtual bool mouse_press_event(const db::DPoint &p, unsigned int buttons,
+                                 bool prio);
+  virtual bool mouse_click_event(const db::DPoint &p, unsigned int buttons,
+                                 bool prio);
+  virtual bool mouse_move_event(const db::DPoint &p, unsigned int buttons,
+                                bool prio);
+  virtual bool mouse_double_click_event(const db::DPoint &p,
+                                        unsigned int buttons, bool prio);
+  virtual bool mouse_release_event(const db::DPoint &p,
+                                   unsigned int /*buttons*/, bool prio);
+  virtual bool wheel_event(int delta, bool horizontal, const db::DPoint &p,
+                           unsigned int buttons, bool prio);
+  virtual bool key_event(unsigned int key, unsigned int buttons);
+  virtual void drag_cancel();
+  virtual void deactivated();
 
-  bool handle_click (const db::DPoint &p, unsigned int buttons, bool drag_transient, db::Transaction *transaction);
+  bool handle_click(const db::DPoint &p, unsigned int buttons,
+                    bool drag_transient, db::Transaction *transaction);
 
   bool m_dragging;
   bool m_dragging_transient;
@@ -67,7 +73,6 @@ private:
   std::unique_ptr<db::Transaction> mp_transaction;
 };
 
-}
+} // namespace lay
 
 #endif
-

@@ -20,17 +20,12 @@
 
 */
 
-
 #include "layCanvasPlane.h"
 
 namespace lay {
 
-CanvasPlane::~CanvasPlane ()
-{
+CanvasPlane::~CanvasPlane() {
   // .. nothing yet ..
 }
 
 } // namespace lay
-
-
-

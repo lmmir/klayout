@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_libBasicText
 #define HDR_libBasicText
 
@@ -28,77 +27,84 @@
 
 #include "dbPCellDeclaration.h"
 
-namespace lib
-{
+namespace lib {
 
 /**
  *  @brief Implements the "TEXT" PCell of the basic library
  */
-class BasicText 
-  : public db::PCellDeclaration
-{
+class BasicText : public db::PCellDeclaration {
 public:
   /**
    *  @brief The constructor
    */
-  BasicText ();
+  BasicText();
 
   /**
    *  @brief This PCell can be created from a shape
    */
-  virtual bool can_create_from_shape (const db::Layout &layout, const db::Shape &shape, unsigned int layer) const;
+  virtual bool can_create_from_shape(const db::Layout &layout,
+                                     const db::Shape &shape,
+                                     unsigned int layer) const;
 
   /**
    *  @brief Get the parameters from a shape
    */
-  virtual db::pcell_parameters_type parameters_from_shape (const db::Layout &layout, const db::Shape &shape, unsigned int layer) const;
+  virtual db::pcell_parameters_type
+  parameters_from_shape(const db::Layout &layout, const db::Shape &shape,
+                        unsigned int layer) const;
 
   /**
    *  @brief Get the instance transformation from a shape
    */
-  virtual db::Trans transformation_from_shape (const db::Layout &layout, const db::Shape &shape, unsigned int layer) const;
+  virtual db::Trans transformation_from_shape(const db::Layout &layout,
+                                              const db::Shape &shape,
+                                              unsigned int layer) const;
 
   /**
    *  @brief Get the layer declarations
    */
-  virtual std::vector<db::PCellLayerDeclaration> get_layer_declarations (const db::pcell_parameters_type &parameters) const;
+  virtual std::vector<db::PCellLayerDeclaration>
+  get_layer_declarations(const db::pcell_parameters_type &parameters) const;
 
   /**
    *  @brief Coerces the parameters (in particular updates the computed ones)
    */
-  virtual void coerce_parameters (const db::Layout &layout, db::pcell_parameters_type &parameters) const;
+  virtual void coerce_parameters(const db::Layout &layout,
+                                 db::pcell_parameters_type &parameters) const;
 
   /**
    *  @brief Produces the layout
    */
-  virtual void produce (const db::Layout &layout, const std::vector<unsigned int> &layer_ids, const db::pcell_parameters_type &parameters, db::Cell &cell) const;
+  virtual void produce(const db::Layout &layout,
+                       const std::vector<unsigned int> &layer_ids,
+                       const db::pcell_parameters_type &parameters,
+                       db::Cell &cell) const;
 
   /**
    *  @brief Get the display name for a PCell with the given parameters
    */
-  virtual std::string get_display_name (const db::pcell_parameters_type &) const;
+  virtual std::string get_display_name(const db::pcell_parameters_type &) const;
 
   /**
    *  @brief Get the parameter declarations
    */
-  virtual std::vector<db::PCellParameterDeclaration> get_parameter_declarations () const;
+  virtual std::vector<db::PCellParameterDeclaration>
+  get_parameter_declarations() const;
 
 protected:
   /**
-   *  @brief Returns a value indicating that this PCell wants to update it's parameter declarations dynamically
+   *  @brief Returns a value indicating that this PCell wants to update it's
+   * parameter declarations dynamically
    *
-   *  This is be required because the fonts can be updated dynamically when new packages are installed.
+   *  This is be required because the fonts can be updated dynamically when new
+   * packages are installed.
    */
-  virtual bool wants_parameter_declaration_caching () const
-  {
-    return false;
-  }
+  virtual bool wants_parameter_declaration_caching() const { return false; }
 
 public:
-  int get_font_index (const db::pcell_parameters_type &parameters) const;
+  int get_font_index(const db::pcell_parameters_type &parameters) const;
 };
 
-}
+} // namespace lib
 
 #endif
-

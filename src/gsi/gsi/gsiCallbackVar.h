@@ -20,7 +20,6 @@
 
 */
 
-
 //  This header by intention does not have a include guard
 //  It is used multiple times inside gsiCallback.h
 //
@@ -31,38 +30,33 @@
 //   _SETVALUE     "args.template write<A1> (a1);"
 
 template <class X _COMMA _TMPLARGPART>
-void issue (void (X::*) (_FUNCARGLIST) _COMMA _CALLARGLIST) const
-{
-  SerialArgs args (argsize), ret (retsize);
+void issue(void (X::*)(_FUNCARGLIST) _COMMA _CALLARGLIST) const {
+  SerialArgs args(argsize), ret(retsize);
   _SETVALUE
-  call_int (args, ret);
+  call_int(args, ret);
 }
 
 template <class X _COMMA _TMPLARGPART>
-void issue (void (X::*) (_FUNCARGLIST) const _COMMA _CALLARGLIST) const
-{
-  SerialArgs args (argsize), ret (retsize);
+void issue(void (X::*)(_FUNCARGLIST) const _COMMA _CALLARGLIST) const {
+  SerialArgs args(argsize), ret(retsize);
   _SETVALUE
-  call_int (args, ret);
+  call_int(args, ret);
 }
 
 template <class X, class R _COMMA _TMPLARGPART>
-R issue (R (X::*) (_FUNCARGLIST) _COMMA _CALLARGLIST) const
-{
+R issue(R (X::*)(_FUNCARGLIST) _COMMA _CALLARGLIST) const {
   tl::Heap heap;
-  SerialArgs args (argsize), ret (retsize);
+  SerialArgs args(argsize), ret(retsize);
   _SETVALUE
-  call_int (args, ret);
-  return ret.template read<R> (heap);
+  call_int(args, ret);
+  return ret.template read<R>(heap);
 }
 
 template <class X, class R _COMMA _TMPLARGPART>
-R issue (R (X::*) (_FUNCARGLIST) const _COMMA _CALLARGLIST) const
-{
+R issue(R (X::*)(_FUNCARGLIST) const _COMMA _CALLARGLIST) const {
   tl::Heap heap;
-  SerialArgs args (argsize), ret (retsize);
+  SerialArgs args(argsize), ret(retsize);
   _SETVALUE
-  call_int (args, ret);
-  return ret.template read<R> (heap);
+  call_int(args, ret);
+  return ret.template read<R>(heap);
 }
-

@@ -20,26 +20,24 @@
 
 */
 
-
-
 #ifndef HDR_dbLocalOperation
 #define HDR_dbLocalOperation
 
 #include "dbCommon.h"
 #include "dbLayout.h"
 
+#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include <memory>
 
-namespace db
-{
+namespace db {
 
 template <class TS, class TI> class shape_interactions;
 
 /**
- *  @brief Indicates the desired behaviour for subject shapes for which there is no intruder
+ *  @brief Indicates the desired behaviour for subject shapes for which there is
+ * no intruder
  */
 enum OnEmptyIntruderHint {
   /**
@@ -74,47 +72,53 @@ enum OnEmptyIntruderHint {
  *  This class implements the actual operation. It receives a
  *  cluster of subject shapes vs. corresponding intruder shapes.
  */
-template <class TS, class TI, class TR>
-class DB_PUBLIC local_operation
-{
+template <class TS, class TI, class TR> class DB_PUBLIC local_operation {
 public:
   /**
    *  @brief Constructor
    */
-  local_operation () { }
+  local_operation() {}
 
   /**
    *  @brief Destructor
    */
-  virtual ~local_operation () { }
+  virtual ~local_operation() {}
 
   /**
    *  @brief Computes the results from a given set of interacting shapes
    *
-   *  If the operation requests single subject mode, the interactions will be split into single subject/intruder clusters
+   *  If the operation requests single subject mode, the interactions will be
+   * split into single subject/intruder clusters
    */
-  void compute_local (db::Layout *layout, const shape_interactions<TS, TI> &interactions, std::vector<std::unordered_set<TR> > &results, size_t max_vertex_count, double area_ratio, bool report_progress = false, const std::string &progress_desc = std::string ()) const;
+  void compute_local(db::Layout *layout,
+                     const shape_interactions<TS, TI> &interactions,
+                     std::vector<std::unordered_set<TR>> &results,
+                     size_t max_vertex_count, double area_ratio,
+                     bool report_progress = false,
+                     const std::string &progress_desc = std::string()) const;
 
   /**
-   *  @brief Indicates the desired behaviour when a shape does not have an intruder
+   *  @brief Indicates the desired behaviour when a shape does not have an
+   * intruder
    */
-  virtual OnEmptyIntruderHint on_empty_intruder_hint () const { return Ignore; }
+  virtual OnEmptyIntruderHint on_empty_intruder_hint() const { return Ignore; }
 
   /**
-   *  @brief If this method returns true, this operation requests single subjects for meal
+   *  @brief If this method returns true, this operation requests single
+   * subjects for meal
    */
-  virtual bool requests_single_subjects () const { return false; }
+  virtual bool requests_single_subjects() const { return false; }
 
   /**
    *  @brief Gets a description text for this operation
    */
-  virtual std::string description () const = 0;
+  virtual std::string description() const = 0;
 
   /**
    *  @brief Gets the interaction distance
    *  A distance of means the shapes must overlap in order to interact.
    */
-  virtual db::Coord dist () const { return 0; }
+  virtual db::Coord dist() const { return 0; }
 
 protected:
   /**
@@ -123,10 +127,13 @@ protected:
    *  @param interactions The interaction set
    *  @param result The container to which the results are written
    */
-  virtual void do_compute_local (db::Layout *layout, const shape_interactions<TS, TI> &interactions, std::vector<std::unordered_set<TR> > &result, size_t max_vertex_count, double area_ratio) const = 0;
+  virtual void do_compute_local(db::Layout *layout,
+                                const shape_interactions<TS, TI> &interactions,
+                                std::vector<std::unordered_set<TR>> &result,
+                                size_t max_vertex_count,
+                                double area_ratio) const = 0;
 };
 
-}
+} // namespace db
 
 #endif
-

@@ -20,14 +20,13 @@
 
 */
 
-
 #ifndef HDR_dbRegionUtils
 #define HDR_dbRegionUtils
 
+#include "dbBoxScanner.h"
+#include "dbCellVariants.h"
 #include "dbCommon.h"
 #include "dbRegion.h"
-#include "dbCellVariants.h"
-#include "dbBoxScanner.h"
 
 namespace db {
 
@@ -40,61 +39,64 @@ namespace db {
  *  matching the criterion.
  */
 
-struct DB_PUBLIC RegionPerimeterFilter
-  : public PolygonFilterBase
-{
+struct DB_PUBLIC RegionPerimeterFilter : public PolygonFilterBase {
   typedef db::coord_traits<db::Coord>::perimeter_type perimeter_type;
 
   /**
    *  @brief Constructor
    *
-   *  @param amin The min perimeter (only polygons above this value are filtered)
-   *  @param amax The maximum perimeter (only polygons with a perimeter below this value are filtered)
-   *  @param inverse If set to true, only polygons not matching this criterion will be filtered
+   *  @param amin The min perimeter (only polygons above this value are
+   * filtered)
+   *  @param amax The maximum perimeter (only polygons with a perimeter below
+   * this value are filtered)
+   *  @param inverse If set to true, only polygons not matching this criterion
+   * will be filtered
    */
-  RegionPerimeterFilter (perimeter_type pmin, perimeter_type pmax, bool inverse);
+  RegionPerimeterFilter(perimeter_type pmin, perimeter_type pmax, bool inverse);
 
   /**
    *  @brief Returns true if the polygon's perimeter matches the criterion
    */
-  virtual bool selected (const db::Polygon &poly) const;
+  virtual bool selected(const db::Polygon &poly) const;
 
   /**
    *  @brief Returns true if the polygon's perimeter matches the criterion
    */
-  virtual bool selected (const db::PolygonRef &poly) const;
+  virtual bool selected(const db::PolygonRef &poly) const;
 
   /**
    *  @brief Returns true if the polygon's perimeter sum matches the criterion
    */
-  virtual bool selected_set (const std::unordered_set<db::PolygonRef> &polygons) const;
+  virtual bool
+  selected_set(const std::unordered_set<db::PolygonRef> &polygons) const;
 
   /**
    *  @brief Returns true if the polygon's perimeter sum matches the criterion
    */
-  virtual bool selected_set (const std::unordered_set<db::Polygon> &polygons) const;
+  virtual bool
+  selected_set(const std::unordered_set<db::Polygon> &polygons) const;
 
   /**
    *  @brief This filter is isotropic
    */
-  virtual const TransformationReducer *vars () const;
+  virtual const TransformationReducer *vars() const;
 
   /**
    *  @brief This filter prefers producing variants
    */
-  virtual bool wants_variants () const { return true; }
+  virtual bool wants_variants() const { return true; }
 
   /**
    *  @brief This filter wants merged input
    */
-  virtual bool requires_raw_input () const { return false; }
+  virtual bool requires_raw_input() const { return false; }
 
 private:
   perimeter_type m_pmin, m_pmax;
   bool m_inverse;
   db::MagnificationReducer m_vars;
 
-  bool check (perimeter_type p) const;
+  bool check(perimeter_type p) const;
 };
 
 /**
@@ -106,95 +108,98 @@ private:
  *  matching the criterion.
  */
 
-struct DB_PUBLIC RegionAreaFilter
-  : public PolygonFilterBase
-{
+struct DB_PUBLIC RegionAreaFilter : public PolygonFilterBase {
   typedef db::Polygon::area_type area_type;
 
   /**
    *  @brief Constructor
    *
    *  @param amin The min area (only polygons above this value are filtered)
-   *  @param amax The maximum area (only polygons with an area below this value are filtered)
-   *  @param inverse If set to true, only polygons not matching this criterion will be filtered
+   *  @param amax The maximum area (only polygons with an area below this value
+   * are filtered)
+   *  @param inverse If set to true, only polygons not matching this criterion
+   * will be filtered
    */
-  RegionAreaFilter (area_type amin, area_type amax, bool inverse);
+  RegionAreaFilter(area_type amin, area_type amax, bool inverse);
 
   /**
    *  @brief Returns true if the polygon's area matches the criterion
    */
-  virtual bool selected (const db::Polygon &poly) const;
+  virtual bool selected(const db::Polygon &poly) const;
 
   /**
    *  @brief Returns true if the polygon's area matches the criterion
    */
-  virtual bool selected (const db::PolygonRef &poly) const;
+  virtual bool selected(const db::PolygonRef &poly) const;
 
   /**
    *  @brief Returns true if the polygon's area sum matches the criterion
    */
-  virtual bool selected_set (const std::unordered_set<db::PolygonRef> &polygons) const;
+  virtual bool
+  selected_set(const std::unordered_set<db::PolygonRef> &polygons) const;
 
   /**
    *  @brief Returns true if the polygon's area sum matches the criterion
    */
-  virtual bool selected_set (const std::unordered_set<db::Polygon> &polygons) const;
+  virtual bool
+  selected_set(const std::unordered_set<db::Polygon> &polygons) const;
 
   /**
    *  @brief This filter is isotropic
    */
-  virtual const TransformationReducer *vars () const;
+  virtual const TransformationReducer *vars() const;
 
   /**
    *  @brief This filter prefers producing variants
    */
-  virtual bool wants_variants () const { return true; }
+  virtual bool wants_variants() const { return true; }
 
   /**
    *  @brief This filter wants merged input
    */
-  virtual bool requires_raw_input () const { return false; }
+  virtual bool requires_raw_input() const { return false; }
 
 private:
   area_type m_amin, m_amax;
   bool m_inverse;
   db::MagnificationReducer m_vars;
 
-  bool check (area_type a) const;
+  bool check(area_type a) const;
 };
 
 /**
- *  @brief A filter implementation which implements the set filters through "all must match"
+ *  @brief A filter implementation which implements the set filters through "all
+ * must match"
  */
 
-struct DB_PUBLIC AllMustMatchFilter
-  : public PolygonFilterBase
-{
+struct DB_PUBLIC AllMustMatchFilter : public PolygonFilterBase {
   /**
    *  @brief Constructor
    */
-  AllMustMatchFilter () { }
+  AllMustMatchFilter() {}
 
-  virtual bool selected_set (const std::unordered_set<db::PolygonRef> &polygons) const
-  {
-    for (std::unordered_set<db::PolygonRef>::const_iterator p = polygons.begin (); p != polygons.end (); ++p) {
-      if (! selected (*p)) {
+  virtual bool
+  selected_set(const std::unordered_set<db::PolygonRef> &polygons) const {
+    for (std::unordered_set<db::PolygonRef>::const_iterator p =
+             polygons.begin();
+         p != polygons.end(); ++p) {
+      if (!selected(*p)) {
         return false;
       }
     }
     return true;
   }
 
-  virtual bool selected_set (const std::unordered_set<db::Polygon> &polygons) const
-  {
-    for (std::unordered_set<db::Polygon>::const_iterator p = polygons.begin (); p != polygons.end (); ++p) {
-      if (! selected (*p)) {
+  virtual bool
+  selected_set(const std::unordered_set<db::Polygon> &polygons) const {
+    for (std::unordered_set<db::Polygon>::const_iterator p = polygons.begin();
+         p != polygons.end(); ++p) {
+      if (!selected(*p)) {
         return false;
       }
     }
     return true;
   }
-
 };
 
 /**
@@ -203,39 +208,38 @@ struct DB_PUBLIC AllMustMatchFilter
  *  This filter will select all polygons which are rectilinear.
  */
 
-struct DB_PUBLIC RectilinearFilter
-  : public AllMustMatchFilter
-{
+struct DB_PUBLIC RectilinearFilter : public AllMustMatchFilter {
   /**
    *  @brief Constructor
-   *  @param inverse If set to true, only polygons not matching this criterion will be filtered
+   *  @param inverse If set to true, only polygons not matching this criterion
+   * will be filtered
    */
-  RectilinearFilter (bool inverse);
+  RectilinearFilter(bool inverse);
 
   /**
    *  @brief Returns true if the polygon is rectilinear
    */
-  virtual bool selected (const db::Polygon &poly) const;
+  virtual bool selected(const db::Polygon &poly) const;
 
   /**
    *  @brief Returns true if the polygon is rectilinear
    */
-  virtual bool selected (const db::PolygonRef &poly) const;
+  virtual bool selected(const db::PolygonRef &poly) const;
 
   /**
    *  @brief This filter does not need variants
    */
-  virtual const TransformationReducer *vars () const;
+  virtual const TransformationReducer *vars() const;
 
   /**
    *  @brief This filter prefers producing variants
    */
-  virtual bool wants_variants () const { return true; }
+  virtual bool wants_variants() const { return true; }
 
   /**
    *  @brief This filter wants merged input
    */
-  virtual bool requires_raw_input () const { return false; }
+  virtual bool requires_raw_input() const { return false; }
 
 private:
   bool m_inverse;
@@ -247,39 +251,38 @@ private:
  *  This filter will select all polygons which are rectangles.
  */
 
-struct DB_PUBLIC RectangleFilter
-  : public AllMustMatchFilter
-{
+struct DB_PUBLIC RectangleFilter : public AllMustMatchFilter {
   /**
    *  @brief Constructor
-   *  @param inverse If set to true, only polygons not matching this criterion will be filtered
+   *  @param inverse If set to true, only polygons not matching this criterion
+   * will be filtered
    */
-  RectangleFilter (bool is_square, bool inverse);
+  RectangleFilter(bool is_square, bool inverse);
 
   /**
    *  @brief Returns true if the polygon is a rectangle
    */
-  virtual bool selected (const db::Polygon &poly) const;
+  virtual bool selected(const db::Polygon &poly) const;
 
   /**
    *  @brief Returns true if the polygon is a rectangle
    */
-  virtual bool selected (const db::PolygonRef &poly) const;
+  virtual bool selected(const db::PolygonRef &poly) const;
 
   /**
    *  @brief This filter does not need variants
    */
-  virtual const TransformationReducer *vars () const;
+  virtual const TransformationReducer *vars() const;
 
   /**
    *  @brief This filter prefers producing variants
    */
-  virtual bool wants_variants () const { return true; }
+  virtual bool wants_variants() const { return true; }
 
   /**
    *  @brief This filter wants merged input
    */
-  virtual bool requires_raw_input () const { return false; }
+  virtual bool requires_raw_input() const { return false; }
 
 private:
   bool m_is_square;
@@ -289,42 +292,42 @@ private:
 /**
  *  @brief Filters by number of holes
  *
- *  This filter will select all polygons with a hole count between min_holes and max_holes (exclusively)
+ *  This filter will select all polygons with a hole count between min_holes and
+ * max_holes (exclusively)
  */
 
-struct DB_PUBLIC HoleCountFilter
-  : public AllMustMatchFilter
-{
+struct DB_PUBLIC HoleCountFilter : public AllMustMatchFilter {
   /**
    *  @brief Constructor
-   *  @param inverse If set to true, only polygons not matching this criterion will be filtered
+   *  @param inverse If set to true, only polygons not matching this criterion
+   * will be filtered
    */
-  HoleCountFilter (size_t min_count, size_t max_count, bool inverse);
+  HoleCountFilter(size_t min_count, size_t max_count, bool inverse);
 
   /**
    *  @brief Returns true if the polygon is a rectangle
    */
-  virtual bool selected (const db::Polygon &poly) const;
+  virtual bool selected(const db::Polygon &poly) const;
 
   /**
    *  @brief Returns true if the polygon is a rectangle
    */
-  virtual bool selected (const db::PolygonRef &poly) const;
+  virtual bool selected(const db::PolygonRef &poly) const;
 
   /**
    *  @brief This filter does not need variants
    */
-  virtual const TransformationReducer *vars () const;
+  virtual const TransformationReducer *vars() const;
 
   /**
    *  @brief This filter prefers producing variants
    */
-  virtual bool wants_variants () const { return true; }
+  virtual bool wants_variants() const { return true; }
 
   /**
    *  @brief This filter wants merged input
    */
-  virtual bool requires_raw_input () const { return false; }
+  virtual bool requires_raw_input() const { return false; }
 
 private:
   size_t m_min_count, m_max_count;
@@ -335,9 +338,9 @@ private:
  *  @brief A bounding box filter for use with Region::filter or Region::filtered
  *
  *  This filter has two parameters: vmin and vmax.
- *  It will filter all polygons for which the selected bounding box parameter is >= vmin and < vmax.
- *  There is an "invert" flag which allows selecting all polygons not
- *  matching the criterion.
+ *  It will filter all polygons for which the selected bounding box parameter is
+ * >= vmin and < vmax. There is an "invert" flag which allows selecting all
+ * polygons not matching the criterion.
  *
  *  For bounding box parameters the following choices are available:
  *    - (BoxWidth) width
@@ -347,9 +350,7 @@ private:
  *    - (BoxAverageDim) average of width and height
  */
 
-struct DB_PUBLIC RegionBBoxFilter
-  : public AllMustMatchFilter
-{
+struct DB_PUBLIC RegionBBoxFilter : public AllMustMatchFilter {
   typedef db::Box::distance_type value_type;
 
   /**
@@ -366,36 +367,40 @@ struct DB_PUBLIC RegionBBoxFilter
   /**
    *  @brief Constructor
    *
-   *  @param vmin The min value (only polygons with bounding box parameters above this value are filtered)
-   *  @param vmax The max value (only polygons with bounding box parameters below this value are filtered)
-   *  @param inverse If set to true, only polygons not matching this criterion will be filtered
+   *  @param vmin The min value (only polygons with bounding box parameters
+   * above this value are filtered)
+   *  @param vmax The max value (only polygons with bounding box parameters
+   * below this value are filtered)
+   *  @param inverse If set to true, only polygons not matching this criterion
+   * will be filtered
    */
-  RegionBBoxFilter (value_type vmin, value_type vmax, bool inverse, parameter_type parameter);
+  RegionBBoxFilter(value_type vmin, value_type vmax, bool inverse,
+                   parameter_type parameter);
 
   /**
    *  @brief Returns true if the polygon's bounding box matches the criterion
    */
-  virtual bool selected (const db::Polygon &poly) const;
+  virtual bool selected(const db::Polygon &poly) const;
 
   /**
    *  @brief Returns true if the polygon's bounding box matches the criterion
    */
-  virtual bool selected (const db::PolygonRef &poly) const;
+  virtual bool selected(const db::PolygonRef &poly) const;
 
   /**
    *  @brief This filter is isotropic unless the parameter is width or height
    */
-  virtual const TransformationReducer *vars () const;
+  virtual const TransformationReducer *vars() const;
 
   /**
    *  @brief This filter prefers producing variants
    */
-  virtual bool wants_variants () const { return true; }
+  virtual bool wants_variants() const { return true; }
 
   /**
    *  @brief This filter wants merged input
    */
-  virtual bool requires_raw_input () const { return false; }
+  virtual bool requires_raw_input() const { return false; }
 
 private:
   value_type m_vmin, m_vmax;
@@ -404,7 +409,7 @@ private:
   db::MagnificationReducer m_isotropic_vars;
   db::MagnificationAndOrientationReducer m_anisotropic_vars;
 
-  bool check (const db::Box &box) const;
+  bool check(const db::Box &box) const;
 };
 
 /**
@@ -420,51 +425,49 @@ private:
  *    - (RelativeHeight) bounding box height to width (tallness)
  */
 
-struct DB_PUBLIC RegionRatioFilter
-  : public AllMustMatchFilter
-{
+struct DB_PUBLIC RegionRatioFilter : public AllMustMatchFilter {
   /**
    *  @brief The parameters available
    */
-  enum parameter_type {
-    AreaRatio,
-    AspectRatio,
-    RelativeHeight
-  };
+  enum parameter_type { AreaRatio, AspectRatio, RelativeHeight };
 
   /**
    *  @brief Constructor
    *
-   *  @param vmin The min value (only polygons with bounding box parameters above this value are filtered)
-   *  @param vmax The max value (only polygons with bounding box parameters below this value are filtered)
-   *  @param inverse If set to true, only polygons not matching this criterion will be filtered
+   *  @param vmin The min value (only polygons with bounding box parameters
+   * above this value are filtered)
+   *  @param vmax The max value (only polygons with bounding box parameters
+   * below this value are filtered)
+   *  @param inverse If set to true, only polygons not matching this criterion
+   * will be filtered
    */
-  RegionRatioFilter (double vmin, bool min_included, double vmax, bool max_included, bool inverse, parameter_type parameter);
+  RegionRatioFilter(double vmin, bool min_included, double vmax,
+                    bool max_included, bool inverse, parameter_type parameter);
 
   /**
    *  @brief Returns true if the polygon's area matches the criterion
    */
-  virtual bool selected (const db::Polygon &poly) const;
+  virtual bool selected(const db::Polygon &poly) const;
 
   /**
    *  @brief Returns true if the polygon's area matches the criterion
    */
-  virtual bool selected (const db::PolygonRef &poly) const;
+  virtual bool selected(const db::PolygonRef &poly) const;
 
   /**
    *  @brief This filter is isotropic unless the parameter is width or height
    */
-  virtual const TransformationReducer *vars () const;
+  virtual const TransformationReducer *vars() const;
 
   /**
    *  @brief This filter prefers producing variants
    */
-  virtual bool wants_variants () const { return true; }
+  virtual bool wants_variants() const { return true; }
 
   /**
    *  @brief This filter wants merged input
    */
-  virtual bool requires_raw_input () const { return false; }
+  virtual bool requires_raw_input() const { return false; }
 
 private:
   double m_vmin, m_vmax;
@@ -481,39 +484,37 @@ private:
  *  "strange polygons" are those which do not have a specific orientation, e.g.
  *  "8" shape polygons.
  */
-class DB_PUBLIC StrangePolygonCheckProcessor
-  : public PolygonProcessorBase
-{
+class DB_PUBLIC StrangePolygonCheckProcessor : public PolygonProcessorBase {
 public:
-  StrangePolygonCheckProcessor ();
-  ~StrangePolygonCheckProcessor ();
+  StrangePolygonCheckProcessor();
+  ~StrangePolygonCheckProcessor();
 
-  virtual void process (const db::Polygon &poly, std::vector<db::Polygon> &res) const;
+  virtual void process(const db::Polygon &poly,
+                       std::vector<db::Polygon> &res) const;
 
-  virtual const TransformationReducer *vars () const { return 0; }
-  virtual bool result_is_merged () const { return false; }
-  virtual bool requires_raw_input () const { return true; }
-  virtual bool wants_variants () const { return true; }
-  virtual bool result_must_not_be_merged () const { return false; }
+  virtual const TransformationReducer *vars() const { return 0; }
+  virtual bool result_is_merged() const { return false; }
+  virtual bool requires_raw_input() const { return true; }
+  virtual bool wants_variants() const { return true; }
+  virtual bool result_must_not_be_merged() const { return false; }
 };
 
 /**
  *  @brief A polygon processor applying smoothing
  */
-class DB_PUBLIC SmoothingProcessor
-  : public PolygonProcessorBase
-{
+class DB_PUBLIC SmoothingProcessor : public PolygonProcessorBase {
 public:
-  SmoothingProcessor (db::Coord d, bool keep_hv);
-  ~SmoothingProcessor ();
+  SmoothingProcessor(db::Coord d, bool keep_hv);
+  ~SmoothingProcessor();
 
-  virtual void process (const db::Polygon &poly, std::vector<db::Polygon> &res) const;
+  virtual void process(const db::Polygon &poly,
+                       std::vector<db::Polygon> &res) const;
 
-  virtual const TransformationReducer *vars () const { return &m_vars; }
-  virtual bool result_is_merged () const { return false; }
-  virtual bool requires_raw_input () const { return false; }
-  virtual bool wants_variants () const { return true; }
-  virtual bool result_must_not_be_merged () const { return false; }
+  virtual const TransformationReducer *vars() const { return &m_vars; }
+  virtual bool result_is_merged() const { return false; }
+  virtual bool requires_raw_input() const { return false; }
+  virtual bool wants_variants() const { return true; }
+  virtual bool result_must_not_be_merged() const { return false; }
 
 private:
   db::Coord m_d;
@@ -524,20 +525,19 @@ private:
 /**
  *  @brief A polygon processor generating rounded corners
  */
-class DB_PUBLIC RoundedCornersProcessor
-  : public PolygonProcessorBase
-{
+class DB_PUBLIC RoundedCornersProcessor : public PolygonProcessorBase {
 public:
-  RoundedCornersProcessor (double rinner, double router, unsigned int n);
-  ~RoundedCornersProcessor ();
+  RoundedCornersProcessor(double rinner, double router, unsigned int n);
+  ~RoundedCornersProcessor();
 
-  virtual void process (const db::Polygon &poly, std::vector<db::Polygon> &res) const;
+  virtual void process(const db::Polygon &poly,
+                       std::vector<db::Polygon> &res) const;
 
-  virtual const TransformationReducer *vars () const { return &m_vars; }
-  virtual bool result_is_merged () const { return true; }   //  we believe so ...
-  virtual bool requires_raw_input () const { return false; }
-  virtual bool wants_variants () const { return true; }
-  virtual bool result_must_not_be_merged () const { return false; }
+  virtual const TransformationReducer *vars() const { return &m_vars; }
+  virtual bool result_is_merged() const { return true; } //  we believe so ...
+  virtual bool requires_raw_input() const { return false; }
+  virtual bool wants_variants() const { return true; }
+  virtual bool result_must_not_be_merged() const { return false; }
 
 private:
   double m_rinner, m_router;
@@ -548,51 +548,54 @@ private:
 /**
  *  @brief A polygon processor extracting the holes
  */
-class DB_PUBLIC HolesExtractionProcessor
-  : public PolygonProcessorBase
-{
+class DB_PUBLIC HolesExtractionProcessor : public PolygonProcessorBase {
 public:
-  HolesExtractionProcessor ();
-  ~HolesExtractionProcessor ();
+  HolesExtractionProcessor();
+  ~HolesExtractionProcessor();
 
-  virtual void process (const db::Polygon &poly, std::vector<db::Polygon> &res) const;
+  virtual void process(const db::Polygon &poly,
+                       std::vector<db::Polygon> &res) const;
 
-  virtual const TransformationReducer *vars () const { return 0; }
-  virtual bool result_is_merged () const { return false; }  //  isn't merged for nested holes :(
-  virtual bool requires_raw_input () const { return false; }
-  virtual bool wants_variants () const { return true; }
-  virtual bool result_must_not_be_merged () const { return false; }
+  virtual const TransformationReducer *vars() const { return 0; }
+  virtual bool result_is_merged() const {
+    return false;
+  } //  isn't merged for nested holes :(
+  virtual bool requires_raw_input() const { return false; }
+  virtual bool wants_variants() const { return true; }
+  virtual bool result_must_not_be_merged() const { return false; }
 };
 
 /**
  *  @brief A polygon processor extracting the hull
  */
-class DB_PUBLIC HullExtractionProcessor
-  : public PolygonProcessorBase
-{
+class DB_PUBLIC HullExtractionProcessor : public PolygonProcessorBase {
 public:
-  HullExtractionProcessor ();
-  ~HullExtractionProcessor ();
+  HullExtractionProcessor();
+  ~HullExtractionProcessor();
 
-  virtual void process (const db::Polygon &poly, std::vector<db::Polygon> &res) const;
+  virtual void process(const db::Polygon &poly,
+                       std::vector<db::Polygon> &res) const;
 
-  virtual const TransformationReducer *vars () const { return 0; }
-  virtual bool result_is_merged () const { return false; }   //  isn't merged for nested hulls :(
-  virtual bool requires_raw_input () const { return false; }
-  virtual bool wants_variants () const { return true; }
-  virtual bool result_must_not_be_merged () const { return false; }
+  virtual const TransformationReducer *vars() const { return 0; }
+  virtual bool result_is_merged() const {
+    return false;
+  } //  isn't merged for nested hulls :(
+  virtual bool requires_raw_input() const { return false; }
+  virtual bool wants_variants() const { return true; }
+  virtual bool result_must_not_be_merged() const { return false; }
 };
 
 /**
- *  @brief A class wrapping the single-polygon checks into a polygon-to-edge pair processor
+ *  @brief A class wrapping the single-polygon checks into a polygon-to-edge
+ * pair processor
  */
-class DB_PUBLIC SinglePolygonCheck
-  : public PolygonToEdgePairProcessorBase
-{
+class DB_PUBLIC SinglePolygonCheck : public PolygonToEdgePairProcessorBase {
 public:
-  SinglePolygonCheck (db::edge_relation_type rel, db::Coord d, const RegionCheckOptions &options);
+  SinglePolygonCheck(db::edge_relation_type rel, db::Coord d,
+                     const RegionCheckOptions &options);
 
-  virtual void process (const db::Polygon &polygon, std::vector<db::EdgePair> &res) const;
+  virtual void process(const db::Polygon &polygon,
+                       std::vector<db::EdgePair> &res) const;
 
 private:
   db::edge_relation_type m_relation;
@@ -603,4 +606,3 @@ private:
 } // namespace db
 
 #endif
-

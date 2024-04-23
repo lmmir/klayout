@@ -33,34 +33,31 @@
 
 class QTreeWidgetItem;
 
-namespace lay
-{
-  class GenericSyntaxHighlighterAttributes;
+namespace lay {
+class GenericSyntaxHighlighterAttributes;
 }
 
-namespace Ui
-{
-  class LayerSourceDialog;
-  class NewLayoutPropertiesDialog;
-  class NewLayerPropertiesDialog;
-  class NewCellPropertiesDialog;
-  class MoveOptionsDialog;
-  class MoveToOptionsDialog;
-  class DeleteCellModeDialog;
-  class CopyCellModeDialog;
-  class ReplaceCellOptionsDialog;
-  class ClearLayerModeDialog;
-  class OpenLayoutModeDialog;
-  class RenameCellDialog;
-  class DuplicateLayerDialog;
-  class AlignCellOptionsDialog;
-  class FlattenInstOptionsDialog;
-  class UserPropertiesForm;
-  class UserPropertiesEditForm;
-}
+namespace Ui {
+class LayerSourceDialog;
+class NewLayoutPropertiesDialog;
+class NewLayerPropertiesDialog;
+class NewCellPropertiesDialog;
+class MoveOptionsDialog;
+class MoveToOptionsDialog;
+class DeleteCellModeDialog;
+class CopyCellModeDialog;
+class ReplaceCellOptionsDialog;
+class ClearLayerModeDialog;
+class OpenLayoutModeDialog;
+class RenameCellDialog;
+class DuplicateLayerDialog;
+class AlignCellOptionsDialog;
+class FlattenInstOptionsDialog;
+class UserPropertiesForm;
+class UserPropertiesEditForm;
+} // namespace Ui
 
-namespace lay
-{
+namespace lay {
 
 class CellView;
 class LayoutViewBase;
@@ -68,16 +65,14 @@ class LayoutViewBase;
 /**
  *  @brief The layer source dialog
  */
-class LAYUI_PUBLIC LayerSourceDialog
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC LayerSourceDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  LayerSourceDialog (QWidget *parent);
-  ~LayerSourceDialog ();
+  LayerSourceDialog(QWidget *parent);
+  ~LayerSourceDialog();
 
-  bool exec_dialog (std::string &s);
+  bool exec_dialog(std::string &s);
 
 private:
   Ui::LayerSourceDialog *mp_ui;
@@ -86,19 +81,18 @@ private:
 /**
  *  @brief The new cell properties dialog
  */
-class LAYUI_PUBLIC NewCellPropertiesDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC NewCellPropertiesDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  NewCellPropertiesDialog (QWidget *parent);
-  virtual ~NewCellPropertiesDialog ();
+  NewCellPropertiesDialog(QWidget *parent);
+  virtual ~NewCellPropertiesDialog();
 
-  bool exec_dialog (const db::Layout *layout, std::string &cell_name, double &size);
+  bool exec_dialog(const db::Layout *layout, std::string &cell_name,
+                   double &size);
 
 private:
-  virtual void accept ();
+  virtual void accept();
 
   Ui::NewCellPropertiesDialog *mp_ui;
   const db::Layout *mp_layout;
@@ -107,21 +101,19 @@ private:
 /**
  *  @brief The new layer properties dialog
  */
-class LAYUI_PUBLIC NewLayerPropertiesDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC NewLayerPropertiesDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  NewLayerPropertiesDialog (QWidget *parent);
-  virtual ~NewLayerPropertiesDialog ();
+  NewLayerPropertiesDialog(QWidget *parent);
+  virtual ~NewLayerPropertiesDialog();
 
-  bool exec_dialog (const lay::CellView &cv, db::LayerProperties &src);
-  bool exec_dialog (db::LayerProperties &src);
+  bool exec_dialog(const lay::CellView &cv, db::LayerProperties &src);
+  bool exec_dialog(db::LayerProperties &src);
 
 private:
-  virtual void accept ();
-  void get (db::LayerProperties &src);
+  virtual void accept();
+  void get(db::LayerProperties &src);
 
   Ui::NewLayerPropertiesDialog *mp_ui;
 };
@@ -129,19 +121,17 @@ private:
 /**
  *  @brief The move options dialog
  */
-class LAYUI_PUBLIC MoveOptionsDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC MoveOptionsDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  MoveOptionsDialog (QWidget *parent);
-  virtual ~MoveOptionsDialog ();
+  MoveOptionsDialog(QWidget *parent);
+  virtual ~MoveOptionsDialog();
 
-  bool exec_dialog (db::DVector &disp);
+  bool exec_dialog(db::DVector &disp);
 
 private:
-  virtual void accept ();
+  virtual void accept();
 
   Ui::MoveOptionsDialog *mp_ui;
 };
@@ -149,22 +139,20 @@ private:
 /**
  *  @brief The move "to" options dialog
  */
-class LAYUI_PUBLIC MoveToOptionsDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC MoveToOptionsDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  MoveToOptionsDialog (QWidget *parent);
-  virtual ~MoveToOptionsDialog ();
+  MoveToOptionsDialog(QWidget *parent);
+  virtual ~MoveToOptionsDialog();
 
-  bool exec_dialog (int &mode_x, int &mode_y, db::DPoint &target);
+  bool exec_dialog(int &mode_x, int &mode_y, db::DPoint &target);
 
 private slots:
-  void button_clicked ();
+  void button_clicked();
 
 private:
-  virtual void accept ();
+  virtual void accept();
 
   Ui::MoveToOptionsDialog *mp_ui;
 };
@@ -172,19 +160,17 @@ private:
 /**
  *  @brief The rename cell options dialog
  */
-class LAYUI_PUBLIC RenameCellDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC RenameCellDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  RenameCellDialog (QWidget *parent);
-  virtual ~RenameCellDialog ();
+  RenameCellDialog(QWidget *parent);
+  virtual ~RenameCellDialog();
 
-  bool exec_dialog (const db::Layout &layout, std::string &name);
+  bool exec_dialog(const db::Layout &layout, std::string &name);
 
 private:
-  virtual void accept ();
+  virtual void accept();
 
   Ui::RenameCellDialog *mp_ui;
   const db::Layout *mp_layout;
@@ -193,24 +179,23 @@ private:
 /**
  *  @brief The replace cell options dialog
  */
-class LAYUI_PUBLIC ReplaceCellOptionsDialog
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC ReplaceCellOptionsDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  ReplaceCellOptionsDialog (QWidget *parent);
-  virtual ~ReplaceCellOptionsDialog ();
+  ReplaceCellOptionsDialog(QWidget *parent);
+  virtual ~ReplaceCellOptionsDialog();
 
-  /** 
+  /**
    *  @brief Execute the dialog
    *
    *  The mode is either 0 (for shallow), 1 (for deep) and 2 (for complete)
    */
-  bool exec_dialog (const lay::CellView &cv, int &replace_mode, db::cell_index_type &cell);
+  bool exec_dialog(const lay::CellView &cv, int &replace_mode,
+                   db::cell_index_type &cell);
 
 protected:
-  virtual void accept ();
+  virtual void accept();
 
 private:
   Ui::ReplaceCellOptionsDialog *mp_ui;
@@ -219,21 +204,19 @@ private:
 /**
  *  @brief The copy cell options dialog
  */
-class LAYUI_PUBLIC CopyCellModeDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC CopyCellModeDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  CopyCellModeDialog (QWidget *parent);
-  virtual ~CopyCellModeDialog ();
+  CopyCellModeDialog(QWidget *parent);
+  virtual ~CopyCellModeDialog();
 
-  /** 
+  /**
    *  @brief Execute the dialog
    *
    *  The mode is either 0 (for shallow), 1 (for deep)
    */
-  bool exec_dialog (int &copy_mode);
+  bool exec_dialog(int &copy_mode);
 
 private:
   Ui::CopyCellModeDialog *mp_ui;
@@ -242,21 +225,19 @@ private:
 /**
  *  @brief The delete cell options dialog
  */
-class LAYUI_PUBLIC DeleteCellModeDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC DeleteCellModeDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  DeleteCellModeDialog (QWidget *parent);
-  virtual ~DeleteCellModeDialog ();
+  DeleteCellModeDialog(QWidget *parent);
+  virtual ~DeleteCellModeDialog();
 
-  /** 
+  /**
    *  @brief Execute the dialog
    *
    *  The mode is either 0 (for shallow), 1 (for deep) and 2 (for complete)
    */
-  bool exec_dialog (int &delete_mode);
+  bool exec_dialog(int &delete_mode);
 
 private:
   Ui::DeleteCellModeDialog *mp_ui;
@@ -265,21 +246,19 @@ private:
 /**
  *  @brief The delete cell options dialog
  */
-class LAYUI_PUBLIC ClearLayerModeDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC ClearLayerModeDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  ClearLayerModeDialog (QWidget *parent);
-  virtual ~ClearLayerModeDialog ();
+  ClearLayerModeDialog(QWidget *parent);
+  virtual ~ClearLayerModeDialog();
 
-  /** 
+  /**
    *  @brief Execute the dialog
    *
    *  The mode is either 0 (for locally), 1 (for hierarchically) and 2 (for all)
    */
-  bool exec_dialog (int &clear_mode);
+  bool exec_dialog(int &clear_mode);
 
 private:
   Ui::ClearLayerModeDialog *mp_ui;
@@ -288,21 +267,20 @@ private:
 /**
  *  @brief The open layout mode dialog
  */
-class LAYUI_PUBLIC OpenLayoutModeDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC OpenLayoutModeDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  OpenLayoutModeDialog (QWidget *parent);
-  virtual ~OpenLayoutModeDialog ();
+  OpenLayoutModeDialog(QWidget *parent);
+  virtual ~OpenLayoutModeDialog();
 
-  /** 
+  /**
    *  @brief Execute the dialog
    *
-   *  The mode is either 0 (to replace current view), 1 (to create new view) and 2 (add to current view)
+   *  The mode is either 0 (to replace current view), 1 (to create new view) and
+   * 2 (add to current view)
    */
-  bool exec_dialog (int &open_mode);
+  bool exec_dialog(int &open_mode);
 
 private:
   Ui::OpenLayoutModeDialog *mp_ui;
@@ -311,22 +289,23 @@ private:
 /**
  *  @brief The new layout properties dialog
  */
-class LAYUI_PUBLIC NewLayoutPropertiesDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC NewLayoutPropertiesDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  NewLayoutPropertiesDialog (QWidget *parent);
-  virtual ~NewLayoutPropertiesDialog ();
+  NewLayoutPropertiesDialog(QWidget *parent);
+  virtual ~NewLayoutPropertiesDialog();
 
-  bool exec_dialog (std::string &tech_name, std::string &cell_name, double &dbu, double &window_size, std::vector<db::LayerProperties> &layers, bool &current_panel);
+  bool exec_dialog(std::string &tech_name, std::string &cell_name, double &dbu,
+                   double &window_size,
+                   std::vector<db::LayerProperties> &layers,
+                   bool &current_panel);
 
 private slots:
-  void tech_changed ();
+  void tech_changed();
 
 private:
-  virtual void accept ();
+  virtual void accept();
 
   Ui::NewLayoutPropertiesDialog *mp_ui;
   double m_default_dbu;
@@ -335,22 +314,21 @@ private:
 /**
  *  @brief The duplicate layer operation options
  */
-class LAYUI_PUBLIC DuplicateLayerDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC DuplicateLayerDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  DuplicateLayerDialog (QWidget *parent);
-  virtual ~DuplicateLayerDialog ();
+  DuplicateLayerDialog(QWidget *parent);
+  virtual ~DuplicateLayerDialog();
 
-  bool exec_dialog (lay::LayoutViewBase *view, int &cv, int &layer, int &cv_res, int &layer_res, int &hier_mode, bool &clear_before);
+  bool exec_dialog(lay::LayoutViewBase *view, int &cv, int &layer, int &cv_res,
+                   int &layer_res, int &hier_mode, bool &clear_before);
 
 public slots:
-  void cv_changed (int);
+  void cv_changed(int);
 
 private:
-  virtual void accept ();
+  virtual void accept();
 
   Ui::DuplicateLayerDialog *mp_ui;
   lay::LayoutViewBase *mp_view;
@@ -359,11 +337,10 @@ private:
 /**
  *  @brief A data structure holding the options for the "align cell" dialog
  */
-struct LAYUI_PUBLIC AlignCellOptions
-{
-  AlignCellOptions ()
-    : mode_x (-1), mode_y (-1), xpos (0.0), ypos (0.0), visible_only (false), adjust_parents (true)
-  { }
+struct LAYUI_PUBLIC AlignCellOptions {
+  AlignCellOptions()
+      : mode_x(-1), mode_y(-1), xpos(0.0), ypos(0.0), visible_only(false),
+        adjust_parents(true) {}
 
   int mode_x, mode_y;
   double xpos, ypos;
@@ -374,20 +351,18 @@ struct LAYUI_PUBLIC AlignCellOptions
 /**
  *  @brief The merge operation options
  */
-class LAYUI_PUBLIC AlignCellOptionsDialog 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC AlignCellOptionsDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  AlignCellOptionsDialog (QWidget *parent);
-  virtual ~AlignCellOptionsDialog ();
+  AlignCellOptionsDialog(QWidget *parent);
+  virtual ~AlignCellOptionsDialog();
 
-  bool exec_dialog (AlignCellOptions &data);
+  bool exec_dialog(AlignCellOptions &data);
 
 private slots:
-  void button_clicked ();
-  void accept ();
+  void button_clicked();
+  void accept();
 
 private:
   Ui::AlignCellOptionsDialog *mp_ui;
@@ -396,14 +371,12 @@ private:
 /**
  *  @brief Options dialog for the "flatten instances" function
  */
-class LAYUI_PUBLIC FlattenInstOptionsDialog
-  : public QDialog
-{
+class LAYUI_PUBLIC FlattenInstOptionsDialog : public QDialog {
 public:
-  FlattenInstOptionsDialog (QWidget *parent, bool enable_pruning = true);
-  virtual ~FlattenInstOptionsDialog ();
+  FlattenInstOptionsDialog(QWidget *parent, bool enable_pruning = true);
+  virtual ~FlattenInstOptionsDialog();
 
-  bool exec_dialog (int &levels, bool &prune); 
+  bool exec_dialog(int &levels, bool &prune);
 
 private:
   Ui::FlattenInstOptionsDialog *mp_ui;
@@ -412,56 +385,59 @@ private:
 /**
  *  @brief The user properties report form
  */
-class LAYUI_PUBLIC UserPropertiesForm 
-  : public QDialog
-{
-Q_OBJECT
+class LAYUI_PUBLIC UserPropertiesForm : public QDialog {
+  Q_OBJECT
 
 public:
-  UserPropertiesForm (QWidget *parent);
-  virtual ~UserPropertiesForm ();
+  UserPropertiesForm(QWidget *parent);
+  virtual ~UserPropertiesForm();
 
-  bool show (lay::LayoutViewBase *view, unsigned int cv_index, db::properties_id_type &prop_id);
-  bool show (lay::LayoutViewBase *view, unsigned int cv_index, db::properties_id_type &prop_id, db::Layout::meta_info_iterator begin_meta, db::Layout::meta_info_iterator end_meta);
+  bool show(lay::LayoutViewBase *view, unsigned int cv_index,
+            db::properties_id_type &prop_id);
+  bool show(lay::LayoutViewBase *view, unsigned int cv_index,
+            db::properties_id_type &prop_id,
+            db::Layout::meta_info_iterator begin_meta,
+            db::Layout::meta_info_iterator end_meta);
 
 public slots:
-  void add ();
-  void remove ();
-  void edit ();
-  void dbl_clicked (QTreeWidgetItem *, int);
-  void tab_changed (int);
+  void add();
+  void remove();
+  void edit();
+  void dbl_clicked(QTreeWidgetItem *, int);
+  void tab_changed(int);
 
 private:
-  db::PropertiesRepository::properties_set get_properties (int tab);
-  void set_properties (const db::PropertiesRepository::properties_set &props);
-  void set_meta_info (db::Layout::meta_info_iterator begin_meta, db::Layout::meta_info_iterator end_meta, const db::Layout &layout);
-  void accept ();
+  db::PropertiesRepository::properties_set get_properties(int tab);
+  void set_properties(const db::PropertiesRepository::properties_set &props);
+  void set_meta_info(db::Layout::meta_info_iterator begin_meta,
+                     db::Layout::meta_info_iterator end_meta,
+                     const db::Layout &layout);
+  void accept();
 
   bool m_editable;
   db::PropertiesRepository *mp_prep;
   Ui::UserPropertiesForm *mp_ui;
   db::Layout::meta_info_iterator m_begin_meta, m_end_meta;
-  std::unique_ptr<lay::GenericSyntaxHighlighterAttributes> mp_hl_attributes, mp_hl_basic_attributes;
+  std::unique_ptr<lay::GenericSyntaxHighlighterAttributes> mp_hl_attributes,
+      mp_hl_basic_attributes;
 };
 
 /**
  *  @brief The user properties report form
  */
-class LAYUI_PUBLIC UserPropertiesEditForm 
-  : public QDialog
-{
+class LAYUI_PUBLIC UserPropertiesEditForm : public QDialog {
 public:
-  UserPropertiesEditForm (QWidget *parent);
-  virtual ~UserPropertiesEditForm ();
+  UserPropertiesEditForm(QWidget *parent);
+  virtual ~UserPropertiesEditForm();
 
-  bool show (QString &key, QString &value);
-  virtual void accept ();
+  bool show(QString &key, QString &value);
+  virtual void accept();
 
   Ui::UserPropertiesEditForm *mp_ui;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

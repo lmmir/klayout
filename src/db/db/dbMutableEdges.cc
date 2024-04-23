@@ -20,131 +20,112 @@
 
 */
 
-
 #include "dbMutableEdges.h"
 
-namespace db
-{
+namespace db {
 
 // -------------------------------------------------------------------------------------------------------------
 //  MutableEdges implementation
 
-MutableEdges::MutableEdges ()
-  : AsIfFlatEdges ()
-{
+MutableEdges::MutableEdges() : AsIfFlatEdges() {
   //  .. nothing yet ..
 }
 
-MutableEdges::MutableEdges (const MutableEdges &other)
-  : AsIfFlatEdges (other)
-{
+MutableEdges::MutableEdges(const MutableEdges &other) : AsIfFlatEdges(other) {
   //  .. nothing yet ..
 }
 
-MutableEdges::~MutableEdges ()
-{
+MutableEdges::~MutableEdges() {
   //  .. nothing yet ..
 }
 
-void
-MutableEdges::insert (const db::Box &box)
-{
-  if (! box.empty () && box.width () > 0 && box.height () > 0) {
-    do_insert (db::Edge (box.lower_left (), box.upper_left ()), 0);
-    do_insert (db::Edge (box.upper_left (), box.upper_right ()), 0);
-    do_insert (db::Edge (box.upper_right (), box.lower_right ()), 0);
-    do_insert (db::Edge (box.lower_right (), box.lower_left ()), 0);
+void MutableEdges::insert(const db::Box &box) {
+  if (!box.empty() && box.width() > 0 && box.height() > 0) {
+    do_insert(db::Edge(box.lower_left(), box.upper_left()), 0);
+    do_insert(db::Edge(box.upper_left(), box.upper_right()), 0);
+    do_insert(db::Edge(box.upper_right(), box.lower_right()), 0);
+    do_insert(db::Edge(box.lower_right(), box.lower_left()), 0);
   }
 }
 
-void
-MutableEdges::insert (const db::BoxWithProperties &box)
-{
-  if (! box.empty () && box.width () > 0 && box.height () > 0) {
-    do_insert (db::Edge (box.lower_left (), box.upper_left ()), box.properties_id ());
-    do_insert (db::Edge (box.upper_left (), box.upper_right ()), box.properties_id ());
-    do_insert (db::Edge (box.upper_right (), box.lower_right ()), box.properties_id ());
-    do_insert (db::Edge (box.lower_right (), box.lower_left ()), box.properties_id ());
+void MutableEdges::insert(const db::BoxWithProperties &box) {
+  if (!box.empty() && box.width() > 0 && box.height() > 0) {
+    do_insert(db::Edge(box.lower_left(), box.upper_left()),
+              box.properties_id());
+    do_insert(db::Edge(box.upper_left(), box.upper_right()),
+              box.properties_id());
+    do_insert(db::Edge(box.upper_right(), box.lower_right()),
+              box.properties_id());
+    do_insert(db::Edge(box.lower_right(), box.lower_left()),
+              box.properties_id());
   }
 }
 
-void
-MutableEdges::insert (const db::Path &path)
-{
-  if (path.points () > 0) {
-    insert (path.polygon ());
+void MutableEdges::insert(const db::Path &path) {
+  if (path.points() > 0) {
+    insert(path.polygon());
   }
 }
 
-void
-MutableEdges::insert (const db::PathWithProperties &path)
-{
-  if (path.points () > 0) {
-    insert (db::PolygonWithProperties (path.polygon (), path.properties_id ()));
+void MutableEdges::insert(const db::PathWithProperties &path) {
+  if (path.points() > 0) {
+    insert(db::PolygonWithProperties(path.polygon(), path.properties_id()));
   }
 }
 
-void
-MutableEdges::insert (const db::Polygon &polygon)
-{
-  if (polygon.holes () > 0 || polygon.vertices () > 0) {
-    for (db::Polygon::polygon_edge_iterator e = polygon.begin_edge (); ! e.at_end (); ++e) {
-      do_insert (*e, 0);
+void MutableEdges::insert(const db::Polygon &polygon) {
+  if (polygon.holes() > 0 || polygon.vertices() > 0) {
+    for (db::Polygon::polygon_edge_iterator e = polygon.begin_edge();
+         !e.at_end(); ++e) {
+      do_insert(*e, 0);
     }
   }
 }
 
-void
-MutableEdges::insert (const db::PolygonWithProperties &polygon)
-{
-  if (polygon.holes () > 0 || polygon.vertices () > 0) {
-    for (db::Polygon::polygon_edge_iterator e = polygon.begin_edge (); ! e.at_end (); ++e) {
-      do_insert (*e, polygon.properties_id ());
+void MutableEdges::insert(const db::PolygonWithProperties &polygon) {
+  if (polygon.holes() > 0 || polygon.vertices() > 0) {
+    for (db::Polygon::polygon_edge_iterator e = polygon.begin_edge();
+         !e.at_end(); ++e) {
+      do_insert(*e, polygon.properties_id());
     }
   }
 }
 
-void
-MutableEdges::insert (const db::SimplePolygon &polygon)
-{
-  if (polygon.vertices () > 0) {
-    for (db::SimplePolygon::polygon_edge_iterator e = polygon.begin_edge (); ! e.at_end (); ++e) {
-      do_insert (*e, 0);
+void MutableEdges::insert(const db::SimplePolygon &polygon) {
+  if (polygon.vertices() > 0) {
+    for (db::SimplePolygon::polygon_edge_iterator e = polygon.begin_edge();
+         !e.at_end(); ++e) {
+      do_insert(*e, 0);
     }
   }
 }
 
-void
-MutableEdges::insert (const db::SimplePolygonWithProperties &polygon)
-{
-  if (polygon.vertices () > 0) {
-    for (db::SimplePolygon::polygon_edge_iterator e = polygon.begin_edge (); ! e.at_end (); ++e) {
-      do_insert (*e, polygon.properties_id ());
+void MutableEdges::insert(const db::SimplePolygonWithProperties &polygon) {
+  if (polygon.vertices() > 0) {
+    for (db::SimplePolygon::polygon_edge_iterator e = polygon.begin_edge();
+         !e.at_end(); ++e) {
+      do_insert(*e, polygon.properties_id());
     }
   }
 }
 
-void
-MutableEdges::insert (const db::Shape &shape)
-{
-  db::properties_id_type prop_id = shape.prop_id ();
+void MutableEdges::insert(const db::Shape &shape) {
+  db::properties_id_type prop_id = shape.prop_id();
 
-  if (shape.is_polygon () || shape.is_path () || shape.is_box ()) {
+  if (shape.is_polygon() || shape.is_path() || shape.is_box()) {
 
     db::Polygon poly;
-    shape.polygon (poly);
-    for (auto e = poly.begin_edge (); ! e.at_end (); ++e) {
-      do_insert (*e, prop_id);
+    shape.polygon(poly);
+    for (auto e = poly.begin_edge(); !e.at_end(); ++e) {
+      do_insert(*e, prop_id);
     }
 
-  } else if (shape.is_edge ()) {
+  } else if (shape.is_edge()) {
 
     db::Edge edge;
-    shape.edge (edge);
-    do_insert (edge, prop_id);
-
+    shape.edge(edge);
+    do_insert(edge, prop_id);
   }
 }
 
-}
-
+} // namespace db

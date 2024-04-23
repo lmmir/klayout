@@ -20,22 +20,20 @@
 
 */
 
-
 #ifndef HDR_edtConfig
 #define HDR_edtConfig
 
 #include <string>
 
-#include "laySnap.h"
-#include "edtCommon.h"
-#include "tlString.h"
-#include "dbPoint.h"
 #include "dbHersheyFont.h"
+#include "dbPoint.h"
+#include "edtCommon.h"
+#include "laySnap.h"
+#include "tlString.h"
 
-namespace edt
-{
+namespace edt {
 
-/** 
+/**
  *  @brief Declaration of the configuration names
  */
 extern EDT_PUBLIC std::string cfg_edit_grid;
@@ -77,47 +75,39 @@ extern EDT_PUBLIC std::string cfg_edit_combine_mode;
 
 enum combine_mode_type { CM_Add = 0, CM_Merge, CM_Erase, CM_Mask, CM_Diff };
 
-struct EDT_PUBLIC CMConverter
-{
-  std::string to_string (const edt::combine_mode_type &m);
-  void from_string (const std::string &s, edt::combine_mode_type &m);
+struct EDT_PUBLIC CMConverter {
+  std::string to_string(const edt::combine_mode_type &m);
+  void from_string(const std::string &s, edt::combine_mode_type &m);
 };
 
 enum path_ext_type { Flush = 0, Square, Variable, Round, NumPEModes };
 
-struct EDT_PUBLIC ACConverter
-{
-  std::string to_string (const lay::angle_constraint_type &m);
-  void from_string (const std::string &s, lay::angle_constraint_type &m);
+struct EDT_PUBLIC ACConverter {
+  std::string to_string(const lay::angle_constraint_type &m);
+  void from_string(const std::string &s, lay::angle_constraint_type &m);
 };
 
-struct EDT_PUBLIC PathExtConverter
-{
-  std::string to_string (const edt::path_ext_type &m);
-  void from_string (const std::string &s, edt::path_ext_type &m);
+struct EDT_PUBLIC PathExtConverter {
+  std::string to_string(const edt::path_ext_type &m);
+  void from_string(const std::string &s, edt::path_ext_type &m);
 };
 
-struct EDT_PUBLIC EditGridConverter
-{
-  std::string to_string (const db::DVector &eg);
-  void from_string (const std::string &s, db::DVector &eg);
-  void from_string_picky (const std::string &s, db::DVector &eg);
+struct EDT_PUBLIC EditGridConverter {
+  std::string to_string(const db::DVector &eg);
+  void from_string(const std::string &s, db::DVector &eg);
+  void from_string_picky(const std::string &s, db::DVector &eg);
 };
 
-struct EDT_PUBLIC HAlignConverter
-{
-  std::string to_string (db::HAlign a);
-  void from_string (const std::string &s, db::HAlign &a);
+struct EDT_PUBLIC HAlignConverter {
+  std::string to_string(db::HAlign a);
+  void from_string(const std::string &s, db::HAlign &a);
 };
 
-struct EDT_PUBLIC VAlignConverter
-{
-  std::string to_string (db::VAlign a);
-  void from_string (const std::string &s, db::VAlign &a);
+struct EDT_PUBLIC VAlignConverter {
+  std::string to_string(db::VAlign a);
+  void from_string(const std::string &s, db::VAlign &a);
 };
 
-}
+} // namespace edt
 
 #endif
-
-

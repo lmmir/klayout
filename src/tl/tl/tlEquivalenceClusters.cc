@@ -22,9 +22,8 @@
 
 #include "tlEquivalenceClusters.h"
 
-namespace tl
-{
+namespace tl {
 
-  //  .. nothing yet ..
+//  .. nothing yet ..
 
 }

@@ -20,25 +20,24 @@
 
 */
 
-
 #ifndef HDR_layRedrawThread
 #define HDR_layRedrawThread
 
-#include <vector>
-#include <set>
 #include <memory>
+#include <set>
+#include <vector>
 
 #include "dbBox.h"
-#include "dbTrans.h"
 #include "dbLayout.h"
-#include "layRenderer.h"
-#include "layLayoutViewBase.h"
-#include "layRedrawThreadCanvas.h"
-#include "layRedrawLayerInfo.h"
+#include "dbTrans.h"
 #include "layCanvasPlane.h"
-#include "tlTimer.h"
-#include "tlThreads.h"
+#include "layLayoutViewBase.h"
+#include "layRedrawLayerInfo.h"
+#include "layRedrawThreadCanvas.h"
+#include "layRenderer.h"
 #include "tlThreadedWorkers.h"
+#include "tlThreads.h"
+#include "tlTimer.h"
 
 namespace lay {
 
@@ -47,59 +46,51 @@ class Viewport;
 //  update (snapshot) interval in ms
 const int update_interval = 500;
 
-class RedrawThread 
-  : public tl::Object,
-    public tl::JobBase
-{
+class RedrawThread : public tl::Object, public tl::JobBase {
 public:
-  RedrawThread (lay::RedrawThreadCanvas *canvas, lay::LayoutViewBase *view);
-  virtual ~RedrawThread ();
+  RedrawThread(lay::RedrawThreadCanvas *canvas, lay::LayoutViewBase *view);
+  virtual ~RedrawThread();
 
-  void commit (const std::vector <lay::RedrawLayerInfo> &layers, const lay::Viewport &vp, double resolution);
-  void start (int workers, const std::vector <lay::RedrawLayerInfo> &layers, const lay::Viewport &vp, double resolution, bool force_redraw);
-  void restart (const std::vector<int> &restart);
-  void wakeup_checked ();
-  void wakeup ();
+  void commit(const std::vector<lay::RedrawLayerInfo> &layers,
+              const lay::Viewport &vp, double resolution);
+  void start(int workers, const std::vector<lay::RedrawLayerInfo> &layers,
+             const lay::Viewport &vp, double resolution, bool force_redraw);
+  void restart(const std::vector<int> &restart);
+  void wakeup_checked();
+  void wakeup();
 
   /**
    *  @brief change the visibility of entries in the redrawing queue
    *
    *  HINT: this should be done only when the redraw thread is stopped.
    */
-  void change_visibility (const std::vector<bool> &visibility);
+  void change_visibility(const std::vector<bool> &visibility);
 
-  const RedrawLayerInfo &get_layer_info (int id) const
-  {
-    return m_layers [id];
-  }
+  const RedrawLayerInfo &get_layer_info(int id) const { return m_layers[id]; }
 
-  int num_layers () const
-  {
-    return int (m_layers.size ());
-  }
+  int num_layers() const { return int(m_layers.size()); }
 
-  void task_finished (int id);
+  void task_finished(int id);
 
 protected:
-  tl::Worker *create_worker ();
-  void setup_worker (tl::Worker *worker);
-  void finished ();
-  void stopped ();
+  tl::Worker *create_worker();
+  void setup_worker(tl::Worker *worker);
+  void finished();
+  void stopped();
 
 private:
-  void start ();
-  void do_start (bool clear, const db::Vector *shift_vector, const std::vector <lay::RedrawLayerInfo> *layers, const std::vector<int> &restart, int workers);
-  void done ();
+  void start();
+  void do_start(bool clear, const db::Vector *shift_vector,
+                const std::vector<lay::RedrawLayerInfo> *layers,
+                const std::vector<int> &restart, int workers);
+  void done();
 
-  void layout_changed ();
+  void layout_changed();
 
-  void layout_changed_with_int (int)
-  {
-    layout_changed ();
-  }
+  void layout_changed_with_int(int) { layout_changed(); }
 
   bool m_initial_update;
-  std::vector <RedrawLayerInfo> m_layers;
+  std::vector<RedrawLayerInfo> m_layers;
   int m_nlayers;
   bool m_boxes_already_drawn;
   bool m_custom_already_drawn;
@@ -123,7 +114,6 @@ private:
   std::unique_ptr<tl::SelfTimer> m_main_timer;
 };
 
-}
+} // namespace lay
 
 #endif
-

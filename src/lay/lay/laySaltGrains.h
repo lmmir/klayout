@@ -28,15 +28,13 @@
 
 #include <list>
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief A class representing a collection of grains (packages)
  *  A collection can have child collections and grains (leafs).
  */
-class LAY_PUBLIC SaltGrains
-{
+class LAY_PUBLIC SaltGrains {
 public:
   typedef std::list<SaltGrains> collections_type;
   typedef collections_type::const_iterator collection_iterator;
@@ -46,37 +44,32 @@ public:
   /**
    *  @brief Constructor: creates an empty collection
    */
-  SaltGrains ();
+  SaltGrains();
 
   /**
    *  @brief Equality
    */
-  bool operator== (const SaltGrains &other) const;
+  bool operator==(const SaltGrains &other) const;
 
   /**
    *  @brief Inequality
    */
-  bool operator!= (const SaltGrains &other) const
-  {
-    return !operator== (other);
-  }
+  bool operator!=(const SaltGrains &other) const { return !operator==(other); }
 
   /**
    *  @brief Gets the name of the grain collection
    *
    *  The name is either a plain name (a word) or a path into a collection.
-   *  Name paths are formed using the "/" separator. "mycollection" is a plain name,
-   *  while "mycollection/subcollection" is a collection within a collection.
+   *  Name paths are formed using the "/" separator. "mycollection" is a plain
+   * name, while "mycollection/subcollection" is a collection within a
+   * collection.
    */
-  const std::string &name () const
-  {
-    return m_name;
-  }
+  const std::string &name() const { return m_name; }
 
   /**
    *  @brief Sets the name of the grain collection
    */
-  void set_name (const std::string &p);
+  void set_name(const std::string &p);
 
   /**
    *  @brief Gets the title of the grain collection
@@ -84,139 +77,129 @@ public:
    *  The title is a brief description that is shown in the title of the
    *  package manager.
    */
-  const std::string &title () const
-  {
-    return m_title;
-  }
+  const std::string &title() const { return m_title; }
 
   /**
    *  @brief Sets the title of the grain collection
    */
-  void set_title (const std::string &t);
+  void set_title(const std::string &t);
 
   /**
    *  @brief Gets the absolute file path of the installed grain
    *  This is the file path to the grain folder.
    */
-  const std::string &path () const
-  {
-    return m_path;
-  }
+  const std::string &path() const { return m_path; }
 
   /**
    *  @brief Sets the absolute file path of the installed grain
    */
-  void set_path (const std::string &p);
+  void set_path(const std::string &p);
 
   /**
    *  @brief Includes a list from an external source into this list
    *  This method reads the other list from the source (an URL) and
    *  merges it into this.
    */
-  void include (const std::string &src);
+  void include(const std::string &src);
 
   /**
-   *  @brief Gets the collections which are members of this collection (begin iterator)
+   *  @brief Gets the collections which are members of this collection (begin
+   * iterator)
    */
-  collection_iterator begin_collections () const
-  {
-    return m_collections.begin ();
+  collection_iterator begin_collections() const {
+    return m_collections.begin();
   }
 
   /**
-   *  @brief Gets the collections which are members of this collection (end iterator)
+   *  @brief Gets the collections which are members of this collection (end
+   * iterator)
    */
-  collection_iterator end_collections () const
-  {
-    return m_collections.end ();
-  }
+  collection_iterator end_collections() const { return m_collections.end(); }
 
   /**
    *  @brief Adds a collection to this collection
    */
-  void add_collection (const SaltGrains &collection);
+  void add_collection(const SaltGrains &collection);
 
   /**
    *  @brief Removes the collection given by the collection iterator
-   *  If "with_files" is true, also the folder and all sub-folders will be removed
+   *  If "with_files" is true, also the folder and all sub-folders will be
+   * removed
    *  @return true, if the remove was successful.
    */
-  bool remove_collection (collection_iterator iter, bool with_files = false);
+  bool remove_collection(collection_iterator iter, bool with_files = false);
 
   /**
-   *  @brief Gets the grains (leaf nodes) which are members of this collection (begin iterator)
+   *  @brief Gets the grains (leaf nodes) which are members of this collection
+   * (begin iterator)
    */
-  grain_iterator begin_grains () const
-  {
-    return m_grains.begin ();
-  }
+  grain_iterator begin_grains() const { return m_grains.begin(); }
 
   /**
-   *  @brief Gets the grains (leaf nodes) which are members of this collection (end iterator)
+   *  @brief Gets the grains (leaf nodes) which are members of this collection
+   * (end iterator)
    */
-  grain_iterator end_grains () const
-  {
-    return m_grains.end ();
-  }
+  grain_iterator end_grains() const { return m_grains.end(); }
 
   /**
    *  @brief Adds a grain to this collection
    */
-  void add_grain (const SaltGrain &grain);
+  void add_grain(const SaltGrain &grain);
 
   /**
    *  @brief Removes the grain given by the grain iterator
    *  If "with_files" is true, also the files and the folder will be removed.
    *  @return true, if the remove was successful.
    */
-  bool remove_grain (grain_iterator iter, bool with_files = false);
+  bool remove_grain(grain_iterator iter, bool with_files = false);
 
   /**
    *  @brief Merges the other collection into this one
-   *  This method will apply the rules of "consolidate" for grains and will merge
-   *  grain collections with the same name into one.
+   *  This method will apply the rules of "consolidate" for grains and will
+   * merge grain collections with the same name into one.
    */
-  void merge_with (const lay::SaltGrains &other);
+  void merge_with(const lay::SaltGrains &other);
 
   /**
    *  @brief Removes redundant entries with same names
    *  This method will keep the first entry or the one with the higher version.
    */
-  void consolidate ();
+  void consolidate();
 
   /**
    *  @brief Gets a value indicating whether the collection is empty
    */
-  bool is_empty () const;
+  bool is_empty() const;
 
   /**
    *  @brief Returns true, if the collection is read-only
    */
-  bool is_readonly () const;
+  bool is_readonly() const;
 
   /**
    *  @brief Loads the grain collection from the given path
    */
-  void load (const std::string &p);
+  void load(const std::string &p);
 
   /**
    *  @brief Loads the grain collection from the given input stream
    *  "url" is used as the source URL.
    */
-  void load (const std::string &p, tl::InputStream &s);
+  void load(const std::string &p, tl::InputStream &s);
 
   /**
    *  @brief Saves the grain collection to the given file
    */
-  void save (const std::string &p) const;
+  void save(const std::string &p) const;
 
   /**
    *  @brief Scan grains from a given path
-   *  This will scan the grains found within this path and return a collection containing
-   *  the grains from this path.
-   *  Sub-collections are created from folders which contain grains or sub-collections.
+   *  This will scan the grains found within this path and return a collection
+   * containing the grains from this path. Sub-collections are created from
+   * folders which contain grains or sub-collections.
    */
-  static SaltGrains from_path (const std::string &path, const std::string &pfx = std::string ());
+  static SaltGrains from_path(const std::string &path,
+                              const std::string &pfx = std::string());
 
 private:
   std::string m_name;
@@ -227,6 +210,6 @@ private:
   std::string m_url;
 };
 
-}
+} // namespace lay
 
 #endif

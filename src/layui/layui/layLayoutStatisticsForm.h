@@ -25,9 +25,9 @@
 #ifndef HDR_layLayoutStatisticsForm
 #define HDR_layLayoutStatisticsForm
 
-#include <QDialog>
-#include "ui_LayoutStatistics.h"
 #include "layCellView.h"
+#include "ui_LayoutStatistics.h"
+#include <QDialog>
 
 #include <vector>
 
@@ -36,25 +36,24 @@ namespace lay {
 class LayoutViewBase;
 class StatisticsSource;
 
-class LayoutStatisticsForm
-  : public QDialog, private Ui::LayoutStatisticsForm
-{
-  Q_OBJECT 
+class LayoutStatisticsForm : public QDialog, private Ui::LayoutStatisticsForm {
+  Q_OBJECT
 
 public:
-  LayoutStatisticsForm (QWidget *parent, lay::LayoutViewBase *view, const char *name);
-  ~LayoutStatisticsForm ();
+  LayoutStatisticsForm(QWidget *parent, lay::LayoutViewBase *view,
+                       const char *name);
+  ~LayoutStatisticsForm();
 
 public slots:
-  void layout_selected (int);
+  void layout_selected(int);
 
 private:
-  std::vector <lay::LayoutHandleRef> m_handles;
+  std::vector<lay::LayoutHandleRef> m_handles;
   StatisticsSource *mp_source;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

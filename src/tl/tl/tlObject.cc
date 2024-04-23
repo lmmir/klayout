@@ -20,78 +20,65 @@
 
 */
 
-
 #include "tlObject.h"
 
 #include <memory>
 
-namespace tl
-{
+namespace tl {
 
 // ---------------------------------------------------------------------
 //  Object implementation
 
-Object::Object ()
-  : mp_ptrs (0)
-{
+Object::Object() : mp_ptrs(0) {
   //  .. nothing yet ..
 }
 
-Object::~Object ()
-{
-  reset ();
-}
+Object::~Object() { reset(); }
 
-void
-Object::reset ()
-{
+void Object::reset() {
   WeakOrSharedPtr *ptrs;
 
   //  NOTE: basically we'd need to lock the mutex here.
   //  But this will easily create deadlocks and the
   //  destructor should not be called while other threads
   //  are accessing this object anyway.
-  while ((ptrs = reinterpret_cast<WeakOrSharedPtr *> (size_t (mp_ptrs) & ~size_t (1))) != 0) {
-    ptrs->reset_object ();
+  while ((ptrs = reinterpret_cast<WeakOrSharedPtr *>(size_t(mp_ptrs) &
+                                                     ~size_t(1))) != 0) {
+    ptrs->reset_object();
   }
 }
 
-Object::Object (const Object & /*other*/)
-  : mp_ptrs (0)
-{
+Object::Object(const Object & /*other*/) : mp_ptrs(0) {
   //  .. nothing yet ..
 }
 
-Object &Object::operator= (const Object & /*other*/)
-{
+Object &Object::operator=(const Object & /*other*/) {
   //  .. nothing yet ..
   return *this;
 }
 
-void Object::register_ptr (WeakOrSharedPtr *p)
-{
-  tl_assert (p->mp_next == 0);
-  tl_assert (p->mp_prev == 0);
+void Object::register_ptr(WeakOrSharedPtr *p) {
+  tl_assert(p->mp_next == 0);
+  tl_assert(p->mp_prev == 0);
 
-  WeakOrSharedPtr *ptrs = (WeakOrSharedPtr *)(size_t (mp_ptrs) & ~size_t (1));
-  bool kept = (size_t (mp_ptrs) & size_t(1));
+  WeakOrSharedPtr *ptrs = (WeakOrSharedPtr *)(size_t(mp_ptrs) & ~size_t(1));
+  bool kept = (size_t(mp_ptrs) & size_t(1));
 
   p->mp_next = ptrs;
   if (ptrs) {
     ptrs->mp_prev = p;
   }
 
-  mp_ptrs = (WeakOrSharedPtr *)(size_t (p) | (kept ? 1 : 0));
+  mp_ptrs = (WeakOrSharedPtr *)(size_t(p) | (kept ? 1 : 0));
 }
 
-void Object::unregister_ptr (WeakOrSharedPtr *p)
-{
-  WeakOrSharedPtr *ptrs = (WeakOrSharedPtr *)(size_t (mp_ptrs) & ~size_t (1));
-  bool kept = (size_t (mp_ptrs) & size_t(1));
+void Object::unregister_ptr(WeakOrSharedPtr *p) {
+  WeakOrSharedPtr *ptrs = (WeakOrSharedPtr *)(size_t(mp_ptrs) & ~size_t(1));
+  bool kept = (size_t(mp_ptrs) & size_t(1));
 
   if (p == ptrs) {
-    mp_ptrs = (WeakOrSharedPtr *)(size_t (p->mp_next) | (kept ? 1 : 0));
-  } 
+    mp_ptrs = (WeakOrSharedPtr *)(size_t(p->mp_next) | (kept ? 1 : 0));
+  }
   if (p->mp_prev) {
     p->mp_prev->mp_next = p->mp_next;
   }
@@ -101,46 +88,42 @@ void Object::unregister_ptr (WeakOrSharedPtr *p)
   p->mp_prev = p->mp_next = 0;
 }
 
-void Object::detach_from_all_events ()
-{
-  WeakOrSharedPtr *ptrs = (WeakOrSharedPtr *)(size_t (mp_ptrs) & ~size_t (1));
+void Object::detach_from_all_events() {
+  WeakOrSharedPtr *ptrs = (WeakOrSharedPtr *)(size_t(mp_ptrs) & ~size_t(1));
 
-  for (WeakOrSharedPtr *p = ptrs; p; ) {
+  for (WeakOrSharedPtr *p = ptrs; p;) {
     WeakOrSharedPtr *pnext = p->mp_next;
-    if (p->is_event ()) {
-      p->reset_object ();
+    if (p->is_event()) {
+      p->reset_object();
     }
     p = pnext;
   }
 }
 
-bool Object::has_strong_references () const
-{
-  WeakOrSharedPtr *ptrs = (WeakOrSharedPtr *)(size_t (mp_ptrs) & ~size_t (1));
+bool Object::has_strong_references() const {
+  WeakOrSharedPtr *ptrs = (WeakOrSharedPtr *)(size_t(mp_ptrs) & ~size_t(1));
   if (ptrs != mp_ptrs) {
     //  Object is kept
     return true;
   }
 
   for (WeakOrSharedPtr *p = ptrs; p; p = p->mp_next) {
-    if (p->is_shared ()) {
+    if (p->is_shared()) {
       return true;
     }
   }
   return false;
 }
 
-void Object::keep_object ()
-{
-  mp_ptrs = (WeakOrSharedPtr *)(size_t (mp_ptrs) | size_t (1));
+void Object::keep_object() {
+  mp_ptrs = (WeakOrSharedPtr *)(size_t(mp_ptrs) | size_t(1));
 }
 
-void Object::release_object ()
-{
-  mp_ptrs = (WeakOrSharedPtr *)(size_t (mp_ptrs) & ~size_t (1));
+void Object::release_object() {
+  mp_ptrs = (WeakOrSharedPtr *)(size_t(mp_ptrs) & ~size_t(1));
 
   //  If no more strong references are left, we have to delete ourselves
-  if (! has_strong_references ()) {
+  if (!has_strong_references()) {
     delete this;
   }
 }
@@ -148,102 +131,87 @@ void Object::release_object ()
 // ---------------------------------------------------------------------
 //  WeakOrSharedPtr implementation
 
-WeakOrSharedPtr::WeakOrSharedPtr ()
-  : mp_next (0), mp_prev (0), mp_t (0), m_is_shared (true), m_is_event (false)
-{
+WeakOrSharedPtr::WeakOrSharedPtr()
+    : mp_next(0), mp_prev(0), mp_t(0), m_is_shared(true), m_is_event(false) {}
+
+WeakOrSharedPtr::WeakOrSharedPtr(const WeakOrSharedPtr &o)
+    : mp_next(0), mp_prev(0), mp_t(0), m_is_shared(true), m_is_event(false) {
+  operator=(o);
 }
 
-WeakOrSharedPtr::WeakOrSharedPtr (const WeakOrSharedPtr &o)
-  : mp_next (0), mp_prev (0), mp_t (0), m_is_shared (true), m_is_event (false)
-{
-  operator= (o);
+WeakOrSharedPtr::WeakOrSharedPtr(Object *t, bool shared, bool is_event)
+    : mp_next(0), mp_prev(0), mp_t(0), m_is_shared(true), m_is_event(false) {
+  reset(t, shared, is_event);
 }
 
-WeakOrSharedPtr::WeakOrSharedPtr (Object *t, bool shared, bool is_event)
-  : mp_next (0), mp_prev (0), mp_t (0), m_is_shared (true), m_is_event (false)
-{
-  reset (t, shared, is_event);
-}
+WeakOrSharedPtr::~WeakOrSharedPtr() { reset(0, true, false); }
 
-WeakOrSharedPtr::~WeakOrSharedPtr ()
-{
-  reset (0, true, false);
-}
-
-WeakOrSharedPtr &WeakOrSharedPtr::operator= (const WeakOrSharedPtr &o) 
-{
-  reset (o.mp_t, o.m_is_shared, o.m_is_event);
+WeakOrSharedPtr &WeakOrSharedPtr::operator=(const WeakOrSharedPtr &o) {
+  reset(o.mp_t, o.m_is_shared, o.m_is_event);
   return *this;
 }
 
 namespace {
 
-  /**
-   *  @brief Provides the global lock instance
-   */
-  struct GlobalLockInitializer
-  {
-    GlobalLockInitializer ()
-    {
-      if (! sp_lock) {
-        sp_lock = new tl::Mutex ();
-      }
+/**
+ *  @brief Provides the global lock instance
+ */
+struct GlobalLockInitializer {
+  GlobalLockInitializer() {
+    if (!sp_lock) {
+      sp_lock = new tl::Mutex();
     }
+  }
 
-    tl::Mutex &gl ()
-    {
-      return *sp_lock;
-    }
+  tl::Mutex &gl() { return *sp_lock; }
 
-  private:
-    static tl::Mutex *sp_lock;
-  };
+private:
+  static tl::Mutex *sp_lock;
+};
 
-  tl::Mutex *GlobalLockInitializer::sp_lock = 0;
+tl::Mutex *GlobalLockInitializer::sp_lock = 0;
 
-  //  This ensures the instance is created in the initialization code
-  static GlobalLockInitializer s_gl_init;
+//  This ensures the instance is created in the initialization code
+static GlobalLockInitializer s_gl_init;
 
+} // namespace
+
+tl::Mutex &WeakOrSharedPtr::lock() {
+  //  NOTE: to ensure proper function in static initialization code we cannot
+  //  simply use a static QMutex instance - this may not be initialized. This is
+  //  not entirely thread safe we make sure above that this initialization is
+  //  guaranteed to happen in the static initialization which is
+  //  single-threaded.
+  return GlobalLockInitializer().gl();
 }
 
-tl::Mutex &WeakOrSharedPtr::lock ()
-{
-  //  NOTE: to ensure proper function in static initialization code we cannot simply use
-  //  a static QMutex instance - this may not be initialized. This is not entirely thread
-  //  safe we make sure above that this initialization is guaranteed to happen in the
-  //  static initialization which is single-threaded.
-  return GlobalLockInitializer ().gl ();
-}
-
-Object *WeakOrSharedPtr::get () 
-{
-  //  NOTE: this assumes that the pointer access is an atomic operation. Hence no locking.
+Object *WeakOrSharedPtr::get() {
+  //  NOTE: this assumes that the pointer access is an atomic operation. Hence
+  //  no locking.
   return mp_t;
 }
 
-const Object *WeakOrSharedPtr::get () const
-{
-  //  NOTE: this assumes that the pointer access is an atomic operation. Hence no locking.
+const Object *WeakOrSharedPtr::get() const {
+  //  NOTE: this assumes that the pointer access is an atomic operation. Hence
+  //  no locking.
   return mp_t;
 }
 
-void WeakOrSharedPtr::reset_object ()
-{
-  tl::MutexLocker locker (&lock ());
+void WeakOrSharedPtr::reset_object() {
+  tl::MutexLocker locker(&lock());
 
   if (mp_t) {
-    mp_t->unregister_ptr (this);
+    mp_t->unregister_ptr(this);
     mp_t = 0;
   }
 
-  tl_assert (mp_prev == 0);
-  tl_assert (mp_next == 0);
+  tl_assert(mp_prev == 0);
+  tl_assert(mp_next == 0);
 
   m_is_shared = true;
 }
 
-void WeakOrSharedPtr::reset (Object *t, bool is_shared, bool is_event)
-{
+void WeakOrSharedPtr::reset(Object *t, bool is_shared, bool is_event) {
   if (t == mp_t) {
     return;
   }
@@ -251,26 +219,26 @@ void WeakOrSharedPtr::reset (Object *t, bool is_shared, bool is_event)
   Object *to_delete = 0;
 
   {
-    tl::MutexLocker locker (&lock ());
+    tl::MutexLocker locker(&lock());
 
     if (mp_t) {
       Object *told = mp_t;
-      mp_t->unregister_ptr (this);
+      mp_t->unregister_ptr(this);
       mp_t = 0;
-      if (m_is_shared && told && !told->has_strong_references ()) {
+      if (m_is_shared && told && !told->has_strong_references()) {
         to_delete = told;
       }
     }
 
-    tl_assert (mp_prev == 0);
-    tl_assert (mp_next == 0);
+    tl_assert(mp_prev == 0);
+    tl_assert(mp_next == 0);
 
     mp_t = t;
     m_is_shared = is_shared;
     m_is_event = is_event;
 
     if (mp_t) {
-      mp_t->register_ptr (this);
+      mp_t->register_ptr(this);
     }
   }
 
@@ -279,4 +247,4 @@ void WeakOrSharedPtr::reset (Object *t, bool is_shared, bool is_event)
   }
 }
 
-}
+} // namespace tl

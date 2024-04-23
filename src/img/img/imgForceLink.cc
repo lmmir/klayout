@@ -22,11 +22,6 @@
 
 #include "imgForceLink.h"
 
-namespace img
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace img {
+int _force_link_f() { return 0; }
+} // namespace img

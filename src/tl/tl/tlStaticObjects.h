@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_tlStaticObjects
 #define HDR_tlStaticObjects
 
@@ -28,16 +27,14 @@
 
 #include <vector>
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief A helper class for registered objects
  */
-class StaticObjectReferenceBase
-{
+class StaticObjectReferenceBase {
 public:
-  virtual ~StaticObjectReferenceBase () { };
+  virtual ~StaticObjectReferenceBase(){};
 
   virtual void clear() = 0;
 };
@@ -46,22 +43,15 @@ public:
  *  @brief A helper template for a specific class
  */
 template <class X>
-class StaticObjectReference : public StaticObjectReferenceBase
-{
+class StaticObjectReference : public StaticObjectReferenceBase {
 public:
-  StaticObjectReference (X **x)
-    : mp_x (x)
-  {
+  StaticObjectReference(X **x) : mp_x(x) {
     //  .. nothing yet ..
   }
 
-  ~StaticObjectReference ()
-  {
-    clear ();
-  }
+  ~StaticObjectReference() { clear(); }
 
-  void clear()
-  {
+  void clear() {
     if (mp_x) {
       delete *mp_x;
       *mp_x = 0;
@@ -78,25 +68,23 @@ private:
  *
  *  The basic purpose of this facility is to provide a way to clean up those
  *  objects without having to rely on some destructors being called from the
- *  exit handler. It registers locations where objects are stored and will 
+ *  exit handler. It registers locations where objects are stored and will
  *  release the stored objects and reset their pointer to 0.
  */
-struct TL_PUBLIC StaticObjects
-{
+struct TL_PUBLIC StaticObjects {
   /**
    *  @brief Destructor
    */
-  ~StaticObjects ();
+  ~StaticObjects();
 
   /**
-   *  @brief Register a static object 
+   *  @brief Register a static object
    *
-   *  After registration, the object behind the location is automatically deleted on the static destructor.
+   *  After registration, the object behind the location is automatically
+   * deleted on the static destructor.
    */
-  template <class X>
-  static void reg (X **x)
-  {
-    ms_instance.register_object_base (new StaticObjectReference<X> (x));
+  template <class X> static void reg(X **x) {
+    ms_instance.register_object_base(new StaticObjectReference<X>(x));
   }
 
   /**
@@ -104,21 +92,17 @@ struct TL_PUBLIC StaticObjects
    *
    *  Caution: if cleanup is not called, the stored objects are never deleted!
    */
-  static void cleanup ()
-  {
-    ms_instance.do_cleanup ();
-  }
+  static void cleanup() { ms_instance.do_cleanup(); }
 
 protected:
   std::vector<StaticObjectReferenceBase *> m_objects;
 
   static StaticObjects ms_instance;
 
-  void do_cleanup ();
-  void register_object_base (StaticObjectReferenceBase *o);
+  void do_cleanup();
+  void register_object_base(StaticObjectReferenceBase *o);
 };
 
-}
+} // namespace tl
 
 #endif
-

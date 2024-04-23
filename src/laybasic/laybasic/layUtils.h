@@ -30,9 +30,8 @@ namespace lay {
 /**
  *  @brief Returns true, if GUI is enabled
  */
-LAYBASIC_PUBLIC bool has_gui ();
+LAYBASIC_PUBLIC bool has_gui();
 
-}
+} // namespace lay
 
 #endif
-

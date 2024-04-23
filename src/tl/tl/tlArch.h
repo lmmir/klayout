@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_tlArch
 #define HDR_tlArch
 
@@ -28,8 +27,7 @@
 
 #include <string>
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief Returns the architecture string
@@ -37,9 +35,8 @@ namespace tl
  *  The architecture string is made from the cpu, os and compiler.
  *  For example: i686-win32-mingw or x86_64-linux-gcc.
  */
-TL_PUBLIC std::string arch_string ();
+TL_PUBLIC std::string arch_string();
 
-}
+} // namespace tl
 
 #endif
-

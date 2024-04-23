@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_libBasicArc
 #define HDR_libBasicArc
 
@@ -28,48 +27,50 @@
 
 #include "dbPCellDeclaration.h"
 
-namespace lib
-{
+namespace lib {
 
 /**
  *  @brief Implements the "ARC" PCell of the basic library
  */
-class BasicArc 
-  : public db::PCellDeclaration
-{
+class BasicArc : public db::PCellDeclaration {
 public:
   /**
    *  @brief The constructor
    */
-  BasicArc ();
+  BasicArc();
 
   /**
    *  @brief Get the layer declarations
    */
-  virtual std::vector<db::PCellLayerDeclaration> get_layer_declarations (const db::pcell_parameters_type &parameters) const;
+  virtual std::vector<db::PCellLayerDeclaration>
+  get_layer_declarations(const db::pcell_parameters_type &parameters) const;
 
   /**
    *  @brief Coerces the parameters (in particular updates the computed ones)
    */
-  virtual void coerce_parameters (const db::Layout &layout, db::pcell_parameters_type &parameters) const;
+  virtual void coerce_parameters(const db::Layout &layout,
+                                 db::pcell_parameters_type &parameters) const;
 
   /**
    *  @brief Produces the layout
    */
-  virtual void produce (const db::Layout &layout, const std::vector<unsigned int> &layer_ids, const db::pcell_parameters_type &parameters, db::Cell &cell) const;
+  virtual void produce(const db::Layout &layout,
+                       const std::vector<unsigned int> &layer_ids,
+                       const db::pcell_parameters_type &parameters,
+                       db::Cell &cell) const;
 
   /**
    *  @brief Get the display name for a PCell with the given parameters
    */
-  virtual std::string get_display_name (const db::pcell_parameters_type &) const;
+  virtual std::string get_display_name(const db::pcell_parameters_type &) const;
 
   /**
    *  @brief Get the parameter declarations
    */
-  virtual std::vector<db::PCellParameterDeclaration> get_parameter_declarations () const;
+  virtual std::vector<db::PCellParameterDeclaration>
+  get_parameter_declarations() const;
 };
 
-}
+} // namespace lib
 
 #endif
-

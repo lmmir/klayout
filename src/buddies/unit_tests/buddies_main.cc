@@ -20,31 +20,30 @@
 
 */
 
-//  NOTE: klayout_main_tests is actually a Ruby test which does all test automation
-//  The tests will also test Python capabilities, so Python is required too.
+//  NOTE: klayout_main_tests is actually a Ruby test which does all test
+//  automation The tests will also test Python capabilities, so Python is
+//  required too.
 
 #if defined(HAVE_RUBY) && defined(HAVE_PYTHON)
 
-#include "rba.h"
 #include "gsiDecl.h"
+#include "rba.h"
 
-#include "tlUnitTest.h"
 #include "tlFileUtils.h"
+#include "tlUnitTest.h"
 
-void run_rubytest (tl::TestBase * /*_this*/, const std::string &fn)
-{
-  tl_assert (rba::RubyInterpreter::instance ());
+void run_rubytest(tl::TestBase * /*_this*/, const std::string &fn) {
+  tl_assert(rba::RubyInterpreter::instance());
 
-  std::string fp (tl::testsrc ());
+  std::string fp(tl::testsrc());
   fp += "/testdata/buddies/";
   fp += fn;
-  rba::RubyInterpreter::instance ()->load_file (fp.c_str ());
+  rba::RubyInterpreter::instance()->load_file(fp.c_str());
 }
 
-#define RUBYTEST(n, file) \
+#define RUBYTEST(n, file)                                                      \
   TEST(n) { run_rubytest(_this, file); }
 
-RUBYTEST (main, "buddies.rb")
+RUBYTEST(main, "buddies.rb")
 
 #endif
-

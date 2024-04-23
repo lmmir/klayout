@@ -20,14 +20,10 @@
 
 */
 
-
 #include "tlUniqueName.h"
 
-namespace tl
-{
+namespace tl {
 
 //  .. nothing yet ..
 
 } // namespace tl
-
-

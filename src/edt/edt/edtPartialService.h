@@ -20,107 +20,88 @@
 
 */
 
-
-
 #ifndef HDR_edtPartialService
 #define HDR_edtPartialService
 
+#include "edtConfig.h"
+#include "edtUtils.h"
 #include "layEditorServiceBase.h"
 #include "layObjectInstPath.h"
-#include "layViewObject.h"
 #include "layRubberBox.h"
 #include "laySnap.h"
+#include "layViewObject.h"
 #include "tlAssert.h"
 #include "tlDeferredExecution.h"
-#include "edtUtils.h"
-#include "edtConfig.h"
 
 #if defined(HAVE_QT)
-#  include <QObject>
-#  include <QTimer>
+#include <QObject>
+#include <QTimer>
 #endif
 
 namespace db {
-  class Manager;
+class Manager;
 }
 
 namespace lay {
-  class Dispatcher;
-  class Marker;
-  class InstanceMarker;
-}
+class Dispatcher;
+class Marker;
+class InstanceMarker;
+} // namespace lay
 
 namespace edt {
 
 // -------------------------------------------------------------
-//  A point with an unsigned index describing a certain point of a polygon or path
+//  A point with an unsigned index describing a certain point of a polygon or
+//  path
 
-struct PointWithIndex 
-  : public db::Point
-{
-  PointWithIndex ()
-    : db::Point (), n (0), c (0)
-  { }
+struct PointWithIndex : public db::Point {
+  PointWithIndex() : db::Point(), n(0), c(0) {}
 
-  PointWithIndex (const db::Point &p, unsigned int _n, unsigned int _c)
-    : db::Point (p), n (_n), c (_c)
-  { }
+  PointWithIndex(const db::Point &p, unsigned int _n, unsigned int _c)
+      : db::Point(p), n(_n), c(_c) {}
 
   unsigned int n, c;
 
-  bool operator== (const PointWithIndex &d) const
-  {
+  bool operator==(const PointWithIndex &d) const {
     if (n != d.n) {
       return false;
     }
-    return db::Point::operator== (d);
+    return db::Point::operator==(d);
   }
 
-  bool operator< (const PointWithIndex &d) const
-  {
+  bool operator<(const PointWithIndex &d) const {
     if (n != d.n) {
       return n < d.n;
     }
-    return db::Point::operator< (d);
+    return db::Point::operator<(d);
   }
 };
 
 // -------------------------------------------------------------
-//  An edge with two indices describing an edge of a polygon or segment of a path
+//  An edge with two indices describing an edge of a polygon or segment of a
+//  path
 
-struct EdgeWithIndex 
-  : public db::Edge
-{
-  EdgeWithIndex ()
-    : db::Edge (), n (0), nn (0), c (0) 
-  { }
+struct EdgeWithIndex : public db::Edge {
+  EdgeWithIndex() : db::Edge(), n(0), nn(0), c(0) {}
 
-  EdgeWithIndex (const db::Edge &e, unsigned int _n, unsigned int _nn, unsigned int _c)
-    : db::Edge (e), n (_n), nn (_nn), c (_c) 
-  { }
+  EdgeWithIndex(const db::Edge &e, unsigned int _n, unsigned int _nn,
+                unsigned int _c)
+      : db::Edge(e), n(_n), nn(_nn), c(_c) {}
 
   unsigned int n, nn, c;
 
-  PointWithIndex pi1 () const
-  {
-    return PointWithIndex (p1 (), n, c);
-  }
+  PointWithIndex pi1() const { return PointWithIndex(p1(), n, c); }
 
-  PointWithIndex pi2 () const
-  {
-    return PointWithIndex (p2 (), nn, c);
-  }
+  PointWithIndex pi2() const { return PointWithIndex(p2(), nn, c); }
 
-  bool operator== (const EdgeWithIndex &d) const
-  {
+  bool operator==(const EdgeWithIndex &d) const {
     if (n != d.n || nn != d.nn || c != d.c) {
       return false;
     }
-    return db::Edge::operator== (d);
+    return db::Edge::operator==(d);
   }
 
-  bool operator< (const EdgeWithIndex &d) const
-  {
+  bool operator<(const EdgeWithIndex &d) const {
     if (n != d.n) {
       return n < d.n;
     }
@@ -130,7 +111,7 @@ struct EdgeWithIndex
     if (c != d.c) {
       return c < d.c;
     }
-    return db::Edge::operator< (d);
+    return db::Edge::operator<(d);
   }
 };
 
@@ -144,186 +125,188 @@ class PartialService :
     public QObject,
 #endif
     public lay::EditorServiceBase,
-    public db::Object
-{
+    public db::Object {
 #if defined(HAVE_QT)
-Q_OBJECT
+  Q_OBJECT
 #endif
 
-public: 
-  typedef std::map<lay::ObjectInstPath, std::set<EdgeWithIndex> > partial_objects;
+public:
+  typedef std::map<lay::ObjectInstPath, std::set<EdgeWithIndex>>
+      partial_objects;
 
   /**
    *  @brief The constructor
    */
-  PartialService (db::Manager *manager, lay::LayoutViewBase *view, lay::Dispatcher *root);
+  PartialService(db::Manager *manager, lay::LayoutViewBase *view,
+                 lay::Dispatcher *root);
 
   /**
    *  @brief The destructor
    */
-  ~PartialService ();
+  ~PartialService();
 
   /**
    *  @brief Access to the view object
    */
-  lay::LayoutViewBase *view () const
-  {
-    tl_assert (mp_view != 0);
+  lay::LayoutViewBase *view() const {
+    tl_assert(mp_view != 0);
     return mp_view;
   }
 
   /**
    *  @brief Obtain the lay::ViewService interface
    */
-  lay::ViewService *view_service_interface ()
-  {
-    return this;
-  }
+  lay::ViewService *view_service_interface() { return this; }
 
   /**
    *  @brief Obtain the lay::Editable interface
    */
-  lay::Editable *editable_interface ()
-  {
-    return this;
-  }
+  lay::Editable *editable_interface() { return this; }
 
-  /** 
+  /**
    *  @brief Implementation of the menu functions
    */
-  virtual void menu_activated (const std::string &symbol);
+  virtual void menu_activated(const std::string &symbol);
 
   /**
    *  @brief Implementation of "Plugin" interface: configuration setup
    */
-  bool configure (const std::string &name, const std::string &value);
+  bool configure(const std::string &name, const std::string &value);
 
   /**
    *  @brief Implementation of "Plugin" interface: configuration finalization
    */
-  void config_finalize ();
+  void config_finalize();
 
   /**
    *  @brief Implement the wheel event (for resetting hove state)
    */
-  virtual bool wheel_event (int delta, bool horizontal, const db::DPoint &p, unsigned int buttons, bool prio);
+  virtual bool wheel_event(int delta, bool horizontal, const db::DPoint &p,
+                           unsigned int buttons, bool prio);
 
   /**
    *  @brief Implement the mouse mode: move event
    */
-  virtual bool mouse_move_event (const db::DPoint &p, unsigned int buttons, bool prio);
+  virtual bool mouse_move_event(const db::DPoint &p, unsigned int buttons,
+                                bool prio);
 
   /**
    *  @brief Implement the mouse mode: button press event
    */
-  virtual bool mouse_press_event (const db::DPoint &p, unsigned int buttons, bool prio);
+  virtual bool mouse_press_event(const db::DPoint &p, unsigned int buttons,
+                                 bool prio);
 
   /**
    *  @brief Implement the mouse mode: button clicked (pressed and released)
    */
-  virtual bool mouse_click_event (const db::DPoint &p, unsigned int buttons, bool prio);
+  virtual bool mouse_click_event(const db::DPoint &p, unsigned int buttons,
+                                 bool prio);
 
   /**
-   *  @brief Implement the mouse mode: button double clicked 
+   *  @brief Implement the mouse mode: button double clicked
    */
-  virtual bool mouse_double_click_event (const db::DPoint &p, unsigned int buttons, bool prio);
+  virtual bool mouse_double_click_event(const db::DPoint &p,
+                                        unsigned int buttons, bool prio);
 
   /**
    *  @brief Implement the mouse mode: button release
    */
-  virtual bool mouse_release_event (const db::DPoint &p, unsigned int buttons, bool prio);
+  virtual bool mouse_release_event(const db::DPoint &p, unsigned int buttons,
+                                   bool prio);
 
   /**
    *  @brief Transforms the selection
    *
-   *  Currently only displacements are allowed which basically moves the partial selection 
-   *  by the given distance
+   *  Currently only displacements are allowed which basically moves the partial
+   * selection by the given distance
    */
-  virtual void transform (const db::DCplxTrans &tr);
+  virtual void transform(const db::DCplxTrans &tr);
 
   /**
    *  @brief Gets the catch distance (for single click)
    */
-  virtual double catch_distance ();
+  virtual double catch_distance();
 
   /**
    *  @brief Gets the catch distance (for box)
    */
-  virtual double catch_distance_box ();
+  virtual double catch_distance_box();
 
   /**
    *  @brief Indicates whether objects are selected
    */
-  virtual bool has_selection ();
+  virtual bool has_selection();
 
   /**
    *  @brief Indicates how many objects are selected
    */
-  virtual size_t selection_size ();
+  virtual size_t selection_size();
 
   /**
    *  @brief Indicates whether objects are selected in transient mode
    */
-  virtual bool has_transient_selection ();
+  virtual bool has_transient_selection();
 
   /**
    *  @brief Gets the selection bounding box
    */
-  virtual db::DBox selection_bbox ();
+  virtual db::DBox selection_bbox();
 
   /**
    *  @brief Start a "move" operation
    */
-  virtual bool begin_move (MoveMode sel, const db::DPoint &p, lay::angle_constraint_type ac);
+  virtual bool begin_move(MoveMode sel, const db::DPoint &p,
+                          lay::angle_constraint_type ac);
 
   /**
    *  @brief Continue a "move" operation
    */
-  virtual void move (const db::DPoint &p, lay::angle_constraint_type ac);
+  virtual void move(const db::DPoint &p, lay::angle_constraint_type ac);
 
   /**
    *  @brief Terminate a "move" operation
    */
-  virtual void end_move (const db::DPoint &p, lay::angle_constraint_type ac);
+  virtual void end_move(const db::DPoint &p, lay::angle_constraint_type ac);
 
   /**
    *  @brief Implement the "select" method at least to clear the selection
    */
-  virtual bool select (const db::DBox &box, SelectionMode mode);
+  virtual bool select(const db::DBox &box, SelectionMode mode);
 
-  /** 
+  /**
    *  @brief "delete" operation
    */
-  virtual void del ();
+  virtual void del();
 
   /**
    *  @brief Implement the mouse mode: deactivate mouse mode
    */
-  virtual void deactivated ();
+  virtual void deactivated();
 
   /**
    *  @brief Implement the mouse mode: mode activated
    */
-  virtual void activated ();
+  virtual void activated();
 
   /**
    *  @brief Reimplementation of the ViewService interface: set the colors
    */
-  virtual void set_colors (tl::Color background, tl::Color text);
+  virtual void set_colors(tl::Color background, tl::Color text);
 
   /**
-   *  @brief Cancel any edit operations (in this case, unselect all & cancel any drag operation)
+   *  @brief Cancel any edit operations (in this case, unselect all & cancel any
+   * drag operation)
    */
-  virtual void edit_cancel ();
+  virtual void edit_cancel();
 
 #if defined(HAVE_QT)
 public slots:
-  void timeout ();
+  void timeout();
 #endif
 
 protected:
-  lay::angle_constraint_type connect_ac () const;
-  lay::angle_constraint_type move_ac () const;
+  lay::angle_constraint_type connect_ac() const;
+  lay::angle_constraint_type move_ac() const;
 
 private:
   //  The layout view that this service is attached to
@@ -363,34 +346,54 @@ private:
   //  Deferred method to update the selection
   tl::DeferredMethod<edt::PartialService> dm_selection_to_view;
 
-  void hover_reset ();
+  void hover_reset();
 
-  void clear_partial_transient_selection ();
-  bool partial_select (const db::DBox &box, lay::Editable::SelectionMode mode);
-  void selection_to_view ();
-  void do_selection_to_view ();
+  void clear_partial_transient_selection();
+  bool partial_select(const db::DBox &box, lay::Editable::SelectionMode mode);
+  void selection_to_view();
+  void do_selection_to_view();
 
-  db::DPoint snap (const db::DPoint &p) const;
-  db::DVector snap (const db::DVector &p) const;
-  lay::PointSnapToObjectResult snap2 (const db::DPoint &p) const;
+  db::DPoint snap(const db::DPoint &p) const;
+  db::DVector snap(const db::DVector &p) const;
+  lay::PointSnapToObjectResult snap2(const db::DPoint &p) const;
 
-  void enter_edge (const EdgeWithIndex &e, size_t &nmarker, partial_objects::const_iterator sel, const std::map <PointWithIndex, db::Point> &new_points, const std::map <EdgeWithIndex, db::Edge> &new_edges, const db::ICplxTrans &gt, const std::vector<db::DCplxTrans> &tv, bool transient);
-  void enter_vertices (size_t &nmarker, partial_objects::const_iterator sel, const std::map <PointWithIndex, db::Point> &new_points, const std::map <EdgeWithIndex, db::Edge> &new_edges, const db::ICplxTrans &gt, const std::vector<db::DCplxTrans> &tv, bool transient);
-  void enter_polygon (db::Polygon &p, size_t &nmarker, partial_objects::const_iterator sel, const std::map <PointWithIndex, db::Point> &new_points, const std::map <EdgeWithIndex, db::Edge> &new_edges, const db::ICplxTrans &gt, const std::vector<db::DCplxTrans> &tv, bool transient);
-  void enter_path (db::Path &p, size_t &nmarker, partial_objects::const_iterator sel, const std::map <PointWithIndex, db::Point> &new_points, const std::map <EdgeWithIndex, db::Edge> &new_edges, const db::ICplxTrans &gt, const std::vector<db::DCplxTrans> &tv, bool transient);
-  lay::Marker *new_marker (size_t &nmarker, unsigned int cv_index, bool transient);
-  lay::InstanceMarker *new_inst_marker (size_t &nmarker, unsigned int cv_index, bool transient);
-  void resize_markers (size_t n, bool transient);
-  void resize_inst_markers (size_t n, bool transient);
-  bool is_single_point_selection () const;
-  bool is_single_edge_selection () const;
-  db::DPoint single_selected_point () const;
-  db::DEdge single_selected_edge () const;
-  bool handle_guiding_shape_changes ();
-  void transform_selection (const db::DTrans &move_trans);
+  void enter_edge(const EdgeWithIndex &e, size_t &nmarker,
+                  partial_objects::const_iterator sel,
+                  const std::map<PointWithIndex, db::Point> &new_points,
+                  const std::map<EdgeWithIndex, db::Edge> &new_edges,
+                  const db::ICplxTrans &gt,
+                  const std::vector<db::DCplxTrans> &tv, bool transient);
+  void enter_vertices(size_t &nmarker, partial_objects::const_iterator sel,
+                      const std::map<PointWithIndex, db::Point> &new_points,
+                      const std::map<EdgeWithIndex, db::Edge> &new_edges,
+                      const db::ICplxTrans &gt,
+                      const std::vector<db::DCplxTrans> &tv, bool transient);
+  void enter_polygon(db::Polygon &p, size_t &nmarker,
+                     partial_objects::const_iterator sel,
+                     const std::map<PointWithIndex, db::Point> &new_points,
+                     const std::map<EdgeWithIndex, db::Edge> &new_edges,
+                     const db::ICplxTrans &gt,
+                     const std::vector<db::DCplxTrans> &tv, bool transient);
+  void enter_path(db::Path &p, size_t &nmarker,
+                  partial_objects::const_iterator sel,
+                  const std::map<PointWithIndex, db::Point> &new_points,
+                  const std::map<EdgeWithIndex, db::Edge> &new_edges,
+                  const db::ICplxTrans &gt,
+                  const std::vector<db::DCplxTrans> &tv, bool transient);
+  lay::Marker *new_marker(size_t &nmarker, unsigned int cv_index,
+                          bool transient);
+  lay::InstanceMarker *new_inst_marker(size_t &nmarker, unsigned int cv_index,
+                                       bool transient);
+  void resize_markers(size_t n, bool transient);
+  void resize_inst_markers(size_t n, bool transient);
+  bool is_single_point_selection() const;
+  bool is_single_edge_selection() const;
+  db::DPoint single_selected_point() const;
+  db::DEdge single_selected_edge() const;
+  bool handle_guiding_shape_changes();
+  void transform_selection(const db::DTrans &move_trans);
 };
 
-}
+} // namespace edt
 
 #endif
-

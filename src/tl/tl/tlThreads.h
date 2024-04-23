@@ -28,17 +28,16 @@
 #include <limits>
 
 #if defined(HAVE_QT) && !defined(HAVE_PTHREADS)
-#  include <QMutex>
-#  include <QWaitCondition>
-#  include <QThread>
-#  include <QThreadStorage>
+#include <QMutex>
+#include <QThread>
+#include <QThreadStorage>
+#include <QWaitCondition>
 #else
 //  atomics taken from https://github.com/mbitsnbites/atomic
-#  include "atomic/spinlock.h"
+#include "atomic/spinlock.h"
 #endif
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief A mutex implementation
@@ -48,22 +47,21 @@ namespace tl
 
 #if defined(HAVE_QT) && !defined(HAVE_PTHREADS)
 
-class TL_PUBLIC Mutex
-  : public QMutex
-{
+class TL_PUBLIC Mutex : public QMutex {
 public:
-  Mutex () : QMutex () { }
+  Mutex() : QMutex() {}
 };
 
 #else
 
-//  The non-Qt version is a dummy implementation as threading is not supported (yet)
-class TL_PUBLIC Mutex
-{
+//  The non-Qt version is a dummy implementation as threading is not supported
+//  (yet)
+class TL_PUBLIC Mutex {
 public:
-  Mutex () : m_spinlock () { }
+  Mutex() : m_spinlock() {}
   void lock() { m_spinlock.lock(); }
   void unlock() { m_spinlock.unlock(); }
+
 private:
   atomic::spinlock m_spinlock;
 };
@@ -78,28 +76,30 @@ private:
 
 #if defined(HAVE_QT) && !defined(HAVE_PTHREADS)
 
-class TL_PUBLIC WaitCondition
-  : public QWaitCondition
-{
+class TL_PUBLIC WaitCondition : public QWaitCondition {
 public:
-  WaitCondition () : QWaitCondition () { }
+  WaitCondition() : QWaitCondition() {}
 
-  bool wait (Mutex *mutex, unsigned long time = std::numeric_limits<unsigned long>::max ()) { return QWaitCondition::wait (mutex, time); }
+  bool wait(Mutex *mutex,
+            unsigned long time = std::numeric_limits<unsigned long>::max()) {
+    return QWaitCondition::wait(mutex, time);
+  }
 };
 
 #else
 
 class WaitConditionPrivate;
 
-//  The non-Qt version is a dummy implementation as threading is not supported (yet)
-class TL_PUBLIC WaitCondition
-{
+//  The non-Qt version is a dummy implementation as threading is not supported
+//  (yet)
+class TL_PUBLIC WaitCondition {
 public:
-  WaitCondition ();
-  ~WaitCondition ();
-  bool wait (Mutex * /*mutex*/, unsigned long /*time*/ = std::numeric_limits<unsigned long>::max ());
-  void wakeAll ();
-  void wakeOne ();
+  WaitCondition();
+  ~WaitCondition();
+  bool wait(Mutex * /*mutex*/,
+            unsigned long /*time*/ = std::numeric_limits<unsigned long>::max());
+  void wakeAll();
+  void wakeOne();
 
 private:
   WaitConditionPrivate *mp_data;
@@ -110,19 +110,11 @@ private:
 /**
  *  @brief A RAII-based Mutex locker
  */
-class TL_PUBLIC MutexLocker
-{
+class TL_PUBLIC MutexLocker {
 public:
-  MutexLocker (Mutex *mutex)
-    : mp_mutex (mutex)
-  {
-    mp_mutex->lock ();
-  }
+  MutexLocker(Mutex *mutex) : mp_mutex(mutex) { mp_mutex->lock(); }
 
-  ~MutexLocker ()
-  {
-    mp_mutex->unlock ();
-  }
+  ~MutexLocker() { mp_mutex->unlock(); }
 
 private:
   Mutex *mp_mutex;
@@ -136,40 +128,35 @@ private:
 
 #if defined(HAVE_QT) && !defined(HAVE_PTHREADS)
 
-class TL_PUBLIC Thread
-  : public QThread
-{
+class TL_PUBLIC Thread : public QThread {
 public:
-  Thread ()
-    : QThread ()
-  { }
+  Thread() : QThread() {}
 };
 
 #else
 
 class ThreadPrivateData;
 
-class TL_PUBLIC Thread
-{
+class TL_PUBLIC Thread {
 public:
-  Thread ();
-  virtual ~Thread ();
+  Thread();
+  virtual ~Thread();
 
-  void exit (int /*returnCode*/ = 0);
-  bool isFinished () const;
-  bool isRunning () const;
-  void quit ();
-  void start ();
-  void terminate ();
-  bool wait (unsigned long /*time*/ = std::numeric_limits<unsigned long>::max ());
+  void exit(int /*returnCode*/ = 0);
+  bool isFinished() const;
+  bool isRunning() const;
+  void quit();
+  void start();
+  void terminate();
+  bool wait(unsigned long /*time*/ = std::numeric_limits<unsigned long>::max());
 
 protected:
-  virtual void run () { }
+  virtual void run() {}
 
 private:
-  friend void *start_thread (void *);
+  friend void *start_thread(void *);
   ThreadPrivateData *mp_data;
-  void do_run ();
+  void do_run();
 };
 
 #endif
@@ -182,86 +169,70 @@ private:
 
 #if defined(HAVE_QT) && !defined(HAVE_PTHREADS)
 
-template <class T>
-class ThreadStorage
-  : public QThreadStorage<T>
-{
+template <class T> class ThreadStorage : public QThreadStorage<T> {
 public:
-  ThreadStorage () : QThreadStorage<T> () { }
+  ThreadStorage() : QThreadStorage<T>() {}
 };
 
 #else
 
-class TL_PUBLIC ThreadStorageHolderBase
-{
+class TL_PUBLIC ThreadStorageHolderBase {
 public:
-  ThreadStorageHolderBase (void *obj) : mp_obj (obj) { }
-  virtual ~ThreadStorageHolderBase () { }
+  ThreadStorageHolderBase(void *obj) : mp_obj(obj) {}
+  virtual ~ThreadStorageHolderBase() {}
 
 protected:
-  void *obj () { return mp_obj; }
+  void *obj() { return mp_obj; }
   void *mp_obj;
 };
 
-template <class T>
-class ThreadStorageHolder
-  : public ThreadStorageHolderBase
-{
+template <class T> class ThreadStorageHolder : public ThreadStorageHolderBase {
 public:
-  ThreadStorageHolder (T *t) : ThreadStorageHolderBase ((void *) t) { }
-  ~ThreadStorageHolder () { delete data (); }
-  T *data () { return (T *) obj (); }
+  ThreadStorageHolder(T *t) : ThreadStorageHolderBase((void *)t) {}
+  ~ThreadStorageHolder() { delete data(); }
+  T *data() { return (T *)obj(); }
 };
 
-class TL_PUBLIC ThreadStorageBase
-{
+class TL_PUBLIC ThreadStorageBase {
 public:
-  ThreadStorageBase ();
+  ThreadStorageBase();
 
 protected:
-  void add (ThreadStorageHolderBase *holder);
-  ThreadStorageHolderBase *holder ();
+  void add(ThreadStorageHolderBase *holder);
+  ThreadStorageHolderBase *holder();
 
-  const ThreadStorageHolderBase *holder () const
-  {
-    return (const_cast<ThreadStorageBase *> (this)->holder ());
+  const ThreadStorageHolderBase *holder() const {
+    return (const_cast<ThreadStorageBase *>(this)->holder());
   }
 };
 
-template <class T>
-class ThreadStorage
-  : public ThreadStorageBase
-{
+template <class T> class ThreadStorage : public ThreadStorageBase {
 public:
-  ThreadStorage () : ThreadStorageBase () { }
+  ThreadStorage() : ThreadStorageBase() {}
 
-  bool hasLocalData () const
-  {
-    return dynamic_cast<const ThreadStorageHolder<T> *> (holder ()) != 0;
+  bool hasLocalData() const {
+    return dynamic_cast<const ThreadStorageHolder<T> *>(holder()) != 0;
   }
 
-  T &localData ()
-  {
-    return *(dynamic_cast<ThreadStorageHolder<T> *> (holder ())->data ());
+  T &localData() {
+    return *(dynamic_cast<ThreadStorageHolder<T> *>(holder())->data());
   }
 
-  T localData () const
-  {
-    return *(dynamic_cast<const ThreadStorageHolder<T> *> (holder ())->data ());
+  T localData() const {
+    return *(dynamic_cast<const ThreadStorageHolder<T> *>(holder())->data());
   }
 
-  void setLocalData (const T &data)
-  {
-    if (hasLocalData ()) {
-      localData () = data;
+  void setLocalData(const T &data) {
+    if (hasLocalData()) {
+      localData() = data;
     } else {
-      add (new ThreadStorageHolder<T> (new T (data)));
+      add(new ThreadStorageHolder<T>(new T(data)));
     }
   }
 };
 
 #endif
 
-}
+} // namespace tl
 
 #endif

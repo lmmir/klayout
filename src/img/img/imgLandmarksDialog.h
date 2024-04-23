@@ -27,11 +27,10 @@
 
 #include <QDialog>
 
-#include "ui_ImageLandmarksDialog.h"
 #include "tlObject.h"
+#include "ui_ImageLandmarksDialog.h"
 
-namespace img
-{
+namespace img {
 
 class Object;
 class LandmarkEditorService;
@@ -39,31 +38,29 @@ class LandmarkEditorService;
 /**
  *  @brief The landmark editor for the image dialog
  */
-class LandmarksDialog :
-  public QDialog,
-  public Ui::ImageLandmarksDialog,
-  public tl::Object
-{
-Q_OBJECT
+class LandmarksDialog : public QDialog,
+                        public Ui::ImageLandmarksDialog,
+                        public tl::Object {
+  Q_OBJECT
 
 public:
-  LandmarksDialog (QWidget *parent, img::Object &img);
-  ~LandmarksDialog ();
+  LandmarksDialog(QWidget *parent, img::Object &img);
+  ~LandmarksDialog();
 
   enum mode_t { Move, Add, Delete, None } m_mode;
 
 private slots:
-  void update_mode ();
-  void accept ();
+  void update_mode();
+  void accept();
 
 private:
   LandmarkEditorService *mp_service;
   img::Object *mp_image, *mp_original_image;
 
-  void landmarks_updated ();
+  void landmarks_updated();
 };
 
-}
+} // namespace img
 
 #endif
 

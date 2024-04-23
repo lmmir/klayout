@@ -24,15 +24,14 @@
 #define HDR_dbLayoutToNetlistWriter
 
 #include "dbCommon.h"
-#include "dbPoint.h"
-#include "dbTrans.h"
-#include "dbPolygon.h"
 #include "dbHierNetworkProcessor.h"
-#include "tlStream.h"
+#include "dbPoint.h"
+#include "dbPolygon.h"
+#include "dbTrans.h"
 #include "tlProgress.h"
+#include "tlStream.h"
 
-namespace db
-{
+namespace db {
 
 class Circuit;
 class SubCircuit;
@@ -50,18 +49,19 @@ class NetShape;
  *    token(a b c)
  *  This class takes care of properly handling separation blanks
  */
-class TokenizedOutput
-{
+class TokenizedOutput {
 public:
-  TokenizedOutput (tl::OutputStream &stream);
-  TokenizedOutput (tl::OutputStream &stream, const std::string &token);
-  TokenizedOutput (tl::OutputStream &stream, int indent, const std::string &token);
-  TokenizedOutput (TokenizedOutput &output, const std::string &token, bool inl = false);
-  ~TokenizedOutput ();
+  TokenizedOutput(tl::OutputStream &stream);
+  TokenizedOutput(tl::OutputStream &stream, const std::string &token);
+  TokenizedOutput(tl::OutputStream &stream, int indent,
+                  const std::string &token);
+  TokenizedOutput(TokenizedOutput &output, const std::string &token,
+                  bool inl = false);
+  ~TokenizedOutput();
 
-  TokenizedOutput &operator<< (const std::string &s);
+  TokenizedOutput &operator<<(const std::string &s);
 
-  tl::OutputStream &stream () { return *mp_stream; }
+  tl::OutputStream &stream() { return *mp_stream; }
 
 private:
   tl::OutputStream *mp_stream;
@@ -69,28 +69,26 @@ private:
   bool m_first, m_inline, m_newline;
   int m_indent;
 
-  void emit_sep ();
-  int indent () const { return m_indent; }
+  void emit_sep();
+  int indent() const { return m_indent; }
 };
 
-namespace l2n_std_format
-{
+namespace l2n_std_format {
 
-template <class Keys>
-class std_writer_impl
-  : private db::CircuitCallback
-{
+template <class Keys> class std_writer_impl : private db::CircuitCallback {
 public:
-  std_writer_impl (tl::OutputStream &stream, double dbu, const std::string &progress_description = std::string ());
+  std_writer_impl(tl::OutputStream &stream, double dbu,
+                  const std::string &progress_description = std::string());
 
-  void write (const db::LayoutToNetlist *l2n);
-  void write (TokenizedOutput &stream, bool nested, const db::Netlist *netlist, const db::LayoutToNetlist *l2n, std::map<const db::Circuit *, std::map<const db::Net *, unsigned int> > *net2id_per_circuit);
+  void write(const db::LayoutToNetlist *l2n);
+  void
+  write(TokenizedOutput &stream, bool nested, const db::Netlist *netlist,
+        const db::LayoutToNetlist *l2n,
+        std::map<const db::Circuit *, std::map<const db::Net *, unsigned int>>
+            *net2id_per_circuit);
 
 protected:
-  tl::OutputStream &stream ()
-  {
-    return *mp_stream;
-  }
+  tl::OutputStream &stream() { return *mp_stream; }
 
 private:
   tl::OutputStream *mp_stream;
@@ -100,38 +98,49 @@ private:
   const db::LayoutToNetlist *mp_l2n;
   tl::AbsoluteProgress m_progress;
 
-  void write (bool nested, TokenizedOutput &stream, std::map<const db::Circuit *, std::map<const db::Net *, unsigned int> > *net2id_per_circuit);
-  void write (TokenizedOutput &stream, const db::Circuit &circuit, std::map<const db::Circuit *, std::map<const db::Net *, unsigned int> > *net2id_per_circuit);
-  void write (TokenizedOutput &stream, const db::Net &net, unsigned int id);
-  void write (TokenizedOutput &stream, const db::SubCircuit &subcircuit, std::map<const Net *, unsigned int> &net2id);
-  void write (TokenizedOutput &stream, const db::Device &device, std::map<const Net *, unsigned int> &net2id);
-  void write (TokenizedOutput &stream, const db::DeviceAbstract &device_abstract);
-  void write (TokenizedOutput &stream, const db::NetShape *s, const db::ICplxTrans &tr, const std::string &lname, bool relative);
-  void write (TokenizedOutput &stream, const db::DCplxTrans &trans);
-  void write_device_class (TokenizedOutput &stream, const db::DeviceClass *cls, const std::string &name, const db::DeviceClass *temp_class);
-  void reset_geometry_ref ();
+  void
+  write(bool nested, TokenizedOutput &stream,
+        std::map<const db::Circuit *, std::map<const db::Net *, unsigned int>>
+            *net2id_per_circuit);
+  void
+  write(TokenizedOutput &stream, const db::Circuit &circuit,
+        std::map<const db::Circuit *, std::map<const db::Net *, unsigned int>>
+            *net2id_per_circuit);
+  void write(TokenizedOutput &stream, const db::Net &net, unsigned int id);
+  void write(TokenizedOutput &stream, const db::SubCircuit &subcircuit,
+             std::map<const Net *, unsigned int> &net2id);
+  void write(TokenizedOutput &stream, const db::Device &device,
+             std::map<const Net *, unsigned int> &net2id);
+  void write(TokenizedOutput &stream,
+             const db::DeviceAbstract &device_abstract);
+  void write(TokenizedOutput &stream, const db::NetShape *s,
+             const db::ICplxTrans &tr, const std::string &lname, bool relative);
+  void write(TokenizedOutput &stream, const db::DCplxTrans &trans);
+  void write_device_class(TokenizedOutput &stream, const db::DeviceClass *cls,
+                          const std::string &name,
+                          const db::DeviceClass *temp_class);
+  void reset_geometry_ref();
 
   //  implementation of CircuitCallback
-  bool new_cell (cell_index_type ci) const;
+  bool new_cell(cell_index_type ci) const;
 };
 
-}
+} // namespace l2n_std_format
 
 class LayoutToNetlist;
 
 /**
  *  @brief The base class for a LayoutToNetlist writer
  */
-class DB_PUBLIC LayoutToNetlistWriterBase
-{
+class DB_PUBLIC LayoutToNetlistWriterBase {
 public:
-  LayoutToNetlistWriterBase ();
-  virtual ~LayoutToNetlistWriterBase ();
+  LayoutToNetlistWriterBase();
+  virtual ~LayoutToNetlistWriterBase();
 
-  void write (const db::LayoutToNetlist *l2n);
+  void write(const db::LayoutToNetlist *l2n);
 
 protected:
-  virtual void do_write (const db::LayoutToNetlist *l2n) = 0;
+  virtual void do_write(const db::LayoutToNetlist *l2n) = 0;
 
 private:
   std::string m_filename;
@@ -141,19 +150,18 @@ private:
  *  @brief The standard writer
  */
 class DB_PUBLIC LayoutToNetlistStandardWriter
-  : public LayoutToNetlistWriterBase
-{
+    : public LayoutToNetlistWriterBase {
 public:
-  LayoutToNetlistStandardWriter (tl::OutputStream &stream, bool short_version);
+  LayoutToNetlistStandardWriter(tl::OutputStream &stream, bool short_version);
 
 protected:
-  void do_write (const db::LayoutToNetlist *l2n);
+  void do_write(const db::LayoutToNetlist *l2n);
 
 private:
   tl::OutputStream *mp_stream;
   bool m_short_version;
 };
 
-}
+} // namespace db
 
 #endif

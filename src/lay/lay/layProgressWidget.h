@@ -20,18 +20,17 @@
 
 */
 
-
 #ifndef HDR_layProgressWidget
 #define HDR_layProgressWidget
 
 #include <QFrame>
-#include <QToolButton>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QPainter>
-#include <QHBoxLayout>
+#include <QToolButton>
 
-#include "layProgress.h"
 #include "layLogViewerDialog.h"
+#include "layProgress.h"
 
 class QToolButton;
 class QLabel;
@@ -40,35 +39,32 @@ class QGridLayout;
 class QListView;
 class QFrame;
 
-namespace tl
-{
-  class Progress;
+namespace tl {
+class Progress;
 }
 
-namespace lay
-{
+namespace lay {
 
 class ProgressBarWidget;
 
-class ProgressWidget
-  : public QFrame
-{
-Q_OBJECT
+class ProgressWidget : public QFrame {
+  Q_OBJECT
 
 public:
-  ProgressWidget (ProgressReporter *pr, QWidget *parent, bool full_width = false);
+  ProgressWidget(ProgressReporter *pr, QWidget *parent,
+                 bool full_width = false);
 
-  void set_progress (tl::Progress *progress);
-  void add_widget (QWidget *widget);
-  void remove_widget ();
-  QWidget *get_widget () const;
-  void set_full_width (bool fw);
-  bool full_width () const;
+  void set_progress(tl::Progress *progress);
+  void add_widget(QWidget *widget);
+  void remove_widget();
+  QWidget *get_widget() const;
+  void set_full_width(bool fw);
+  bool full_width() const;
 
-  QSize sizeHint () const;
+  QSize sizeHint() const;
 
 public slots:
-  void signal_break ();
+  void signal_break();
 
 private:
   QLabel *mp_label;
@@ -86,10 +82,9 @@ private:
   int m_left_col, m_right_col;
   bool m_log_visible;
 
-  void set_log_visible (tl::Progress *progress);
+  void set_log_visible(tl::Progress *progress);
 };
 
-}
+} // namespace lay
 
 #endif
-

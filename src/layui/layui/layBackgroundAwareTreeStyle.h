@@ -29,8 +29,7 @@
 
 #include <QProxyStyle>
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief A style tailoring the drawing of the branch indicator
@@ -39,16 +38,15 @@ namespace lay
  *  The default Gtk style is not, hence making the background dark means the
  *  triangles become invisible.
  */
-class LAYUI_PUBLIC BackgroundAwareTreeStyle
-  : public QProxyStyle
-{
+class LAYUI_PUBLIC BackgroundAwareTreeStyle : public QProxyStyle {
 public:
-  BackgroundAwareTreeStyle (QStyle *org_style);
-  void drawPrimitive (PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *w) const;
+  BackgroundAwareTreeStyle(QStyle *org_style);
+  void drawPrimitive(PrimitiveElement pe, const QStyleOption *opt, QPainter *p,
+                     const QWidget *w) const;
 };
 
 } // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

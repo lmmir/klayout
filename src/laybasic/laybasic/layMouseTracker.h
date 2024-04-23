@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layMouseTracker
 #define HDR_layMouseTracker
 
@@ -33,18 +32,16 @@ namespace lay {
 class LayoutCanvas;
 class LayoutViewBase;
 
-class MouseTracker
-  : public lay::ViewService
-{
-public: 
-  MouseTracker (lay::LayoutViewBase *view);
-  virtual bool mouse_move_event (const db::DPoint &p, unsigned int buttons, bool prio);
+class MouseTracker : public lay::ViewService {
+public:
+  MouseTracker(lay::LayoutViewBase *view);
+  virtual bool mouse_move_event(const db::DPoint &p, unsigned int buttons,
+                                bool prio);
 
 private:
   lay::LayoutViewBase *mp_view;
 };
 
-}
+} // namespace lay
 
 #endif
-

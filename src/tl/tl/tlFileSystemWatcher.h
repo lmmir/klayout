@@ -24,21 +24,20 @@
 #define HDR_tlFileSystemWatcher
 
 #if !defined(HAVE_QT)
-# error tl::FileSystemWatcher not available
+#error tl::FileSystemWatcher not available
 #endif
 
 #include "tlEvents.h"
 
-#include <QObject>
 #include <QDateTime>
+#include <QObject>
 
 #include <map>
 #include <string>
 
 class QTimer;
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief A file system watcher, similar to QFileSystemWatcher
@@ -46,58 +45,53 @@ namespace tl
  *  Thousands of files can be added, but delay between detection of file
  *  system updates and signals can increase.
  */
-class TL_PUBLIC FileSystemWatcher
-  : public QObject
-{
-Q_OBJECT
+class TL_PUBLIC FileSystemWatcher : public QObject {
+  Q_OBJECT
 
 public:
   /**
    *  @brief Constructor
    */
-  FileSystemWatcher (QObject *parent = 0);
+  FileSystemWatcher(QObject *parent = 0);
 
   /**
    *  @brief Global enable/disable
    */
-  static void global_enable (bool en);
+  static void global_enable(bool en);
 
   /**
    *  @brief Enables or disables the file watcher
    */
-  void enable (bool en);
+  void enable(bool en);
 
   /**
    *  @brief Sets the batch size (the number of files checked per timer event)
    *  The default batch size is 100.
    */
-  void set_batch_size (size_t n);
+  void set_batch_size(size_t n);
 
   /**
    *  @brief Gets the batch size
    */
-  size_t batch_size () const
-  {
-    return m_batch_size;
-  }
+  size_t batch_size() const { return m_batch_size; }
 
   /**
    *  @brief Clears the file watcher
    */
-  void clear ();
+  void clear();
 
   /**
    *  @brief Adds a file for being watched
-   *  Files can be added multiple times. In that case they need to be removed the same
-   *  number of times before they really disappear.
+   *  Files can be added multiple times. In that case they need to be removed
+   * the same number of times before they really disappear.
    */
-  void add_file (const std::string &path);
+  void add_file(const std::string &path);
 
   /**
    *  @brief Removes a file from the list of files to watch
    *  See \add_file for details.
    */
-  void remove_file (const std::string &path);
+  void remove_file(const std::string &path);
 
   /**
    *  @brief This event is triggered after the given file has changed
@@ -113,21 +107,21 @@ signals:
   /**
    *  @brief An alternative, Qt-style signal for file_removed
    */
-  void fileRemoved (const QString &path);
+  void fileRemoved(const QString &path);
 
   /**
    *  @brief An alternative, Qt-style signal for file_changed
    */
-  void fileChanged (const QString &path);
+  void fileChanged(const QString &path);
 
 private slots:
-  void timeout ();
+  void timeout();
 
 private:
-
   struct FileEntry {
-    FileEntry () : refcount (0), size (0) { }
-    FileEntry (int r, size_t s, const QDateTime &t) : refcount (r), size (s), time (t) { }
+    FileEntry() : refcount(0), size(0) {}
+    FileEntry(int r, size_t s, const QDateTime &t)
+        : refcount(r), size(s), time(t) {}
     int refcount;
     size_t size;
     QDateTime time;
@@ -140,7 +134,6 @@ private:
   std::map<std::string, FileEntry>::iterator m_iter;
 };
 
-}
+} // namespace tl
 
 #endif
-

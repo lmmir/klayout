@@ -26,8 +26,7 @@
 
 #include "layPluginConfigPage.h"
 
-namespace lay
-{
+namespace lay {
 
 //  .. nothing yet ..
 

@@ -25,11 +25,10 @@
 #ifndef HDR_layLayoutViewNoQt
 #define HDR_layLayoutViewNoQt
 
-#include "layviewCommon.h"
 #include "layLayoutViewBase.h"
+#include "layviewCommon.h"
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief The layout view object
@@ -37,61 +36,64 @@ namespace lay
  *  The layout view is responsible for displaying one or a set of layouts.
  *  It manages the layer display list and many other components.
  */
-class LAYVIEW_PUBLIC LayoutView
-  : public LayoutViewBase
-{
+class LAYVIEW_PUBLIC LayoutView : public LayoutViewBase {
 public:
   /**
    *  @brief Constructor
    */
-  LayoutView (db::Manager *mgr, bool editable, lay::Plugin *plugin_parent, unsigned int options = (unsigned int) LV_Normal);
+  LayoutView(db::Manager *mgr, bool editable, lay::Plugin *plugin_parent,
+             unsigned int options = (unsigned int)LV_Normal);
 
   /**
    *  @brief Constructor (clone from another view)
    */
-  LayoutView (lay::LayoutView *source, db::Manager *mgr, bool editable, lay::Plugin *plugin_parent, unsigned int options = (unsigned int) LV_Normal);
+  LayoutView(lay::LayoutView *source, db::Manager *mgr, bool editable,
+             lay::Plugin *plugin_parent,
+             unsigned int options = (unsigned int)LV_Normal);
 
   /**
-   *  @brief This event is triggered in the "timer" callback when the image ("screenshot") was updated.
+   *  @brief This event is triggered in the "timer" callback when the image
+   * ("screenshot") was updated.
    */
   tl::Event image_updated_event;
 
   /**
-   *  @brief This event is triggered in the "timer" callback when the drawing thread has finished.
+   *  @brief This event is triggered in the "timer" callback when the drawing
+   * thread has finished.
    */
   tl::Event drawing_finished_event;
 
   /**
    *  @brief A callback that needs to be called "frequently"
    */
-  void timer ();
+  void timer();
 
   /**
    *  @brief Makes this view the current one
    */
-  void set_current ();
+  void set_current();
 
   /**
    *  @brief Gets the current view
    */
-  static LayoutView *current ();
+  static LayoutView *current();
 
   /**
    *  @brief Sets the current view
    */
-  static void set_current (LayoutView *view);
+  static void set_current(LayoutView *view);
 
 protected:
   /**
    *  @brief Gets the LayoutView interface
    */
-  virtual LayoutView *get_ui () { return this; }
+  virtual LayoutView *get_ui() { return this; }
 
 private:
   using LayoutViewBase::ui;
 };
 
-}
+} // namespace lay
 
 #endif
 

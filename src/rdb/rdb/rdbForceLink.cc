@@ -20,14 +20,8 @@
 
 */
 
-
 #include "rdbForceLink.h"
 
-namespace rdb
-{
-  int _force_link_f () 
-  { 
-    return 0; 
-  }
-}
-
+namespace rdb {
+int _force_link_f() { return 0; }
+} // namespace rdb

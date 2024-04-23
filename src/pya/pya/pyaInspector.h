@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef _HDR_pyaInspector
 #define _HDR_pyaInspector
 
@@ -31,8 +30,7 @@
 #include <list>
 #include <string>
 
-namespace pya
-{
+namespace pya {
 
 /**
  *  @brief Creates an inspector object from a Python dict, tuple or list
@@ -40,10 +38,8 @@ namespace pya
  *  The returned object must be deleted by the caller.
  *  If symbolic is true, the dict is interpreted as a variable list.
  */
-gsi::Inspector *
-create_inspector (PyObject *container, bool symbolic = false);
+gsi::Inspector *create_inspector(PyObject *container, bool symbolic = false);
 
-}
+} // namespace pya
 
 #endif
-

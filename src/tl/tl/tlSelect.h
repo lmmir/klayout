@@ -20,25 +20,22 @@
 
 */
 
-
 #ifndef HDR_tlSelect
 #define HDR_tlSelect
 
 #include "tlCommon.h"
 
-namespace tl
-{
+namespace tl {
 
-template<class Q, class X>
-struct try_assign
-{
-  bool operator() (Q &, const X &) { return false; }
+template <class Q, class X> struct try_assign {
+  bool operator()(Q &, const X &) { return false; }
 };
 
-template<class Q>
-struct try_assign<Q, Q>
-{
-  bool operator() (Q &q, const Q &x) { q = x; return true; }
+template <class Q> struct try_assign<Q, Q> {
+  bool operator()(Q &q, const Q &x) {
+    q = x;
+    return true;
+  }
 };
 
 /**
@@ -46,13 +43,10 @@ struct try_assign<Q, Q>
  *
  *  Returns true, if type A or B match with Q and q has been assigned.
  */
-template <class Q, class A, class B>
-bool select (Q &q, const A &a, const B &b)
-{
-  return try_assign<Q, A> () (q, a) || try_assign<Q, B> () (q, b);
+template <class Q, class A, class B> bool select(Q &q, const A &a, const B &b) {
+  return try_assign<Q, A>()(q, a) || try_assign<Q, B>()(q, b);
 }
 
-}
+} // namespace tl
 
 #endif
-

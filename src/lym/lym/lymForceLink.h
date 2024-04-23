@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_lymForceLink
 #define HDR_lymForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the lym module
  */
 
-namespace lym
-{
-  LYM_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace lym {
+LYM_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace lym
 
 #endif
-

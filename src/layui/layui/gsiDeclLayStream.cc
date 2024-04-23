@@ -22,31 +22,31 @@
 
 #if defined(HAVE_QT)
 
-#include "gsiDecl.h"
 #include "dbReader.h"
+#include "gsiDecl.h"
 #include "layTechnology.h"
 
-namespace gsi
-{
+namespace gsi {
 
-static db::LoadLayoutOptions get_options_from_technology (const std::string &technology)
-{
-  return db::Technologies::instance ()->technology_by_name (technology)->load_layout_options ();
+static db::LoadLayoutOptions
+get_options_from_technology(const std::string &technology) {
+  return db::Technologies::instance()
+      ->technology_by_name(technology)
+      ->load_layout_options();
 }
 
 //  Extend "LoadLayoutOptions" by contributions from lay
-gsi::ClassExt<db::LoadLayoutOptions> layout_reader_decl (
-  gsi::method ("from_technology", &gsi::get_options_from_technology, gsi::arg ("technology"),
-    "@brief Gets the reader options of a given technology\n"
-    "@param technology The name of the technology to apply\n"
-    "Returns the reader options of a specific technology. If the technology name is not valid or an empty string, "
-    "the reader options of the default technology are returned.\n"
-    "\n"
-    "This method has been introduced in version 0.25\n"
-  )
-);
+gsi::ClassExt<db::LoadLayoutOptions> layout_reader_decl(
+    gsi::method("from_technology", &gsi::get_options_from_technology,
+                gsi::arg("technology"),
+                "@brief Gets the reader options of a given technology\n"
+                "@param technology The name of the technology to apply\n"
+                "Returns the reader options of a specific technology. If the "
+                "technology name is not valid or an empty string, "
+                "the reader options of the default technology are returned.\n"
+                "\n"
+                "This method has been introduced in version 0.25\n"));
 
-}
+} // namespace gsi
 
 #endif
-

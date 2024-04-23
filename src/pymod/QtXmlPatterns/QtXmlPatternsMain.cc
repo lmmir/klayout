@@ -31,4 +31,5 @@ FORCE_LINK_GSI_QTXMLPATTERNS
 #include "../../gsiqt/qtbasic/gsiQtNetworkExternals.h"
 FORCE_LINK_GSI_QTNETWORK
 
-DEFINE_PYMOD(QtXmlPatterns, "QtXmlPatterns", "KLayout/Qt module 'QtXmlPatterns'")
+DEFINE_PYMOD(QtXmlPatterns, "QtXmlPatterns",
+             "KLayout/Qt module 'QtXmlPatterns'")

@@ -26,4 +26,5 @@
 #include "../../gsiqt/qtbasic/gsiQtCore5CompatExternals.h"
 FORCE_LINK_GSI_QTCORE5COMPAT
 
-DEFINE_PYMOD(QtCore5Compat, "QtCore5Compat", "KLayout/Qt module 'QtCore5Compat'")
+DEFINE_PYMOD(QtCore5Compat, "QtCore5Compat",
+             "KLayout/Qt module 'QtCore5Compat'")

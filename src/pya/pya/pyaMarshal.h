@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef _HDR_pyaMarshal
 #define _HDR_pyaMarshal
 
@@ -30,8 +29,7 @@
 #include "gsiDeclBasic.h"
 #include "pyaRefs.h"
 
-namespace pya
-{
+namespace pya {
 
 class PYAObjectBase;
 
@@ -46,8 +44,8 @@ class PYAObjectBase;
  *  The heap collects objects created while filling the buffer.
  *  The stack must persist as long as the serial buffer is used.
  */
-void
-push_arg (const gsi::ArgType &atype, gsi::SerialArgs &aserial, PyObject *arg, tl::Heap &heap);
+void push_arg(const gsi::ArgType &atype, gsi::SerialArgs &aserial,
+              PyObject *arg, tl::Heap &heap);
 
 /**
  *  @brief Reads a value from the serial stream (deserialize)
@@ -55,32 +53,36 @@ push_arg (const gsi::ArgType &atype, gsi::SerialArgs &aserial, PyObject *arg, tl
  *  @param A type of the object to take from the stream
  *  @param aserial The stream from which to deserialize
  *  @param heap The heap for temporary objects
- *  @param self The self object of the method call (for shortcut evaluation to return self if possible)
+ *  @param self The self object of the method call (for shortcut evaluation to
+ * return self if possible)
  *  @return The deserialized object (a new reference)
  */
-PythonRef pop_arg (const gsi::ArgType &atype, gsi::SerialArgs &aserial, PYAObjectBase *self, tl::Heap &heap);
+PythonRef pop_arg(const gsi::ArgType &atype, gsi::SerialArgs &aserial,
+                  PYAObjectBase *self, tl::Heap &heap);
 
 /**
  *  @brief Tests whether the given object is compatible with the given type
  *
  *  @param atype The requested type
  *  @param arg The object to test
- *  @param loose If true, the test is performed in a loose fashion (used for second-pass matching)
+ *  @param loose If true, the test is performed in a loose fashion (used for
+ * second-pass matching)
  *  @return True, if the type match
  */
-bool
-test_arg (const gsi::ArgType &atype, PyObject *arg, bool loose);
+bool test_arg(const gsi::ArgType &atype, PyObject *arg, bool loose);
 
 /**
- *  @brief Correct constness if a reference is const and a non-const reference is required
- *  HINT: this is a workaround for the fact that unlike C++, Python does not have const or non-const
- *  references. Since a reference is identical with the object it points to, there are only const or non-const
- *  objects. We deliver const objects first, but if a non-const version is requested, the
- *  object turns into a non-const one. This may be confusing but provides a certain level
- *  of "constness", at least until there is another non-const reference for that object.
+ *  @brief Correct constness if a reference is const and a non-const reference
+ * is required HINT: this is a workaround for the fact that unlike C++, Python
+ * does not have const or non-const references. Since a reference is identical
+ * with the object it points to, there are only const or non-const objects. We
+ * deliver const objects first, but if a non-const version is requested, the
+ *  object turns into a non-const one. This may be confusing but provides a
+ * certain level of "constness", at least until there is another non-const
+ * reference for that object.
  */
-void correct_constness (PyObject *obj, bool const_required);
+void correct_constness(PyObject *obj, bool const_required);
 
-}
+} // namespace pya
 
 #endif

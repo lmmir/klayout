@@ -20,40 +20,35 @@
 
 */
 
-
 #include "layMouseTracker.h"
 #include "layLayoutCanvas.h"
 #include "layLayoutViewBase.h"
 
-namespace lay
-{
+namespace lay {
 
-MouseTracker::MouseTracker (lay::LayoutViewBase *view)
-  : lay::ViewService (view->canvas ()), mp_view (view)
-{
-  ui ()->grab_mouse (this, false);
+MouseTracker::MouseTracker(lay::LayoutViewBase *view)
+    : lay::ViewService(view->canvas()), mp_view(view) {
+  ui()->grab_mouse(this, false);
 }
 
-bool 
-MouseTracker::mouse_move_event (const db::DPoint &p, unsigned int /*buttons*/, bool prio)
-{
+bool MouseTracker::mouse_move_event(const db::DPoint &p,
+                                    unsigned int /*buttons*/, bool prio) {
   if (prio) {
 
-    //  NOTE: because the tracker grabs first and grabbers are registered first gets served last, the
-    //  tracker will receive the event after all other mouse grabbers have been served and had their
-    //  chance to set the tracking position.
-    lay::ViewService *vs = mp_view->canvas ()->active_service ();
+    //  NOTE: because the tracker grabs first and grabbers are registered first
+    //  gets served last, the tracker will receive the event after all other
+    //  mouse grabbers have been served and had their chance to set the tracking
+    //  position.
+    lay::ViewService *vs = mp_view->canvas()->active_service();
     db::DPoint tp = p;
-    if (vs && vs->enabled () && vs->has_tracking_position ()) {
-      tp = vs->tracking_position ();
+    if (vs && vs->enabled() && vs->has_tracking_position()) {
+      tp = vs->tracking_position();
     }
 
-    mp_view->current_pos (tp.x (), tp.y ());
-
+    mp_view->current_pos(tp.x(), tp.y());
   }
 
   return false;
 }
 
 } // namespace lay
-

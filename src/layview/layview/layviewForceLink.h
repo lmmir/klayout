@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layviewForceLink
 #define HDR_layviewForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the layview module
  */
 
-namespace layview
-{
-  LAYVIEW_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace layview {
+LAYVIEW_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace layview
 
 #endif
-

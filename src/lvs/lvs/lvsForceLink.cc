@@ -20,15 +20,9 @@
 
 */
 
-
 #include "lvsForceLink.h"
 #include "rdbForceLink.h"
 
-namespace lvs
-{
-  int _force_link_f () 
-  { 
-    return 0; 
-  }
-}
-
+namespace lvs {
+int _force_link_f() { return 0; }
+} // namespace lvs

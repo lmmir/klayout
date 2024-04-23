@@ -20,38 +20,38 @@
 
 */
 
-#include "tlUnitTest.h"
-#include "tlStream.h"
 #include "tlFileUtils.h"
+#include "tlStream.h"
+#include "tlUnitTest.h"
 
 //  Testing the converter main implementation (CIF)
-TEST(1)
-{
+TEST(1) {
 #if defined(HAVE_PYTHON)
-  std::string fp (tl::testsrc ());
+  std::string fp(tl::testsrc());
   fp += "/testdata/bd/strmrun.py";
 
   std::string cmd;
 
 #if defined(__APPLE__)
-  //  NOTE: because of system integrity, MacOS does not inherit DYLD_LIBRARY_PATH to child
-  //  processes like sh. We need to port this variable explicitly.
+  //  NOTE: because of system integrity, MacOS does not inherit
+  //  DYLD_LIBRARY_PATH to child processes like sh. We need to port this
+  //  variable explicitly.
   const char *ldpath_name = "DYLD_LIBRARY_PATH";
-  const char *ldpath = getenv (ldpath_name);
+  const char *ldpath = getenv(ldpath_name);
   if (ldpath) {
-    cmd += std::string (ldpath_name) + "=\"" + ldpath + "\"; export " + ldpath_name + "; ";
+    cmd += std::string(ldpath_name) + "=\"" + ldpath + "\"; export " +
+           ldpath_name + "; ";
   }
 #endif
 
-  cmd += tl::combine_path (tl::get_inst_path (), "strmrun ") + fp;
+  cmd += tl::combine_path(tl::get_inst_path(), "strmrun ") + fp;
   tl::info << cmd;
 
-  tl::InputPipe pipe (cmd);
-  tl::InputStream is (pipe);
-  std::string data = is.read_all ();
+  tl::InputPipe pipe(cmd);
+  tl::InputStream is(pipe);
+  std::string data = is.read_all();
   tl::info << data;
 
-  EXPECT_EQ (data, "Hello, world (0,-42;42,0)!\n");
+  EXPECT_EQ(data, "Hello, world (0,-42;42,0)!\n");
 #endif
 }
-

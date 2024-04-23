@@ -25,20 +25,19 @@
 #ifndef HDR_layEditorOptionsPages
 #define HDR_layEditorOptionsPages
 
-#include "layuiCommon.h"
 #include "layEditorOptionsPage.h"
+#include "layuiCommon.h"
 
 #include <tlVariant.h>
 
 #include <QFrame>
-#include <vector>
 #include <string>
+#include <vector>
 
 class QTabWidget;
 class QLabel;
 
-namespace lay
-{
+namespace lay {
 
 class PluginDeclaration;
 class Dispatcher;
@@ -47,41 +46,38 @@ class Plugin;
 /**
  *  @brief The object properties dialog
  */
-class LAYUI_PUBLIC EditorOptionsPages
-  : public QFrame
-{
-Q_OBJECT
+class LAYUI_PUBLIC EditorOptionsPages : public QFrame {
+  Q_OBJECT
 
 public:
-  EditorOptionsPages (QWidget *parent, const std::vector<lay::EditorOptionsPage *> &pages, lay::Dispatcher *root);
-  ~EditorOptionsPages ();
+  EditorOptionsPages(QWidget *parent,
+                     const std::vector<lay::EditorOptionsPage *> &pages,
+                     lay::Dispatcher *root);
+  ~EditorOptionsPages();
 
-  void unregister_page (lay::EditorOptionsPage *page);
-  void activate_page (lay::EditorOptionsPage *page);
-  void focusInEvent (QFocusEvent *event);
+  void unregister_page(lay::EditorOptionsPage *page);
+  void activate_page(lay::EditorOptionsPage *page);
+  void focusInEvent(QFocusEvent *event);
 
-  const std::vector <lay::EditorOptionsPage *> &pages () const
-  {
-    return m_pages;
-  }
+  const std::vector<lay::EditorOptionsPage *> &pages() const { return m_pages; }
 
-  bool has_content () const;
+  bool has_content() const;
 
 public slots:
-  void apply ();
-  void setup ();
+  void apply();
+  void setup();
 
 private:
-  std::vector <lay::EditorOptionsPage *> m_pages;
+  std::vector<lay::EditorOptionsPage *> m_pages;
   lay::Dispatcher *mp_dispatcher;
   QTabWidget *mp_pages;
 
-  void update (lay::EditorOptionsPage *page);
-  void do_apply ();
+  void update(lay::EditorOptionsPage *page);
+  void do_apply();
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

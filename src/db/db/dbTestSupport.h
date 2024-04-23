@@ -23,19 +23,17 @@
 #ifndef HDR_dbTestSupport
 #define HDR_dbTestSupport
 
+#include "dbBox.h"
 #include "dbCommon.h"
 #include "dbTypes.h"
-#include "dbBox.h"
 
 #include <string>
 
-namespace tl
-{
-  class TestBase;
+namespace tl {
+class TestBase;
 }
 
-namespace db
-{
+namespace db {
 
 class PropertiesRepository;
 class Layout;
@@ -50,15 +48,14 @@ class Texts;
 /**
  *  @brief Specifies the normalization mode for compare_layouts
  */
-enum NormalizationMode
-{
-  NoNormalization = 0,    //  no normalization - take the test subject as it is
-  WriteGDS2 = 1,          //  normalize subject by writing to GDS2 and reading back
-  WriteOAS = 2,           //  normalize subject by writing to OASIS and reading back
-  NormFileMask = 7,       //  bits the extract for file mode
-  NoContext = 8,          //  write tmp file without context
-  AsPolygons = 16,        //  paths and boxes are treated as polygons
-  WithArrays = 32         //  do not flatten arrays
+enum NormalizationMode {
+  NoNormalization = 0, //  no normalization - take the test subject as it is
+  WriteGDS2 = 1,       //  normalize subject by writing to GDS2 and reading back
+  WriteOAS = 2,     //  normalize subject by writing to OASIS and reading back
+  NormFileMask = 7, //  bits the extract for file mode
+  NoContext = 8,    //  write tmp file without context
+  AsPolygons = 16,  //  paths and boxes are treated as polygons
+  WithArrays = 32   //  do not flatten arrays
 };
 
 /**
@@ -69,7 +66,10 @@ enum NormalizationMode
  *  @param tolerance A tolerance applied when comparing shapes in database units
  *  The layout is normalized by writing to a file and reading back
  */
-void DB_PUBLIC compare_layouts (tl::TestBase *_this, const db::Layout &layout, const std::string &au_file, NormalizationMode norm = WriteGDS2, db::Coord tolerance = 0);
+void DB_PUBLIC compare_layouts(tl::TestBase *_this, const db::Layout &layout,
+                               const std::string &au_file,
+                               NormalizationMode norm = WriteGDS2,
+                               db::Coord tolerance = 0);
 
 /**
  *  @brief Compares a layout with a golden layout file with layer mapping
@@ -81,48 +81,61 @@ void DB_PUBLIC compare_layouts (tl::TestBase *_this, const db::Layout &layout, c
  *  @param tolerance A tolerance applied when comparing shapes in database units
  *  The layout is normalized by writing to a file and reading back
  */
-void DB_PUBLIC compare_layouts (tl::TestBase *_this, const db::Layout &layout, const std::string &au_file, const db::LayerMap &lmap, bool read_all_others, NormalizationMode norm = WriteGDS2, db::Coord tolerance = 0);
+void DB_PUBLIC compare_layouts(tl::TestBase *_this, const db::Layout &layout,
+                               const std::string &au_file,
+                               const db::LayerMap &lmap, bool read_all_others,
+                               NormalizationMode norm = WriteGDS2,
+                               db::Coord tolerance = 0);
 
 /**
  *  @brief Compares a netlist against a string
  */
-void DB_PUBLIC compare_netlist (tl::TestBase *_this, const db::Netlist &netlist, const std::string &au_nl_string, bool exact_parameter_match = false, bool with_names = false);
+void DB_PUBLIC compare_netlist(tl::TestBase *_this, const db::Netlist &netlist,
+                               const std::string &au_nl_string,
+                               bool exact_parameter_match = false,
+                               bool with_names = false);
 
 /**
  *  @brief Compares a netlist against another netlist
  */
-void DB_PUBLIC compare_netlist (tl::TestBase *_this, const db::Netlist &netlist, const db::Netlist &netlist_au, bool exact_parameter_match = false, bool with_names = false);
+void DB_PUBLIC compare_netlist(tl::TestBase *_this, const db::Netlist &netlist,
+                               const db::Netlist &netlist_au,
+                               bool exact_parameter_match = false,
+                               bool with_names = false);
 
 /**
  *  @brief Convenient compare of region vs. string
  */
-bool DB_PUBLIC compare (const db::Region &region, const std::string &string);
+bool DB_PUBLIC compare(const db::Region &region, const std::string &string);
 
 /**
  *  @brief Convenient compare of edges vs. string
  */
-bool DB_PUBLIC compare (const db::Edges &edges, const std::string &string);
+bool DB_PUBLIC compare(const db::Edges &edges, const std::string &string);
 
 /**
  *  @brief Convenient compare of edge pairs vs. string
  */
-bool DB_PUBLIC compare (const db::EdgePairs &edge_pairs, const std::string &string);
+bool DB_PUBLIC compare(const db::EdgePairs &edge_pairs,
+                       const std::string &string);
 
 /**
  *  @brief Convenient compare of texts vs. string
  */
-bool DB_PUBLIC compare (const db::Texts &texts, const std::string &string);
+bool DB_PUBLIC compare(const db::Texts &texts, const std::string &string);
 
 /**
  *  @brief Convenient compare of box vs. string
  */
-bool DB_PUBLIC compare (const db::Box &box, const std::string &string);
+bool DB_PUBLIC compare(const db::Box &box, const std::string &string);
 
 /**
- *  @brief Converts a property ID into a property key/value string representation
+ *  @brief Converts a property ID into a property key/value string
+ * representation
  */
-std::string DB_PUBLIC prop2string (const db::PropertiesRepository &pr, db::properties_id_type prop_id);
+std::string DB_PUBLIC prop2string(const db::PropertiesRepository &pr,
+                                  db::properties_id_type prop_id);
 
-}
+} // namespace db
 
 #endif

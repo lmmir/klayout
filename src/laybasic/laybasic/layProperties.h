@@ -25,33 +25,29 @@
 #ifndef HDR_layProperties
 #define HDR_layProperties
 
-#include "laybasicCommon.h"
 #include "layEditable.h"
+#include "laybasicCommon.h"
 
 #include <QFrame>
 #include <QIcon>
 
-namespace db
-{
-  class Manager;
+namespace db {
+class Manager;
 }
 
-namespace lay
-{
+namespace lay {
 
 class Editable;
 
 /**
  *  @brief The properties page object
  *
- *  The properties page object forms the interface between the 
+ *  The properties page object forms the interface between the
  *  properties dialog and the selected object.
  */
 
-class LAYBASIC_PUBLIC PropertiesPage
-  : public QFrame
-{
-Q_OBJECT
+class LAYBASIC_PUBLIC PropertiesPage : public QFrame {
+  Q_OBJECT
 
 public:
   /**
@@ -62,17 +58,18 @@ public:
    *  empty, at_start () is supposed to return true then.
    *  The dialog will call update () to update the display accordingly.
    */
-  PropertiesPage (QWidget *parent, db::Manager *manager, lay::Editable *editable);
+  PropertiesPage(QWidget *parent, db::Manager *manager,
+                 lay::Editable *editable);
 
   /**
    *  @brief The destructor
    */
-  virtual ~PropertiesPage ();
+  virtual ~PropertiesPage();
 
   /**
    *  @brief Gets the number of entries represented by this page
    */
-  virtual size_t count () const = 0;
+  virtual size_t count() const = 0;
 
   /**
    *  @brief Selects the entries with the given indexes
@@ -81,43 +78,38 @@ public:
    *  all items with different values as "leave as is". Items with
    *  same value are shown with the given value.
    */
-  virtual void select_entries (const std::vector<size_t> &entries) = 0;
+  virtual void select_entries(const std::vector<size_t> &entries) = 0;
 
   /**
    *  @brief Convenience function to select a specific entry
    */
-  void select_entry (size_t entry)
-  {
+  void select_entry(size_t entry) {
     std::vector<size_t> entries;
-    entries.push_back (entry);
-    select_entries (entries);
+    entries.push_back(entry);
+    select_entries(entries);
   }
 
   /**
    *  @brief Gets a description text for the nth entry
    */
-  virtual std::string description (size_t entry) const = 0;
+  virtual std::string description(size_t entry) const = 0;
 
   /**
    *  @brief Gets the icon for the nth entry
    */
-  virtual QIcon icon (size_t /*entry*/, int /*w*/, int /*h*/) const
-  {
-    return QIcon ();
+  virtual QIcon icon(size_t /*entry*/, int /*w*/, int /*h*/) const {
+    return QIcon();
   }
 
   /**
    *  @brief Gets a description text for the whole group
    */
-  virtual std::string description () const = 0;
+  virtual std::string description() const = 0;
 
   /**
    *  @brief Gets the icon associated with the whole group
    */
-  virtual QIcon icon (int /*w*/, int /*h*/) const
-  {
-    return QIcon ();
-  }
+  virtual QIcon icon(int /*w*/, int /*h*/) const { return QIcon(); }
 
   /**
    *  @brief Update the display
@@ -125,58 +117,52 @@ public:
    *  This method is called by the dialog to transfer data from the
    *  selected element into the display (QFrame and children).
    */
-  virtual void update () { }
+  virtual void update() {}
 
-  /** 
+  /**
    *  @brief Leave the properties page
    *
    *  This method is called when the properties page becomes hidden (unused)
-   *  in the stack of properties pages. The main use is to notify the 
+   *  in the stack of properties pages. The main use is to notify the
    *  owner to remove highlights.
    */
-  virtual void leave () { }
+  virtual void leave() {}
 
-  /** 
+  /**
    *  @brief Report if the object can be changed
    *
    *  This method is supposed to return true if the current object
    *  cannot be changed. In this case, the "Apply" button is disabled.
    */
-  virtual bool readonly () 
-  {
+  virtual bool readonly() {
     //  default implementation is "readonly"
     return true;
   }
 
-  /** 
+  /**
    *  @brief Apply any changes to the current object
    *
    *  Apply any changes to the current objects. If nothing was
    *  changed, the object may be left untouched.
    *  The dialog will start a transaction on the manager object.
    */
-  virtual void apply () 
-  {
+  virtual void apply() {
     //  default implementation is empty.
   }
 
   /**
    *  @brief Returns true, if the properties page supports "apply all"
    */
-  virtual bool can_apply_to_all () const
-  {
-    return false;
-  }
+  virtual bool can_apply_to_all() const { return false; }
 
-  /** 
+  /**
    *  @brief Apply current changes to all objects of the current kind
    *
-   *  Apply any changes to the current object plus all other objects of the same kind. 
-   *  If nothing was changed, the objects may be left untouched.
-   *  The dialog will start a transaction on the manager object.
+   *  Apply any changes to the current object plus all other objects of the same
+   * kind. If nothing was changed, the objects may be left untouched. The dialog
+   * will start a transaction on the manager object.
    */
-  virtual void apply_to_all (bool /*relative*/)
-  {
+  virtual void apply_to_all(bool /*relative*/) {
     //  default implementation is empty.
   }
 
@@ -184,33 +170,27 @@ public:
    *  @brief Return the Editable object that this properties page
    *  object was issued from.
    */
-  lay::Editable *editable () 
-  {
-    return mp_editable.get ();
-  }
+  lay::Editable *editable() { return mp_editable.get(); }
 
   /**
    *  @brief Gets the transaction manager object
    *  Use this object to implement undable operations on the properties page.
    */
-  db::Manager *manager ()
-  {
-    return mp_manager;
-  }
+  db::Manager *manager() { return mp_manager; }
 
 signals:
   /**
    *  @brief This signal is emitted if a value has been changed
    */
-  void edited ();
+  void edited();
 
 private:
   db::Manager *mp_manager;
   tl::weak_ptr<lay::Editable> mp_editable;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

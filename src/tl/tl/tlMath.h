@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_tlMath
 #define HDR_tlMath
 
@@ -28,35 +27,22 @@
 
 #include <cmath>
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief A generic less operator
  */
-template <class T>
-inline bool less (T a, T b)
-{
-  return a < b;
-}
+template <class T> inline bool less(T a, T b) { return a < b; }
 
 /**
  *  @brief A generic equal operator
  */
-template <class T>
-inline bool equal (T a, T b)
-{
-  return a == b;
-}
+template <class T> inline bool equal(T a, T b) { return a == b; }
 
 /**
  *  @brief A generalization of the modulo operator
  */
-template <class T>
-inline T modulo (T a, T b)
-{
-  return a % b;
-}
+template <class T> inline T modulo(T a, T b) { return a % b; }
 
 /**
  *  @brief A common uncertainty value for double compares
@@ -68,37 +54,28 @@ const double epsilon = 1e-10;
 /**
  *  @brief A specialization for double values
  */
-inline bool less (double a, double b)
-{
-  return a < b - tl::epsilon;
-}
+inline bool less(double a, double b) { return a < b - tl::epsilon; }
 
 /**
  *  @brief A specialization for double values
  */
-inline bool equal (double a, double b)
-{
-  return fabs (a - b) < tl::epsilon;
-}
+inline bool equal(double a, double b) { return fabs(a - b) < tl::epsilon; }
 
 /**
  *  @brief A specialization of the modulo operator for doubles
  *  a % b == a - b * floor (a / b)
  */
-inline double modulo (double a, double b)
-{
-  return a - b * floor (a / b + tl::epsilon);
+inline double modulo(double a, double b) {
+  return a - b * floor(a / b + tl::epsilon);
 }
 
 /**
- *  @brief Compute the greatest common divider of two numbers using the euclidian method
+ *  @brief Compute the greatest common divider of two numbers using the
+ * euclidian method
  */
-template <class T>
-inline
-T gcd (T a, T b)
-{
-  while (! equal (b, T (0))) {
-    T h = modulo (a, b);
+template <class T> inline T gcd(T a, T b) {
+  while (!equal(b, T(0))) {
+    T h = modulo(a, b);
     a = b;
     b = h;
   }
@@ -106,41 +83,33 @@ T gcd (T a, T b)
 }
 
 /**
- *  @brief Compute the lowest common multiple of two numbers using the euclidian method
+ *  @brief Compute the lowest common multiple of two numbers using the euclidian
+ * method
  */
-template <class T>
-inline
-T lcm (T a, T b)
-{
-  return a * (b / gcd (a, b));
-}
+template <class T> inline T lcm(T a, T b) { return a * (b / gcd(a, b)); }
 
 /**
  *  @brief Rounding down to the closest multiple of g
  */
-inline double round_down (double x, double g)
-{
-  return g * floor (x / g + tl::epsilon);
+inline double round_down(double x, double g) {
+  return g * floor(x / g + tl::epsilon);
 }
 
 /**
  *  @brief Rounding up to the closest multiple of g
  */
-inline double round_up (double x, double g)
-{
-  return g * ceil (x / g - tl::epsilon);
+inline double round_up(double x, double g) {
+  return g * ceil(x / g - tl::epsilon);
 }
 
 /**
  *  @brief Rounding to the closest multiple of g
  *  A value of (n+1/2)*g is rounded down.
  */
-inline double round (double x, double g)
-{
-  return g * floor (0.5 + x / g - tl::epsilon);
+inline double round(double x, double g) {
+  return g * floor(0.5 + x / g - tl::epsilon);
 }
 
-}
+} // namespace tl
 
 #endif
-

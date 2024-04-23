@@ -20,21 +20,19 @@
 
 */
 
-
 #ifndef HDR_dbLibraryDescriptor
 #define HDR_dbLibraryDescriptor
 
 #include "dbCommon.h"
-#include "gsiObject.h"
 #include "dbLayout.h"
-#include "tlTypeTraits.h"
+#include "gsiObject.h"
 #include "tlObject.h"
+#include "tlTypeTraits.h"
 
-#include <string>
 #include <set>
+#include <string>
 
-namespace db
-{
+namespace db {
 
 class Layout;
 
@@ -43,12 +41,10 @@ class Layout;
  *
  *  A library is basically a wrapper around a layout object.
  *  A library is additionally associated with an id, a name and a description.
- *  A library must provide a layout. This class does not specify how the layout 
+ *  A library must provide a layout. This class does not specify how the layout
  *  is provided. To do so, this class must be reimplemented.
  */
-class DB_PUBLIC Library
-  : public gsi::ObjectBase, public tl::Object
-{
+class DB_PUBLIC Library : public gsi::ObjectBase, public tl::Object {
 public:
   /**
    *  @brief The constructor
@@ -63,18 +59,15 @@ public:
   /**
    *  @brief The destructor
    */
-  virtual ~Library ();
+  virtual ~Library();
 
   /**
    *  @brief The layout object
    *
-   *  This method must be reimplemented by some derived class to actually provide the
-   *  layout or the derived class fills the layout.
+   *  This method must be reimplemented by some derived class to actually
+   * provide the layout or the derived class fills the layout.
    */
-  virtual db::Layout &layout () 
-  {
-    return m_layout;
-  }
+  virtual db::Layout &layout() { return m_layout; }
 
   /**
    *  @brief Get the const layout
@@ -82,107 +75,92 @@ public:
    *  This version uses the non-const, virtual implementation to provide a const
    *  layout accessor.
    */
-  const db::Layout &layout () const
-  {
-    return (const_cast<Library *> (this))->layout ();
+  const db::Layout &layout() const {
+    return (const_cast<Library *>(this))->layout();
   }
 
   /**
    *  @brief Getter for the name property
    */
-  const std::string &get_name () const
-  {
-    return m_name;
-  }
+  const std::string &get_name() const { return m_name; }
 
   /**
    *  @brief Setter for the name property
    */
-  void set_name (const std::string &name) 
-  {
-    m_name = name;
-  }
+  void set_name(const std::string &name) { m_name = name; }
 
   /**
    *  @brief Gets the technology name this library is associated with
    *
-   *  If this attribute is non-empty, the library is selected only when the given technology is
-   *  used for the layout.
+   *  If this attribute is non-empty, the library is selected only when the
+   * given technology is used for the layout.
    */
-  const std::set<std::string> &get_technologies () const
-  {
+  const std::set<std::string> &get_technologies() const {
     return m_technologies;
   }
 
   /**
-   *  @brief Gets a value indicating whether this library is associated with the given technology
+   *  @brief Gets a value indicating whether this library is associated with the
+   * given technology
    */
-  bool is_for_technology (const std::string &name) const;
+  bool is_for_technology(const std::string &name) const;
 
   /**
-   *  @brief Gets a value indicating whether the library is associated with any technology
+   *  @brief Gets a value indicating whether the library is associated with any
+   * technology
    */
-  bool for_technologies () const;
+  bool for_technologies() const;
 
   /**
    *  @brief Sets the technology name this library is associated with
    *
    *  This will reset the list of technologies to this one.
-   *  If the given technology string is empty, the list of technologies will be cleared.
+   *  If the given technology string is empty, the list of technologies will be
+   * cleared.
    */
-  void set_technology (const std::string &t);
+  void set_technology(const std::string &t);
 
   /**
    *  @brief Clears the list of technologies this library is associated with
    */
-  void clear_technologies ();
+  void clear_technologies();
 
   /**
    *  @brief Additionally associate the library with the given technology
    */
-  void add_technology (const std::string &tech);
+  void add_technology(const std::string &tech);
 
   /**
    *  @brief Getter for the description property
    */
-  const std::string &get_description () const
-  {
-    return m_description;
-  }
+  const std::string &get_description() const { return m_description; }
 
   /**
    *  @brief Setter for the description property
    */
-  void set_description (const std::string &description) 
-  {
+  void set_description(const std::string &description) {
     m_description = description;
   }
 
   /**
    *  @brief Getter for the library Id property
    */
-  lib_id_type get_id () const
-  {
-    return m_id;
-  }
+  lib_id_type get_id() const { return m_id; }
 
   /**
    *  @brief Setter for the library Id property
    */
-  void set_id (lib_id_type id) 
-  {
-    m_id = id;
-  }
+  void set_id(lib_id_type id) { m_id = id; }
 
   /**
    *  @brief Register a LibraryProxy in the given layout
    */
-  void register_proxy (db::LibraryProxy *lib_proxy, db::Layout *layout);
-  
+  void register_proxy(db::LibraryProxy *lib_proxy, db::Layout *layout);
+
   /**
    *  @brief Unregister the Library proxy
    */
-  void unregister_proxy (db::LibraryProxy *lib_proxy, db::Layout *layout);
+  void unregister_proxy(db::LibraryProxy *lib_proxy, db::Layout *layout);
 
   /**
    *  @brief Retires a LibraryProxy in the given layout
@@ -192,31 +170,32 @@ public:
    *  is actually used or only present as a shadow object for the transaction
    *  management.
    */
-  void retire_proxy (db::LibraryProxy *lib_proxy);
+  void retire_proxy(db::LibraryProxy *lib_proxy);
 
   /**
    *  @brief Unretires the Library proxy
    */
-  void unretire_proxy (db::LibraryProxy *lib_proxy);
+  void unretire_proxy(db::LibraryProxy *lib_proxy);
 
   /**
    *  @brief Gets a value indicating whether a proxy is entirely retired
    */
-  bool is_retired (const cell_index_type library_cell_index) const;
+  bool is_retired(const cell_index_type library_cell_index) const;
 
   /**
    *  @brief Refreshes the library on all clients
    *
-   *  This will refresh PCells, retire cells (turn them into "cold proxies") and reload layouts.
+   *  This will refresh PCells, retire cells (turn them into "cold proxies") and
+   * reload layouts.
    */
-  void refresh ();
+  void refresh();
 
   /**
    *  @brief Remap the library proxies to a different library
    *
    *  After remapping, "other" can replace "this".
    */
-  void remap_to (db::Library *other);
+  void remap_to(db::Library *other);
 
   /**
    *  @brief This event is fired if proxies get retired on unretired
@@ -236,8 +215,6 @@ private:
   Library &operator=(const Library &);
 };
 
-}
+} // namespace db
 
 #endif
-
-

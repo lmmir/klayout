@@ -25,9 +25,10 @@
 //  to force linking of the lib module
 #include "../../lib/lib/libForceLink.h"
 
-static PyObject *lib_module_init (const char *pymod_name, const char *mod_name, const char *mod_description)
-{
-  return module_init (pymod_name, mod_name, mod_description);
+static PyObject *lib_module_init(const char *pymod_name, const char *mod_name,
+                                 const char *mod_description) {
+  return module_init(pymod_name, mod_name, mod_description);
 }
 
-DEFINE_PYMOD_WITH_INIT(libcore, "lib", "KLayout core module 'lib'", lib_module_init)
+DEFINE_PYMOD_WITH_INIT(libcore, "lib", "KLayout core module 'lib'",
+                       lib_module_init)

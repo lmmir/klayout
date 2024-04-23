@@ -22,62 +22,54 @@
 
 #include "rdb.h"
 #include "rdbReader.h"
-#include "tlUnitTest.h"
 #include "tlFileUtils.h"
 #include "tlLog.h"
+#include "tlUnitTest.h"
 
-void run_rve_test (tl::TestBase *_this, const std::string &fn_rve, const std::string &fn_au)
-{
+void run_rve_test(tl::TestBase *_this, const std::string &fn_rve,
+                  const std::string &fn_au) {
   rdb::Database db;
 
   {
-    tl::InputFile input (tl::testdata_private () + "/rve/" + fn_rve);
-    tl::InputStream is (input);
-    rdb::Reader reader (is);
-    reader.read (db);
+    tl::InputFile input(tl::testdata_private() + "/rve/" + fn_rve);
+    tl::InputStream is(input);
+    rdb::Reader reader(is);
+    reader.read(db);
   }
 
-  std::string tmp = _this->tmp_file ();
-  db.save (tmp);
+  std::string tmp = _this->tmp_file();
+  db.save(tmp);
 
-  std::string au_path = tl::absolute_file_path (tl::testdata_private () + "/rve/" + fn_au);
+  std::string au_path =
+      tl::absolute_file_path(tl::testdata_private() + "/rve/" + fn_au);
 
   std::string txt, au_txt;
 
   try {
-    tl::InputFile input (au_path);
-    tl::InputStream is (input);
-    tl::TextInputStream ts (is);
-    au_txt = ts.read_all ();
+    tl::InputFile input(au_path);
+    tl::InputStream is(input);
+    tl::TextInputStream ts(is);
+    au_txt = ts.read_all();
   } catch (tl::Exception &ex) {
-    tl::error << ex.msg ();
+    tl::error << ex.msg();
   }
 
   {
-    tl::InputFile input (tmp);
-    tl::InputStream is (input);
-    tl::TextInputStream ts (is);
-    txt = ts.read_all ();
+    tl::InputFile input(tmp);
+    tl::InputStream is(input);
+    tl::TextInputStream ts(is);
+    txt = ts.read_all();
   }
 
   if (au_txt != txt) {
     tl::error << "Golden and actual data differs:";
     tl::error << "  cp " << tmp << " " << au_path;
   }
-  EXPECT_EQ (au_txt == txt, true);
+  EXPECT_EQ(au_txt == txt, true);
 }
 
-TEST(1)
-{
-  run_rve_test (_this, "rve1.db", "rve1_au.txt");
-}
+TEST(1) { run_rve_test(_this, "rve1.db", "rve1_au.txt"); }
 
-TEST(2)
-{
-  run_rve_test (_this, "rve2.db", "rve2_au.txt");
-}
+TEST(2) { run_rve_test(_this, "rve2.db", "rve2_au.txt"); }
 
-TEST(3)
-{
-  run_rve_test (_this, "rve3.db", "rve3_au.txt");
-}
+TEST(3) { run_rve_test(_this, "rve3.db", "rve3_au.txt"); }

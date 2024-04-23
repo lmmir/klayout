@@ -20,93 +20,60 @@
 
 */
 
-
 #include "dbEmptyTexts.h"
-#include "dbEmptyRegion.h"
 #include "dbEmptyEdges.h"
+#include "dbEmptyRegion.h"
 #include "dbTexts.h"
 
-namespace db
-{
+namespace db {
 
 // -------------------------------------------------------------------------------------------------------------
 
-EmptyTexts::EmptyTexts ()
-{
+EmptyTexts::EmptyTexts() {
   //  .. nothing yet ..
 }
 
-EmptyTexts::EmptyTexts (const EmptyTexts &other)
-  : TextsDelegate (other)
-{
+EmptyTexts::EmptyTexts(const EmptyTexts &other) : TextsDelegate(other) {
   // .. nothing yet ..
 }
 
-TextsDelegate *
-EmptyTexts::clone () const
-{
-  return new EmptyTexts (*this);
+TextsDelegate *EmptyTexts::clone() const { return new EmptyTexts(*this); }
+
+RegionDelegate *EmptyTexts::polygons(db::Coord) const {
+  return new EmptyRegion();
 }
 
 RegionDelegate *
-EmptyTexts::polygons (db::Coord) const
-{
-  return new EmptyRegion ();
+EmptyTexts::processed_to_polygons(const TextToPolygonProcessorBase &) const {
+  return new EmptyRegion();
 }
 
-RegionDelegate *
-EmptyTexts::processed_to_polygons (const TextToPolygonProcessorBase &) const
-{
-  return new EmptyRegion ();
+EdgesDelegate *EmptyTexts::edges() const { return new EmptyEdges(); }
+
+TextsDelegate *EmptyTexts::add_in_place(const Texts &other) {
+  return add(other);
 }
 
-EdgesDelegate *
-EmptyTexts::edges () const
-{
-  return new EmptyEdges ();
+TextsDelegate *EmptyTexts::add(const Texts &other) const {
+  return other.delegate()->clone();
 }
 
-TextsDelegate *
-EmptyTexts::add_in_place (const Texts &other)
-{
-  return add (other);
+bool EmptyTexts::equals(const Texts &other) const { return other.empty(); }
+
+bool EmptyTexts::less(const Texts &other) const {
+  return other.empty() ? false : true;
 }
 
-TextsDelegate *
-EmptyTexts::add (const Texts &other) const
-{
-  return other.delegate ()->clone ();
+RegionDelegate *EmptyTexts::pull_interacting(const Region &) const {
+  return new EmptyRegion();
 }
 
-bool 
-EmptyTexts::equals (const Texts &other) const
-{
-  return other.empty ();
+TextsDelegate *EmptyTexts::selected_interacting(const Region &) const {
+  return new EmptyTexts();
 }
 
-bool 
-EmptyTexts::less (const Texts &other) const
-{
-  return other.empty () ? false : true;
+TextsDelegate *EmptyTexts::selected_not_interacting(const Region &) const {
+  return new EmptyTexts();
 }
 
-RegionDelegate *
-EmptyTexts::pull_interacting (const Region &) const
-{
-  return new EmptyRegion ();
-}
-
-TextsDelegate *
-EmptyTexts::selected_interacting (const Region &) const
-{
-  return new EmptyTexts ();
-}
-
-TextsDelegate *
-EmptyTexts::selected_not_interacting (const Region &) const
-{
-  return new EmptyTexts ();
-}
-
-}
-
+} // namespace db

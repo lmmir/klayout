@@ -20,12 +20,10 @@
 
 */
 
-
 #include "tlSList.h"
 
-namespace tl
-{
+namespace tl {
 
-  //  .. nothing yet ..
+//  .. nothing yet ..
 
 }

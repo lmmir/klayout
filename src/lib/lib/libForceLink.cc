@@ -20,14 +20,8 @@
 
 */
 
-
 #include "libForceLink.h"
 
-namespace lib
-{
-  int _force_link_f () 
-  { 
-    return 0; 
-  }
-}
-
+namespace lib {
+int _force_link_f() { return 0; }
+} // namespace lib

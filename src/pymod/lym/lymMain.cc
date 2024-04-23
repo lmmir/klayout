@@ -23,6 +23,6 @@
 #include "../pymodHelper.h"
 
 //  to force linking of the lym module
-#  include "../../lym/lym/lymForceLink.h"
+#include "../../lym/lym/lymForceLink.h"
 
 DEFINE_PYMOD(lymcore, "lym", "KLayout core module 'lym'")

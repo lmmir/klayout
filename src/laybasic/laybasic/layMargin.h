@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layMargin
 #define HDR_layMargin
 
@@ -28,8 +27,7 @@
 
 #include "dbBox.h"
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief A class represeting a margin on size
@@ -41,100 +39,78 @@ namespace lay
  *  switched.
  */
 
-class LAYBASIC_PUBLIC Margin
-{
+class LAYBASIC_PUBLIC Margin {
 public:
   /**
    *  @brief The constructor
    */
-  Margin (double value = 0.0, bool relative = false);
+  Margin(double value = 0.0, bool relative = false);
 
   /**
    *  @brief Equality
    */
-  bool operator== (const lay::Margin &other) const;
+  bool operator==(const lay::Margin &other) const;
 
   /**
    *  @brief Inequality
    */
-  bool operator!= (const lay::Margin &other) const
-  {
-    return ! operator== (other);
-  }
+  bool operator!=(const lay::Margin &other) const { return !operator==(other); }
 
   /**
    *  @brief Gets the relative value
    */
-  double relative_value () const
-  {
-    return m_relative_value;
-  }
+  double relative_value() const { return m_relative_value; }
 
   /**
    *  @brief Sets the relative value
    */
-  void set_relative_value (double v)
-  {
-    m_relative_value = v;
-  }
+  void set_relative_value(double v) { m_relative_value = v; }
 
   /**
    *  @brief Gets the absolute value
    */
-  double absolute_value () const
-  {
-    return m_absolute_value;
-  }
+  double absolute_value() const { return m_absolute_value; }
 
   /**
    *  @brief Sets the absolute value
    */
-  void set_absolute_value (double v)
-  {
-    m_absolute_value = v;
-  }
+  void set_absolute_value(double v) { m_absolute_value = v; }
 
   /**
    *  @brief Gets a value indicating whether the relative value shall be used
    */
-  bool relative_mode () const
-  {
-    return m_relative_mode;
-  }
+  bool relative_mode() const { return m_relative_mode; }
 
   /**
    *  @brief Sets a value indicating whether the relative value shall be used
    */
-  void set_relative_mode (bool mode)
-  {
-    m_relative_mode = mode;
-  }
+  void set_relative_mode(bool mode) { m_relative_mode = mode; }
 
   /**
    *  @brief Converts the object to a string
    */
-  std::string to_string () const;
+  std::string to_string() const;
 
   /**
    *  @brief Creates the object from a string
    */
-  static Margin from_string (const std::string &s);
+  static Margin from_string(const std::string &s);
 
   /**
    *  @brief Gets the resulting value for a given object dimension
    */
-  double get (double dim) const;
+  double get(double dim) const;
 
   /**
    *  @brief Gets the resulting value for a given box
    */
-  double get (const db::DBox &box) const;
+  double get(const db::DBox &box) const;
 
 private:
   double m_relative_value, m_absolute_value;
   bool m_relative_mode;
 };
 
-}
+} // namespace lay
 
 #endif

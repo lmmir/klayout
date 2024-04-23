@@ -20,17 +20,13 @@
 
 */
 
-
-
-#include "gsiDecl.h"
 #include "dbLayoutUtils.h"
+#include "gsiDecl.h"
 
 #include "tlGlobPattern.h"
 
-namespace gsi
-{
+namespace gsi {
 
-  //  .. nothing yet ..
+//  .. nothing yet ..
 
 }
-

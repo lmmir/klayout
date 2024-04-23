@@ -20,28 +20,23 @@
 
 */
 
-
 #ifndef HDR_laySession
 #define HDR_laySession
 
-#include "layDisplayState.h"
-#include "layBookmarkList.h"
 #include "layAnnotationShapes.h"
+#include "layBookmarkList.h"
+#include "layDisplayState.h"
 #include "layLayerProperties.h"
 
 #include <string>
 #include <vector>
 
-namespace lay
-{
+namespace lay {
 
 class MainWindow;
 
-struct SessionLayoutDescriptor
-{
-  SessionLayoutDescriptor ()
-    : save_options_valid (false)
-  { }
+struct SessionLayoutDescriptor {
+  SessionLayoutDescriptor() : save_options_valid(false) {}
 
   std::string name;
   std::string file_path;
@@ -50,60 +45,71 @@ struct SessionLayoutDescriptor
   bool save_options_valid;
 };
 
-struct SessionAnnotationDescriptor
-{
+struct SessionAnnotationDescriptor {
   std::string class_name;
   std::string value_string;
 };
 
-struct SessionHiddenCellNames
-{
+struct SessionHiddenCellNames {
   std::vector<std::string> hidden_cell_names;
-  
-  std::vector<std::string>::const_iterator begin () const { return hidden_cell_names.begin (); }
-  std::vector<std::string>::const_iterator end () const { return hidden_cell_names.end (); }
-  void push_back (const std::string &name) { hidden_cell_names.push_back (name); }
-  std::string &back () { return hidden_cell_names.back (); }
-  void reserve (size_t n) { hidden_cell_names.reserve (n); }
+
+  std::vector<std::string>::const_iterator begin() const {
+    return hidden_cell_names.begin();
+  }
+  std::vector<std::string>::const_iterator end() const {
+    return hidden_cell_names.end();
+  }
+  void push_back(const std::string &name) { hidden_cell_names.push_back(name); }
+  std::string &back() { return hidden_cell_names.back(); }
+  void reserve(size_t n) { hidden_cell_names.reserve(n); }
 };
 
-struct SessionCellViewDescriptor
-{
+struct SessionCellViewDescriptor {
   std::string layout_name;
   std::string tech_name;
   SessionHiddenCellNames hidden_cell_names;
 };
 
-struct SessionCellViewDescriptors
-{
+struct SessionCellViewDescriptors {
   std::vector<SessionCellViewDescriptor> cellviews;
-  
-  std::vector<SessionCellViewDescriptor>::const_iterator begin () const { return cellviews.begin (); }
-  std::vector<SessionCellViewDescriptor>::const_iterator end () const { return cellviews.end (); }
-  void push_back (const SessionCellViewDescriptor &desc) { cellviews.push_back (desc); }
-  SessionCellViewDescriptor &back () { return cellviews.back (); }
-  void reserve (size_t n) { cellviews.reserve (n); }
+
+  std::vector<SessionCellViewDescriptor>::const_iterator begin() const {
+    return cellviews.begin();
+  }
+  std::vector<SessionCellViewDescriptor>::const_iterator end() const {
+    return cellviews.end();
+  }
+  void push_back(const SessionCellViewDescriptor &desc) {
+    cellviews.push_back(desc);
+  }
+  SessionCellViewDescriptor &back() { return cellviews.back(); }
+  void reserve(size_t n) { cellviews.reserve(n); }
 };
 
-struct SessionAnnotationShapes
-{
+struct SessionAnnotationShapes {
   std::vector<SessionAnnotationDescriptor> annotation_shapes;
 
-  std::vector<SessionAnnotationDescriptor>::const_iterator begin_annotation_shapes () const { return annotation_shapes.begin (); }
-  std::vector<SessionAnnotationDescriptor>::const_iterator end_annotation_shapes () const { return annotation_shapes.end (); }
-  void add_annotation_shape (const SessionAnnotationDescriptor &shape) { annotation_shapes.push_back (shape); }
-  SessionAnnotationDescriptor &back () { return annotation_shapes.back (); }
+  std::vector<SessionAnnotationDescriptor>::const_iterator
+  begin_annotation_shapes() const {
+    return annotation_shapes.begin();
+  }
+  std::vector<SessionAnnotationDescriptor>::const_iterator
+  end_annotation_shapes() const {
+    return annotation_shapes.end();
+  }
+  void add_annotation_shape(const SessionAnnotationDescriptor &shape) {
+    annotation_shapes.push_back(shape);
+  }
+  SessionAnnotationDescriptor &back() { return annotation_shapes.back(); }
 };
 
-struct SessionViewDescriptor
-{
-  SessionViewDescriptor () : current_layer_list (0), active_cellview (-1) { }
+struct SessionViewDescriptor {
+  SessionViewDescriptor() : current_layer_list(0), active_cellview(-1) {}
 
   //  backward compatibility helper
-  void set_layer_properties(const lay::LayerPropertiesList &list)
-  {
-    layer_properties_lists.clear ();
-    layer_properties_lists.push_back (list);
+  void set_layer_properties(const lay::LayerPropertiesList &list) {
+    layer_properties_lists.clear();
+    layer_properties_lists.push_back(list);
   }
 
   std::string title;
@@ -121,51 +127,58 @@ struct SessionViewDescriptor
 /**
  *  @brief This class implements the persistency of the session
  */
-class Session
-{
+class Session {
 public:
   /**
    *  @brief Represents a session
    */
-  Session ();
+  Session();
 
   /**
    *  @brief Copy the current application status to the session
    */
-  void fetch (const lay::MainWindow &mw);
+  void fetch(const lay::MainWindow &mw);
 
   /**
    *  @brief Restore the session inside the application
    */
-  void restore (lay::MainWindow &mw);
+  void restore(lay::MainWindow &mw);
 
   /**
    *  @brief Load the session from a file
    */
-  void load (const std::string &filename);
+  void load(const std::string &filename);
 
   /**
    *  @brief Save the session to a file
    */
-  void save (const std::string &filename);
+  void save(const std::string &filename);
 
   //  persistency API
-  std::vector<SessionLayoutDescriptor>::const_iterator begin_layouts () const { return m_layouts.begin (); }
-  std::vector<SessionLayoutDescriptor>::const_iterator end_layouts () const { return m_layouts.end (); }
-  void add_layout (const SessionLayoutDescriptor &l) { m_layouts.push_back (l); }
-  std::vector<SessionViewDescriptor>::const_iterator begin_views () const { return m_views.begin (); }
-  std::vector<SessionViewDescriptor>::const_iterator end_views () const { return m_views.end (); }
-  void add_view (const SessionViewDescriptor &l) { m_views.push_back (l); }
-  const std::string &window_state () const { return m_window_state; }
-  void set_window_state (const std::string &s) { m_window_state = s; }
-  const std::string &window_geometry () const { return m_window_geometry; }
-  void set_window_geometry (const std::string &s) { m_window_geometry = s; }
-  int width () const { return m_width; }
-  void set_width (int n) { m_width = n; }
-  int height () const { return m_height; }
-  void set_height (int n) { m_height = n; }
-  int current_view () const { return m_current_view; }
-  void set_current_view (int n) { m_current_view = n; }
+  std::vector<SessionLayoutDescriptor>::const_iterator begin_layouts() const {
+    return m_layouts.begin();
+  }
+  std::vector<SessionLayoutDescriptor>::const_iterator end_layouts() const {
+    return m_layouts.end();
+  }
+  void add_layout(const SessionLayoutDescriptor &l) { m_layouts.push_back(l); }
+  std::vector<SessionViewDescriptor>::const_iterator begin_views() const {
+    return m_views.begin();
+  }
+  std::vector<SessionViewDescriptor>::const_iterator end_views() const {
+    return m_views.end();
+  }
+  void add_view(const SessionViewDescriptor &l) { m_views.push_back(l); }
+  const std::string &window_state() const { return m_window_state; }
+  void set_window_state(const std::string &s) { m_window_state = s; }
+  const std::string &window_geometry() const { return m_window_geometry; }
+  void set_window_geometry(const std::string &s) { m_window_geometry = s; }
+  int width() const { return m_width; }
+  void set_width(int n) { m_width = n; }
+  int height() const { return m_height; }
+  void set_height(int n) { m_height = n; }
+  int current_view() const { return m_current_view; }
+  void set_current_view(int n) { m_current_view = n; }
 
 private:
   std::vector<SessionLayoutDescriptor> m_layouts;
@@ -176,10 +189,9 @@ private:
   std::string m_window_geometry;
   std::string m_base_dir;
 
-  std::string make_absolute (const std::string &fp) const;
+  std::string make_absolute(const std::string &fp) const;
 };
 
-}
+} // namespace lay
 
 #endif
-

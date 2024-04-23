@@ -25,86 +25,76 @@
 #ifndef HDR_layLoadLayoutOptionsDialog
 #define HDR_layLoadLayoutOptionsDialog
 
-#include "layuiCommon.h"
-#include "dbStream.h"
 #include "dbLayout.h"
+#include "dbStream.h"
 #include "layStream.h"
+#include "layuiCommon.h"
 
-#include <string>
 #include <QDialog>
+#include <string>
 
 class QScrollArea;
 class QWidget;
 class QAbstractButton;
 
-namespace db
-{
-  class LoadLayoutOptions;
-  class Technologies;
-}
+namespace db {
+class LoadLayoutOptions;
+class Technologies;
+} // namespace db
 
-namespace Ui
-{
-  class LoadLayoutOptionsDialog;
-  class SpecificLoadLayoutOptionsDialog;
-}
+namespace Ui {
+class LoadLayoutOptionsDialog;
+class SpecificLoadLayoutOptionsDialog;
+} // namespace Ui
 
-namespace lay
-{
+namespace lay {
 
 class Dispatcher;
 class FileDialog;
 
-class LAYUI_PUBLIC LoadLayoutOptionsDialog
-  : public QDialog
-{
-  Q_OBJECT 
+class LAYUI_PUBLIC LoadLayoutOptionsDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  LoadLayoutOptionsDialog (QWidget *parent, const std::string &title);
-  ~LoadLayoutOptionsDialog ();
+  LoadLayoutOptionsDialog(QWidget *parent, const std::string &title);
+  ~LoadLayoutOptionsDialog();
 
-  bool edit_global_options (lay::Dispatcher *dispatcher, db::Technologies *technologies);
-  bool get_options (db::LoadLayoutOptions &options);
+  bool edit_global_options(lay::Dispatcher *dispatcher,
+                           db::Technologies *technologies);
+  bool get_options(db::LoadLayoutOptions &options);
 
-  void show_always (bool sa)
-  {
-    m_show_always = sa;
-  }
+  void show_always(bool sa) { m_show_always = sa; }
 
-  bool show_always () const
-  {
-    return m_show_always;
-  }
+  bool show_always() const { return m_show_always; }
 
 public slots:
-  void ok_button_pressed ();
-  void reset_button_pressed ();
-  void button_pressed (QAbstractButton *button);
-  void current_tech_changed (int index);
+  void ok_button_pressed();
+  void reset_button_pressed();
+  void button_pressed(QAbstractButton *button);
+  void current_tech_changed(int index);
 
 private:
   Ui::LoadLayoutOptionsDialog *mp_ui;
-  std::vector< std::pair<StreamReaderOptionsPage *, std::string> > m_pages;
+  std::vector<std::pair<StreamReaderOptionsPage *, std::string>> m_pages;
   bool m_show_always;
   int m_technology_index;
   std::vector<db::LoadLayoutOptions> m_opt_array;
   std::vector<const db::Technology *> m_tech_array;
 
-  void commit ();
-  void update ();
-  bool get_options_internal ();
+  void commit();
+  void update();
+  bool get_options_internal();
 };
 
-class LAYUI_PUBLIC SpecificLoadLayoutOptionsDialog
-  : public QDialog
-{
+class LAYUI_PUBLIC SpecificLoadLayoutOptionsDialog : public QDialog {
 public:
-  SpecificLoadLayoutOptionsDialog (QWidget *parent, db::LoadLayoutOptions *options, const std::string &format_name);
-  ~SpecificLoadLayoutOptionsDialog ();
+  SpecificLoadLayoutOptionsDialog(QWidget *parent,
+                                  db::LoadLayoutOptions *options,
+                                  const std::string &format_name);
+  ~SpecificLoadLayoutOptionsDialog();
 
 protected:
-  void accept ();
+  void accept();
 
 private:
   Ui::SpecificLoadLayoutOptionsDialog *mp_ui;
@@ -114,8 +104,8 @@ private:
   StreamReaderOptionsPage *mp_editor;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

@@ -20,13 +20,11 @@
 
 */
 
-
 #include "layVersion.h"
 
 #include <string>
 
-namespace lay 
-{
+namespace lay {
 
 static std::string s_exe_name;
 static std::string s_name;
@@ -34,65 +32,24 @@ static std::string s_version;
 static std::string s_subversion;
 static std::string s_about_text;
 
-const char *
-Version::exe_name ()
-{
-  return s_exe_name.c_str ();
-}
+const char *Version::exe_name() { return s_exe_name.c_str(); }
 
-const char *
-Version::name ()
-{
-  return s_name.c_str ();
-}
+const char *Version::name() { return s_name.c_str(); }
 
-const char *
-Version::version ()
-{
-  return s_version.c_str ();
-}
+const char *Version::version() { return s_version.c_str(); }
 
-const char *
-Version::subversion ()
-{
-  return s_subversion.c_str ();
-}
+const char *Version::subversion() { return s_subversion.c_str(); }
 
-const char *
-Version::about_text ()
-{
-  return s_about_text.c_str ();
-}
+const char *Version::about_text() { return s_about_text.c_str(); }
 
-void
-Version::set_exe_name (const char *s)
-{
-  s_exe_name = s;
-}
+void Version::set_exe_name(const char *s) { s_exe_name = s; }
 
-void
-Version::set_name (const char *s)
-{
-  s_name = s;
-}
+void Version::set_name(const char *s) { s_name = s; }
 
-void
-Version::set_version (const char *s)
-{
-  s_version = s;
-}
+void Version::set_version(const char *s) { s_version = s; }
 
-void
-Version::set_subversion (const char *s)
-{
-  s_subversion = s;
-}
+void Version::set_subversion(const char *s) { s_subversion = s; }
 
-void
-Version::set_about_text (const char *s)
-{
-  s_about_text = s;
-}
+void Version::set_about_text(const char *s) { s_about_text = s; }
 
-}
-
+} // namespace lay

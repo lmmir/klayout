@@ -20,33 +20,31 @@
 
 */
 
-
 #ifndef HDR_lymMacro
 #define HDR_lymMacro
 
 #include "lymCommon.h"
 #include "tlObject.h"
 
-#include <string>
 #include <map>
 #include <set>
+#include <string>
 
 #if defined(HAVE_QT)
-#  include <QObject>
+#include <QObject>
 #endif
 
-namespace lym
-{
+namespace lym {
 
 class MacroCollection;
 
 /**
  *  @brief Represents a macro in the framework
  *
- *  A macro is basically a piece of script code that is either 
+ *  A macro is basically a piece of script code that is either
  *  executed on startup or on request.
  *
- *  A macro can be persisted to a file and is located in the 
+ *  A macro can be persisted to a file and is located in the
  *  file hierarchy in one of the configuration folders.
  *  The path of the macro is given by the path property.
  *
@@ -61,54 +59,54 @@ class LYM_PUBLIC Macro :
 #if defined(HAVE_QT)
     public QObject,
 #endif
-    public tl::Object
-{
+    public tl::Object {
 #if defined(HAVE_QT)
-Q_OBJECT
+  Q_OBJECT
 #endif
 
 public:
   /**
    *  @brief Interpreter type
    */
-  enum Interpreter { 
+  enum Interpreter {
 
     /**
      *  @brief Pure Ruby
      */
-    Ruby, 
-    
+    Ruby,
+
     /**
      *  @brief Pure Python
      */
-    Python, 
-    
+    Python,
+
     /**
      *  @brief Plain text (no interpreter)
      */
-    Text, 
-    
+    Text,
+
     /**
-     *  @brief General DSL (uses dsl_interpreter to identify the actual interpreter class)
+     *  @brief General DSL (uses dsl_interpreter to identify the actual
+     * interpreter class)
      */
-    DSLInterpreter, 
+    DSLInterpreter,
 
     /**
      *  @brief No specific language. Interpreter won't be available.
      */
-    None 
+    None
 
   };
 
   /**
    *  @brief Specification of how the file is stored
    */
-  enum Format { 
+  enum Format {
 
     /**
      *  @brief KLayout macro format (XML)
      */
-    MacroFormat, 
+    MacroFormat,
 
     /**
      *  @brief Plain text format
@@ -116,14 +114,15 @@ public:
     PlainTextFormat,
 
     /**
-     *  @brief Plain text format with hash comments for inserting properties into the text
+     *  @brief Plain text format with hash comments for inserting properties
+     * into the text
      */
     PlainTextWithHashAnnotationsFormat,
 
     /**
      *  @brief No file associated
      */
-    NoFormat 
+    NoFormat
 
   };
 
@@ -132,100 +131,94 @@ public:
    *
    *  The default constructor creates a dummy macro with no file associated
    */
-  Macro ();
+  Macro();
 
   /**
    *  @brief Assignment from another macro
-   * 
+   *
    *  This will assign the definition of the macro but keep the name.
    *  It will also not modify the parent nor the readonly flag.
    */
-  void assign (const lym::Macro &other);
+  void assign(const lym::Macro &other);
 
   /**
-   *  @brief Returns the parent of the macro collection 
+   *  @brief Returns the parent of the macro collection
    *
    *  Returns 0, if there is no parent of this collection (this is the root)
    */
-  lym::MacroCollection *parent ()
-  {
-    return mp_parent;
-  }
+  lym::MacroCollection *parent() { return mp_parent; }
 
   /**
    *  @brief Returns the parent of the macro collection (const version)
    *
    *  Returns 0, if there is no parent of this collection (this is the root)
    */
-  const lym::MacroCollection *parent () const
-  {
-    return mp_parent;
-  }
+  const lym::MacroCollection *parent() const { return mp_parent; }
 
   /**
    *  @brief Gets the interpreter name
    */
-  std::string interpreter_name () const;
+  std::string interpreter_name() const;
 
   /**
-   *  @brief Gets the summary text 
+   *  @brief Gets the summary text
    *
    *  The summary text is shown in the tooltip of the tabs
    */
-  std::string summary () const;
-  
+  std::string summary() const;
+
   /**
-   *  @brief Gets the path 
+   *  @brief Gets the path
    *
    *  The path is the file where the macro is stored.
    *  The path is changed when the macro is saved.
    *  If the macro was never saved, the path is empty.
    */
-  std::string path () const;
-  
+  std::string path() const;
+
   /**
    *  @brief Saves the macro to it's path
    */
-  void save ();
+  void save();
 
   /**
    *  @brief Saves the macro to the specificed path
    */
-  void save_to (const std::string &path);
+  void save_to(const std::string &path);
 
   /**
    *  @brief Delete the original file (the file behind the macro)
    *
    *  Returns true if the file was deleted successfully.
    */
-  bool del ();
+  bool del();
 
   /**
    *  @brief Loads the macro from a file
    */
-  void load ();
+  void load();
 
   /**
    *  @brief Load the macro from an arbitrary file
    *
-   *  This method does not change the macro's path nor does it set the is_file property.
-   *  It is used for importing macros
+   *  This method does not change the macro's path nor does it set the is_file
+   * property. It is used for importing macros
    */
-  void load_from (const std::string &path);
+  void load_from(const std::string &path);
 
   /**
    *  @brief Load the macro from a string
    *
-   *  This method does not change the macro's path nor does it set the is_file property.
-   *  It is used for importing macros. 
-   *  The url must be given in order to determine the format.
+   *  This method does not change the macro's path nor does it set the is_file
+   * property. It is used for importing macros. The url must be given in order
+   * to determine the format.
    */
-  void load_from_string (const std::string &text, const std::string &url);
+  void load_from_string(const std::string &text, const std::string &url);
 
   /**
    *  @brief Gets the directory part of the macro's path.
    */
-  std::string dir () const;
+  std::string dir() const;
 
   /**
    *  @brief Gets the name of the macro
@@ -233,235 +226,201 @@ public:
    *  The name is a unique string derived from the file name.
    *  This does not include the ".lym" or ".rb" extension.
    */
-  std::string name () const
-  {
-    return m_name;
-  }
+  std::string name() const { return m_name; }
 
-  /** 
+  /**
    *  @brief Rename a Macro
    *
-   *  Renames the macro. If the macro is a file, the file will be renamed as well.
-   *  This method will return true, if the rename was successful.
-   *  The name must not contain the suffix.
+   *  Renames the macro. If the macro is a file, the file will be renamed as
+   * well. This method will return true, if the rename was successful. The name
+   * must not contain the suffix.
    */
-  bool rename (const std::string &n);
+  bool rename(const std::string &n);
 
   /**
    *  @brief Gets the macro's description text
    */
-  const std::string &description () const
-  {
-    return m_description;
-  }
+  const std::string &description() const { return m_description; }
 
   /**
    *  @brief Sets the macro's description text
    */
-  void set_description (const std::string &d);
+  void set_description(const std::string &d);
 
   /**
    *  @brief Gets the category tags of the macro
    *
-   *  The category tags string is a comma-separated list of categories to which the 
-   *  macro shall apply.
+   *  The category tags string is a comma-separated list of categories to which
+   * the macro shall apply.
    */
-  const std::string &category () const
-  {
-    return m_category;
-  }
+  const std::string &category() const { return m_category; }
 
   /**
    *  @brief Sets the category tags of the macro
    */
-  void set_category (const std::string &c) 
-  {
-    m_category = c;
-  }
+  void set_category(const std::string &c) { m_category = c; }
 
   /**
    *  @brief Gets the macro's prolog string
    *  The prolog is the code executed before the macro is run itself.
    */
-  const std::string &prolog () const
-  {
-    return m_prolog;
-  }
+  const std::string &prolog() const { return m_prolog; }
 
   /**
    *  @brief Sets the macro's prolog string
    */
-  void set_prolog (const std::string &s);
+  void set_prolog(const std::string &s);
 
   /**
    *  @brief Gets the macro's epilog string
    *  The prolog is the code executed after the macro is run itself.
    */
-  const std::string &epilog () const
-  {
-    return m_epilog;
-  }
+  const std::string &epilog() const { return m_epilog; }
 
   /**
    *  @brief Sets the macro's epilog string
    */
-  void set_epilog (const std::string &s);
+  void set_epilog(const std::string &s);
 
   /**
    *  @brief Gets the macro's version string
    */
-  const std::string &version () const
-  {
-    return m_version;
-  }
+  const std::string &version() const { return m_version; }
 
   /**
    *  @brief Sets the macro's version string
    */
-  void set_version (const std::string &s);
+  void set_version(const std::string &s);
 
   /**
    *  @brief Gets the macro's documentation text
    */
-  const std::string &doc () const
-  {
-    return m_doc;
-  }
+  const std::string &doc() const { return m_doc; }
 
   /**
    *  @brief Sets the macro's documentation text
    */
-  void set_doc (const std::string &d);
+  void set_doc(const std::string &d);
 
   /**
    *  @brief Gets the display string
    */
-  std::string display_string () const;
+  std::string display_string() const;
 
   /**
    *  @brief Gets the macro's script text
    */
-  const std::string &text () const;
+  const std::string &text() const;
 
   /**
    *  @brief Sets the macro's script text
    */
-  void set_text (const std::string &t);
+  void set_text(const std::string &t);
 
   /**
    *  @brief Returns true, if the macro needs to be saved
    */
-  bool is_modified () const
-  {
-    return m_modified;
-  }
+  bool is_modified() const { return m_modified; }
 
   /**
    *  @brief Reset the modified state
    */
-  void reset_modified ();
+  void reset_modified();
 
   /**
    *  @brief make the macro "a file"
-   *  This method is supposed to support the case of loading a file through a string.
+   *  This method is supposed to support the case of loading a file through a
+   * string.
    */
-  void set_is_file ();
+  void set_is_file();
 
   /**
    *  @brief Set the macro's file path
-   *  The file path can be used when the macro is a standalone object and 
+   *  The file path can be used when the macro is a standalone object and
    *  there is no parent folder by which the path can be derived.
    */
-  void set_file_path (const std::string &fp);
+  void set_file_path(const std::string &fp);
 
   /**
-   *  @brief Installs any add-on documentation that this macro potentially provides
+   *  @brief Installs any add-on documentation that this macro potentially
+   * provides
    *
-   *  If the documentation text starts with @class ..., this method installes the documentation
-   *  therein in the GSI class/method repository.
+   *  If the documentation text starts with @class ..., this method installes
+   * the documentation therein in the GSI class/method repository.
    */
-  void install_doc () const;
+  void install_doc() const;
 
   /**
    *  @brief Executes the macro
    *
    *  On error, this method throws an exception.
    *
-   *  If the scripts exits with "exit", the status code will be returned by the run 
-   *  method.
+   *  If the scripts exits with "exit", the status code will be returned by the
+   * run method.
    */
-  int run () const;
+  int run() const;
 
   /**
    *  @brief Returns true, if the macro can be executed
    */
-  bool can_run () const;
+  bool can_run() const;
 
   /**
    *  @brief Gets a value indicating whether the macro is readonly
    */
-  bool is_readonly () const
-  {
-    return m_readonly;
-  }
+  bool is_readonly() const { return m_readonly; }
 
   /**
    *  @brief Sets a value indicating whether the macro is readonly
    */
-  void set_readonly (bool f);
+  void set_readonly(bool f);
 
   /**
-   *  @brief Gets a value indicating whether the macro shall be executed on startup
+   *  @brief Gets a value indicating whether the macro shall be executed on
+   * startup
    */
-  bool is_autorun () const
-  {
-    return m_autorun;
-  }
+  bool is_autorun() const { return m_autorun; }
 
   /**
-   *  @brief Gets a value indicating whether the macro shall be executed early on startup (before the main window is created)
+   *  @brief Gets a value indicating whether the macro shall be executed early
+   * on startup (before the main window is created)
    */
-  bool is_autorun_early () const
-  {
-    return m_autorun_early;
-  }
+  bool is_autorun_early() const { return m_autorun_early; }
 
   /**
-   *  @brief Sets a value indicating whether the macro shall be executed on startup
+   *  @brief Sets a value indicating whether the macro shall be executed on
+   * startup
    */
-  void set_autorun (bool f);
+  void set_autorun(bool f);
 
   /**
-   *  @brief Sets a value indicating whether the macro shall be executed early on startup
+   *  @brief Sets a value indicating whether the macro shall be executed early
+   * on startup
    */
-  void set_autorun_early (bool f);
+  void set_autorun_early(bool f);
 
   /**
    *  @brief Gets the priority of the macro in autorun and autorun-early mode
    *  0 is the first priority, -1 means "never execute".
    */
-  int priority () const
-  {
-    return m_priority;
-  }
+  int priority() const { return m_priority; }
 
   /**
    *  @brief Sets the priority
    */
-  void set_priority (int p);
+  void set_priority(int p);
 
   /**
-   *  @brief Gets a value indicating whether the macro shall be shown in the menu
+   *  @brief Gets a value indicating whether the macro shall be shown in the
+   * menu
    */
-  bool show_in_menu () const
-  {
-    return m_show_in_menu;
-  }
+  bool show_in_menu() const { return m_show_in_menu; }
 
   /**
-   *  @brief Sets a value indicating whether the macro shall be shown in the menu
+   *  @brief Sets a value indicating whether the macro shall be shown in the
+   * menu
    */
-  void set_show_in_menu (bool f);
+  void set_show_in_menu(bool f);
 
   /**
    *  @brief Gets the menu group name
@@ -469,136 +428,120 @@ public:
    *  The menu group name identifies a group into which the item it put.
    *  A group has a separator that groups all items with the same group name.
    */
-  const std::string &group_name () const
-  {
-    return m_group_name;
-  }
+  const std::string &group_name() const { return m_group_name; }
 
   /**
    *  @brief Sets the group name
    */
-  void set_group_name (const std::string &g);
+  void set_group_name(const std::string &g);
 
   /**
    *  @brief Gets the menu path
    *
-   *  The menu path. This path identifies the place where the macro is put in the
-   *  menu. If this path is empty but "show_in_menu" is true, the macro will be put
-   *  into the "Tools/Macros" menu.
+   *  The menu path. This path identifies the place where the macro is put in
+   * the menu. If this path is empty but "show_in_menu" is true, the macro will
+   * be put into the "Tools/Macros" menu.
    */
-  const std::string &menu_path () const
-  {
-    return m_menu_path;
-  }
+  const std::string &menu_path() const { return m_menu_path; }
 
   /**
    *  @brief Sets the menu path
    */
-  void set_menu_path (const std::string &mp);
+  void set_menu_path(const std::string &mp);
 
   /**
    *  @brief Gets the keyboard shortcut
    */
-  const std::string &shortcut () const
-  {
-    return m_shortcut;
-  }
+  const std::string &shortcut() const { return m_shortcut; }
 
   /**
    *  @brief Sets the shortcut
    */
-  void set_shortcut (const std::string &s);
+  void set_shortcut(const std::string &s);
 
   /**
    *  @brief Gets the format of this macro
    */
-  Format format () const
-  {
-    return m_format;
-  }
+  Format format() const { return m_format; }
 
   /**
    *  @brief Sets the format of this macro
    */
-  void set_format (Format f);
+  void set_format(Format f);
 
   /**
    *  @brief Gets the suffix for a given interpreter and format
    */
-  static std::string suffix_for_format (Macro::Interpreter interpreter, const std::string &dsl_name, Macro::Format format);
+  static std::string suffix_for_format(Macro::Interpreter interpreter,
+                                       const std::string &dsl_name,
+                                       Macro::Format format);
 
   /**
-   *  @brief Gets the interpreter, dsl interpreter name, autorun preference and format for a given file name 
+   *  @brief Gets the interpreter, dsl interpreter name, autorun preference and
+   * format for a given file name
    *
    *  Returns false, if the suffix is not a known suffix.
    */
-  static bool format_from_suffix (const std::string &fn, Macro::Interpreter &interpreter, std::string &dsl_name, bool &autorun_pref, Macro::Format &format);
+  static bool format_from_suffix(const std::string &fn,
+                                 Macro::Interpreter &interpreter,
+                                 std::string &dsl_name, bool &autorun_pref,
+                                 Macro::Format &format);
 
   /**
    *  @brief Gets the name of the DSL interpreter for the DSL interpreter types
    */
-  const std::string &dsl_interpreter () const
-  {
-    return m_dsl_interpreter;
-  }
+  const std::string &dsl_interpreter() const { return m_dsl_interpreter; }
 
   /**
    *  @brief Set the DSL interpreter name
    */
-  void set_dsl_interpreter (const std::string &dsl_name);
+  void set_dsl_interpreter(const std::string &dsl_name);
 
   /**
    *  @brief Gets the interpreter set for this macro
    */
-  Interpreter interpreter () const
-  {
-    return m_interpreter;
-  }
+  Interpreter interpreter() const { return m_interpreter; }
 
   /**
    *  @brief Set the interpreter
    */
-  void set_interpreter (Interpreter interpreter);
+  void set_interpreter(Interpreter interpreter);
 
   /**
    *  @brief Gets a value indicating whether the macro is backed up by a file
-   *  
+   *
    *  A macro is not a file as long as it's just constructed by not saved.
    */
-  bool is_file () const
-  {
-    return m_is_file;
-  }
+  bool is_file() const { return m_is_file; }
 
   /**
-   *  @brief Synchronize the text with the properties in PlainTextWithHashAnnotationsFormat format
+   *  @brief Synchronize the text with the properties in
+   * PlainTextWithHashAnnotationsFormat format
    */
-  void sync_text_with_properties ();
+  void sync_text_with_properties();
 
   /**
-   *  @brief Synchronize the properties with the text in PlainTextWithHashAnnotationsFormat format
+   *  @brief Synchronize the properties with the text in
+   * PlainTextWithHashAnnotationsFormat format
    */
-  void sync_properties_with_text ();
-
-  /**
-   *  @brief Compares two macros
-   */
-  bool operator== (const Macro &other) const;
+  void sync_properties_with_text();
 
   /**
    *  @brief Compares two macros
    */
-  bool operator!= (const Macro &other) const
-  {
-    return !(*this == other);
-  }
+  bool operator==(const Macro &other) const;
+
+  /**
+   *  @brief Compares two macros
+   */
+  bool operator!=(const Macro &other) const { return !(*this == other); }
 
 #if defined(HAVE_QT)
 signals:
   /**
    *  @brief This signal is sent when the macro changes
    */
-  void changed ();
+  void changed();
 #endif
 
 private:
@@ -629,32 +572,29 @@ private:
   std::string m_dsl_interpreter;
   Format m_format;
 
-  void on_menu_needs_update ();
-  void on_changed ();
-  static bool format_from_suffix_string (const std::string &suffix, Macro::Interpreter &interpreter, std::string &dsl_name, bool &autorun_pref, Macro::Format &format);
-  static std::pair<bool, std::string> format_from_filename (const std::string &fn, Macro::Interpreter &interpreter, std::string &dsl_name, bool &autorun_pref, Macro::Format &format);
+  void on_menu_needs_update();
+  void on_changed();
+  static bool format_from_suffix_string(const std::string &suffix,
+                                        Macro::Interpreter &interpreter,
+                                        std::string &dsl_name,
+                                        bool &autorun_pref,
+                                        Macro::Format &format);
+  static std::pair<bool, std::string>
+  format_from_filename(const std::string &fn, Macro::Interpreter &interpreter,
+                       std::string &dsl_name, bool &autorun_pref,
+                       Macro::Format &format);
 
-  void set_autorun_default (bool f)
-  {
-    m_autorun_default = f;
-  }
+  void set_autorun_default(bool f) { m_autorun_default = f; }
 
-  void set_name (const std::string &name)
-  {
-    m_name = name;
-  }
+  void set_name(const std::string &name) { m_name = name; }
 
-  void set_parent (lym::MacroCollection *parent)
-  {
-    mp_parent = parent;
-  }
+  void set_parent(lym::MacroCollection *parent) { mp_parent = parent; }
 
   //  no copying
-  Macro (const Macro &d);
-  Macro &operator= (const Macro &d);
+  Macro(const Macro &d);
+  Macro &operator=(const Macro &d);
 };
 
-}
+} // namespace lym
 
 #endif
-

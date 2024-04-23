@@ -20,49 +20,45 @@
 
 */
 
-
 #include "dbEdgePair.h"
 
-namespace tl
-{
+namespace tl {
 
-template<> void extractor_impl (tl::Extractor &ex, db::EdgePair &e)
-{
-  if (! test_extractor_impl (ex, e)) {
-    ex.error (tl::to_string (tr ("Expected an edge specification")));
+template <> void extractor_impl(tl::Extractor &ex, db::EdgePair &e) {
+  if (!test_extractor_impl(ex, e)) {
+    ex.error(tl::to_string(tr("Expected an edge specification")));
   }
 }
 
-template<> void extractor_impl (tl::Extractor &ex, db::DEdgePair &e)
-{
-  if (! test_extractor_impl (ex, e)) {
-    ex.error (tl::to_string (tr ("Expected an edge specification")));
+template <> void extractor_impl(tl::Extractor &ex, db::DEdgePair &e) {
+  if (!test_extractor_impl(ex, e)) {
+    ex.error(tl::to_string(tr("Expected an edge specification")));
   }
 }
 
-template<class C> bool _test_extractor_impl (tl::Extractor &ex, db::edge_pair<C> &e)
-{
+template <class C>
+bool _test_extractor_impl(tl::Extractor &ex, db::edge_pair<C> &e) {
   typedef db::edge<C> edge_type;
   tl::Extractor ex_saved = ex;
 
   edge_type e1, e2;
 
-  if (ex.try_read (e1)) {
+  if (ex.try_read(e1)) {
 
     bool symmetric = false;
-    if (ex.test ("|")) {
+    if (ex.test("|")) {
       symmetric = true;
-    } else if (! ex.test ("/")) {
+    } else if (!ex.test("/")) {
       ex = ex_saved;
       return false;
     }
 
-    if (! ex.try_read (e2)) {
+    if (!ex.try_read(e2)) {
       ex = ex_saved;
       return false;
     }
 
-    e = db::edge_pair<C> (e1, e2, symmetric);
+    e = db::edge_pair<C>(e1, e2, symmetric);
     return true;
 
   } else {
@@ -70,15 +66,12 @@ template<class C> bool _test_extractor_impl (tl::Extractor &ex, db::edge_pair<C>
   }
 }
 
-template<> bool test_extractor_impl (tl::Extractor &ex, db::EdgePair &e)
-{
-  return _test_extractor_impl (ex, e);
+template <> bool test_extractor_impl(tl::Extractor &ex, db::EdgePair &e) {
+  return _test_extractor_impl(ex, e);
 }
 
-template<> bool test_extractor_impl (tl::Extractor &ex, db::DEdgePair &e)
-{
-  return _test_extractor_impl (ex, e);
+template <> bool test_extractor_impl(tl::Extractor &ex, db::DEdgePair &e) {
+  return _test_extractor_impl(ex, e);
 }
 
 } // namespace tl
-

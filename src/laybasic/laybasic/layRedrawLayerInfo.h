@@ -20,14 +20,13 @@
 
 */
 
-
 #ifndef HDR_layRedrawLayerInfo
 #define HDR_layRedrawLayerInfo
 
-#include <vector>
-#include "dbTrans.h"
 #include "dbPropertiesRepository.h"
+#include "dbTrans.h"
 #include "layParsedLayerSource.h"
+#include <vector>
 
 namespace lay {
 
@@ -36,22 +35,23 @@ class LayerProperties;
 /**
  *  @brief A helper struct to describe one entry in the redraw queue
  */
-struct RedrawLayerInfo
-{
-  RedrawLayerInfo (const lay::LayerProperties &lp);
+struct RedrawLayerInfo {
+  RedrawLayerInfo(const lay::LayerProperties &lp);
 
   /**
    *  @brief Enable redrawing
    *
-   *  If this flag is true (the default), redrawing is enabled. Otherwise this layer is skipped.
+   *  If this flag is true (the default), redrawing is enabled. Otherwise this
+   * layer is skipped.
    */
   bool enabled;
 
   /**
    *  @brief Visible layer
    *
-   *  If this flag is true, the layer is visible. Visible layers are drawn with 
-   *  higher priority than the invisible ones. This flag is set by the constructor.
+   *  If this flag is true, the layer is visible. Visible layers are drawn with
+   *  higher priority than the invisible ones. This flag is set by the
+   * constructor.
    */
   bool visible;
 
@@ -108,9 +108,9 @@ struct RedrawLayerInfo
    *
    *  This member is set by the constructor.
    */
-  std::set <db::properties_id_type> prop_sel;
+  std::set<db::properties_id_type> prop_sel;
 
-  /** 
+  /**
    *  @brief Invert the property selection
    *
    *  This member is set by the constructor.
@@ -120,12 +120,12 @@ struct RedrawLayerInfo
   /**
    *  @brief Returns true, if the layer needs to be drawn
    */
-  bool needs_drawing () const
-  {
-    return visible && enabled && (cell_frame || layer_index >= 0) && cellview_index >= 0;
+  bool needs_drawing() const {
+    return visible && enabled && (cell_frame || layer_index >= 0) &&
+           cellview_index >= 0;
   }
 };
 
-}
+} // namespace lay
 
 #endif

@@ -29,19 +29,16 @@
 class QCursor;
 #endif
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief A wrapper for the cursor definitions
  */
-struct LAYBASIC_PUBLIC Cursor
-{
+struct LAYBASIC_PUBLIC Cursor {
   /**
    *  @brief An enumeration of all cursors defined
    */
-  enum cursor_shape
-  {
+  enum cursor_shape {
     keep = -2,
     none = -1,
     arrow = 0,
@@ -69,11 +66,10 @@ struct LAYBASIC_PUBLIC Cursor
   /**
    *  @brief Get the QCursor from the lay::cursor_shape enum
    */
-  static QCursor qcursor (cursor_shape cursor);
+  static QCursor qcursor(cursor_shape cursor);
 #endif
-
 };
 
-}
+} // namespace lay
 
 #endif

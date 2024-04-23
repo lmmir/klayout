@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_tlCpp
 #define HDR_tlCpp
 
@@ -35,12 +34,10 @@
 #define NO_RETURN __declspec(noreturn)
 #endif
 
-namespace tl
-{
+namespace tl {
 
 //  .. nothing yet ..
 
 }
 
 #endif
-

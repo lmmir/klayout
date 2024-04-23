@@ -20,20 +20,19 @@
 
 */
 
-
 #ifndef HDR_tlDeflate
 #define HDR_tlDeflate
 
 #include "tlCommon.h"
 
-#include "tlStream.h"
 #include "tlException.h"
+#include "tlStream.h"
 
-//  forware definition of the zlib stream structure - we can omit the zlib header here
+//  forware definition of the zlib stream structure - we can omit the zlib
+//  header here
 struct z_stream_s;
 
-namespace tl
-{
+namespace tl {
 
 class HuffmannDecoder;
 
@@ -44,18 +43,14 @@ class HuffmannDecoder;
  *  these bytes. The bits are delivered in the order specified by the DEFLATE
  *  format specification (least significant bit first).
  */
-class TL_PUBLIC BitStream
-{
+class TL_PUBLIC BitStream {
 public:
   /**
    *  @brief Constructor
    *
    *  Constructs a bit stream filter attached to the given stream
    */
-  BitStream (tl::InputStream &input)
-    : mp_input (&input),
-      m_mask (0), m_byte (0)
-  {
+  BitStream(tl::InputStream &input) : mp_input(&input), m_mask(0), m_byte(0) {
     // ...
   }
 
@@ -65,12 +60,12 @@ public:
    *  This method simply passes the byte.
    *  The method expects the next byte to be available.
    */
-  unsigned char get_byte ()
-  {
+  unsigned char get_byte() {
     m_mask = 0;
-    const char *c = mp_input->get (1, true /*bypass_deflate*/);
+    const char *c = mp_input->get(1, true /*bypass_deflate*/);
     if (c == 0) {
-      throw tl::Exception (tl::to_string (tr ("Unexpected end of file (DEFLATE implementation)")));
+      throw tl::Exception(
+          tl::to_string(tr("Unexpected end of file (DEFLATE implementation)")));
     }
     return *c;
   }
@@ -81,12 +76,11 @@ public:
    *  This method gets the next bit available.
    *  The method expects the next byte to be available, if one needs to be read.
    */
-  bool get_bit ()
-  {
+  bool get_bit() {
     if (m_mask == 0) {
-      m_byte = get_byte ();
+      m_byte = get_byte();
       m_mask = 0x01;
-    } 
+    }
     bool b = ((m_byte & m_mask) != 0);
     m_mask <<= 1;
     return b;
@@ -95,17 +89,16 @@ public:
   /**
    *  @brief Get a sequence of bits
    *
-   *  This method gets the next n bits and delivers them as a single unsigned int,
-   *  packing the first bit into the least signification bit. This is the specification
-   *  for reading multiple bit values except Huffmann codes.
+   *  This method gets the next n bits and delivers them as a single unsigned
+   * int, packing the first bit into the least signification bit. This is the
+   * specification for reading multiple bit values except Huffmann codes.
    */
-  unsigned int get_bits (unsigned int n)
-  {
+  unsigned int get_bits(unsigned int n) {
     //  KLUDGE: take directly from the byte for performance.
     unsigned int r = 0;
     unsigned int m = 1;
     while (n-- > 0) {
-      r |= get_bit () ? m : 0;
+      r |= get_bit() ? m : 0;
       m <<= 1;
     }
     return r;
@@ -114,17 +107,13 @@ public:
   /**
    *  @brief Skip the next bits up to the next byte boundary
    */
-  void skip_to_byte ()
-  {
-    m_mask = 0;
-  }
+  void skip_to_byte() { m_mask = 0; }
 
 private:
   tl::InputStream *mp_input;
   unsigned char m_mask;
   unsigned char m_byte;
 };
-
 
 /**
  *  @brief A Deflating filter, similar to InflateFilter
@@ -133,50 +122,44 @@ private:
  *  output stream. Similar to InflateFilter it is put between the source
  *  and an output stream.
  */
-class TL_PUBLIC DeflateFilter
-{
+class TL_PUBLIC DeflateFilter {
 public:
   /**
    *  @brief Constructor: creates a filter in front of the output stream
    */
-  DeflateFilter (tl::OutputStream &output);
+  DeflateFilter(tl::OutputStream &output);
 
   /**
    *  @brief Destructor
    *
-   *  Note that this method will not flush the stream since that may 
+   *  Note that this method will not flush the stream since that may
    *  throw an exception. flush() has to be called explicitly.
    */
-  ~DeflateFilter ();
+  ~DeflateFilter();
 
   /**
    *  @brief Outputs a series of bytes into the deflated stream
    */
-  void put (const char *b, size_t n);
+  void put(const char *b, size_t n);
 
   /**
    *  @brief Flushes the buffer and writes all remaining bytes
    *
-   *  Note: this method must be called always before the stream 
-   *  is closed and the filter is destroyed. Otherwise, the last bytes may be lost.
+   *  Note: this method must be called always before the stream
+   *  is closed and the filter is destroyed. Otherwise, the last bytes may be
+   * lost.
    */
-  void flush ();
+  void flush();
 
   /**
    *  @brief Get the uncompressed count collected so far
    */
-  size_t uncompressed () const
-  {
-    return m_uc;
-  }
+  size_t uncompressed() const { return m_uc; }
 
   /**
    *  @brief Get the compressed count collected so far
    */
-  size_t compressed () const
-  {
-    return m_cc;
-  }
+  size_t compressed() const { return m_cc; }
 
 private:
   bool m_finished;
@@ -189,31 +172,31 @@ private:
 /**
  *  @brief The DEFLATE decompression (inflating) filter
  *
- *  This class is the main DEFLATE decoder. It is called "filter", since it takes bytes from
- *  the input (from the "input" stream) and delivers bytes on the output ("get" method). 
+ *  This class is the main DEFLATE decoder. It is called "filter", since it
+ * takes bytes from the input (from the "input" stream) and delivers bytes on
+ * the output ("get" method).
  */
-class TL_PUBLIC InflateFilter
-{
+class TL_PUBLIC InflateFilter {
 public:
   /**
    *  @brief Constructor
    *
    *  Constructs a filter attached to the given Stream object.
    */
-  InflateFilter (tl::InputStream &input);
+  InflateFilter(tl::InputStream &input);
 
   /**
    *  @brief Destructor
    */
-  ~InflateFilter ();
+  ~InflateFilter();
 
   /**
    *  @brief Get the next byte(s)
-   *  
-   *  This method returns a contiguous block of decoded bytes with the given length.
-   *  The maximum size of the block available is half the buffer size.
+   *
+   *  This method returns a contiguous block of decoded bytes with the given
+   * length. The maximum size of the block available is half the buffer size.
    */
-  const char *get (size_t n);
+  const char *get(size_t n);
 
   /**
    *  @brief Undo the last "get" operation
@@ -221,13 +204,12 @@ public:
    *  This method ungets the last bytes obtained with the "get" method.
    *  the size to unget must match the last get's size.
    */
-  void unget (size_t n);
-  
+  void unget(size_t n);
 
   /**
    *  @brief Report true, if no more bytes can be delivered
    */
-  bool at_end ();
+  bool at_end();
 
 private:
   BitStream m_input;
@@ -242,13 +224,11 @@ private:
   int m_uncompressed_length;
   HuffmannDecoder *mp_lit_decoder, *mp_dist_decoder;
 
-  void put_byte (char b);
-  void put_byte_dist (unsigned int d);
-  bool process ();
-
+  void put_byte(char b);
+  void put_byte_dist(unsigned int d);
+  bool process();
 };
 
-}
+} // namespace tl
 
 #endif
-

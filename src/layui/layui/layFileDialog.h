@@ -33,76 +33,81 @@
 #include <string>
 #include <vector>
 
-namespace lay
-{
+namespace lay {
 
 /**
- *  @brief Generic file dialog 
+ *  @brief Generic file dialog
  *
  *  This dialog is provided to encapsulate the Qt file dialog.
  *  This implementation allows staying within a directory even
  *  if the static convenience functions are used. Under Windows,
- *  we need to use the static functions since these use the 
+ *  we need to use the static functions since these use the
  *  system dialogs.
  */
-class LAYUI_PUBLIC FileDialog 
-  : public QObject 
-{
+class LAYUI_PUBLIC FileDialog : public QObject {
 public:
   /**
-   *  @brief Instantiate the file dialog 
+   *  @brief Instantiate the file dialog
    *
    *  @param parent The parent object that owns the dialog
    *  @param title The title string
-   *  @param filters The filters as provided for QFileDialog::getOpenFileName 
+   *  @param filters The filters as provided for QFileDialog::getOpenFileName
    *  @param def_suffix The default suffix
    */
-  FileDialog (QWidget *parent, const std::string &title, const std::string &filters, const std::string &def_suffix = std::string ());
+  FileDialog(QWidget *parent, const std::string &title,
+             const std::string &filters,
+             const std::string &def_suffix = std::string());
 
   /**
    *  @brief The destructor
    */
-  ~FileDialog ();
+  ~FileDialog();
 
   /**
    *  @brief Gets a file name to read
    */
-  bool get_open (std::string &file_name, const std::string &title = std::string ());
+  bool get_open(std::string &file_name,
+                const std::string &title = std::string());
 
   /**
    *  @brief Reads multiple files names
    */
-  bool get_open (std::vector<std::string> &file_names, const std::string &dir = std::string (), const std::string &title = std::string ());
+  bool get_open(std::vector<std::string> &file_names,
+                const std::string &dir = std::string(),
+                const std::string &title = std::string());
 
   /**
    *  @brief Gets a file name to save
    */
-  bool get_save (std::string &file_name, const std::string &title = std::string ());
+  bool get_save(std::string &file_name,
+                const std::string &title = std::string());
 
   /**
    *  @brief Gets the selected filter or -1 if no specific filter was selected
    *
    *  This value is only set after get_open or get_save returned true
    */
-  int selected_filter () const;
+  int selected_filter() const;
 
   /**
-   *  @brief Make the file names use UTF8 encoding 
+   *  @brief Make the file names use UTF8 encoding
    *
-   *  TODO: this is a quick hack - basically all 8bit strings should be UTF8 and 
+   *  TODO: this is a quick hack - basically all 8bit strings should be UTF8 and
    *  file names should be handled properly by QString and tl::Stream.
    */
-  static void set_utf8 (bool utf);
+  static void set_utf8(bool utf);
 
   /**
    *  @brief Gets the index of the selected filter from the filter list
    */
-  static int find_selected_filter (const QString &filters, const QString &selected_filter);
+  static int find_selected_filter(const QString &filters,
+                                  const QString &selected_filter);
 
   /**
    *  @brief Adds the default extension unless there is one already
    */
-  static std::string add_default_extension (const std::string &path, const QString &selected_filter);
+  static std::string add_default_extension(const std::string &path,
+                                           const QString &selected_filter);
 
 private:
   QDir m_dir;
@@ -116,4 +121,4 @@ private:
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

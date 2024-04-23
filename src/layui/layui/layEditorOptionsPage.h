@@ -31,8 +31,7 @@
 
 #include <QWidget>
 
-namespace lay
-{
+namespace lay {
 
 class PluginDeclaration;
 class Dispatcher;
@@ -44,47 +43,40 @@ class EditorOptionsPages;
 /**
  *  @brief The base class for a object properties page
  */
-class LAYUI_PUBLIC EditorOptionsPage
-  : public QWidget, public tl::Object
-{
-Q_OBJECT
+class LAYUI_PUBLIC EditorOptionsPage : public QWidget, public tl::Object {
+  Q_OBJECT
 
 public:
-  EditorOptionsPage (lay::LayoutViewBase *view, lay::Dispatcher *dispatcher);
-  virtual ~EditorOptionsPage ();
+  EditorOptionsPage(lay::LayoutViewBase *view, lay::Dispatcher *dispatcher);
+  virtual ~EditorOptionsPage();
 
-  virtual std::string title () const = 0;
-  virtual int order () const = 0;
-  virtual void apply (lay::Dispatcher * /*root*/) { }
-  virtual void setup (lay::Dispatcher * /*root*/) { }
-  virtual void commit_recent (lay::Dispatcher * /*root*/) { }
+  virtual std::string title() const = 0;
+  virtual int order() const = 0;
+  virtual void apply(lay::Dispatcher * /*root*/) {}
+  virtual void setup(lay::Dispatcher * /*root*/) {}
+  virtual void commit_recent(lay::Dispatcher * /*root*/) {}
 
-  bool active () const { return m_active; }
-  void activate (bool active);
-  void set_owner (EditorOptionsPages *owner);
+  bool active() const { return m_active; }
+  void activate(bool active);
+  void set_owner(EditorOptionsPages *owner);
 
-  const lay::PluginDeclaration *plugin_declaration () const { return mp_plugin_declaration; }
-  void set_plugin_declaration (const lay::PluginDeclaration *pd) { mp_plugin_declaration = pd; }
+  const lay::PluginDeclaration *plugin_declaration() const {
+    return mp_plugin_declaration;
+  }
+  void set_plugin_declaration(const lay::PluginDeclaration *pd) {
+    mp_plugin_declaration = pd;
+  }
 
 protected slots:
-  void edited ()
-  {
-    apply (dispatcher ());
-  }
+  void edited() { apply(dispatcher()); }
 
 protected:
-  lay::Dispatcher *dispatcher () const
-  {
-    return mp_dispatcher;
-  }
+  lay::Dispatcher *dispatcher() const { return mp_dispatcher; }
 
-  lay::LayoutViewBase *view () const
-  {
-    return mp_view;
-  }
+  lay::LayoutViewBase *view() const { return mp_view; }
 
-  virtual void active_cellview_changed () { }
-  virtual void technology_changed (const std::string & /*tech*/) { }
+  virtual void active_cellview_changed() {}
+  virtual void technology_changed(const std::string & /*tech*/) {}
 
 private:
   EditorOptionsPages *mp_owner;
@@ -93,13 +85,13 @@ private:
   lay::Dispatcher *mp_dispatcher;
   lay::LayoutViewBase *mp_view;
 
-  void on_active_cellview_changed ();
-  void on_technology_changed ();
-  void attach_events ();
+  void on_active_cellview_changed();
+  void on_technology_changed();
+  void attach_events();
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

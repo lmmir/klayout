@@ -20,23 +20,18 @@
 
 */
 
-
 #include "tlHeap.h"
 
-namespace tl
-{
+namespace tl {
 
 // ----------------------------------------------------------
 //  HeapObject implementation
 
-HeapObject::HeapObject () 
-  : mp_b (0) 
-{ 
+HeapObject::HeapObject() : mp_b(0) {
   //  .. nothing yet ..
 }
 
-HeapObject::~HeapObject () 
-{
+HeapObject::~HeapObject() {
   if (mp_b) {
     delete mp_b;
   }
@@ -46,18 +41,16 @@ HeapObject::~HeapObject ()
 // ----------------------------------------------------------
 //  Heap implementation
 
-Heap::Heap ()
-{
+Heap::Heap() {
   //  .. nothing yet ..
 }
 
-Heap::~Heap ()
-{
-  //  this scheme ensures we delete the objects in the reverse order they are created.
-  while (! m_objects.empty ()) {
-    m_objects.pop_back ();
+Heap::~Heap() {
+  //  this scheme ensures we delete the objects in the reverse order they are
+  //  created.
+  while (!m_objects.empty()) {
+    m_objects.pop_back();
   }
 }
 
-}
-
+} // namespace tl

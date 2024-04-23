@@ -20,15 +20,13 @@
 
 */
 
-
 #ifndef HDR_tlUniqueName
 #define HDR_tlUniqueName
 
 #include "tlCommon.h"
 #include "tlString.h"
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief An object delivering a unique name given a set of existing names
@@ -38,27 +36,28 @@ namespace tl
  *  the separator and an integer disambiguator.
  */
 template <class Set>
-TL_PUBLIC_TEMPLATE std::string unique_name (const std::string &org_name, const Set &present_names, const std::string &sep = "$")
-{
-  if (present_names.find (org_name) == present_names.end ()) {
+TL_PUBLIC_TEMPLATE std::string unique_name(const std::string &org_name,
+                                           const Set &present_names,
+                                           const std::string &sep = "$") {
+  if (present_names.find(org_name) == present_names.end()) {
     return org_name;
   }
 
   std::string b;
 
   unsigned int j = 0;
-  for (unsigned int m = (unsigned int) 1 << (sizeof (unsigned int) * 8 - 2); m > 0; m >>= 1) {
+  for (unsigned int m = (unsigned int)1 << (sizeof(unsigned int) * 8 - 2);
+       m > 0; m >>= 1) {
     j += m;
-    b = org_name + sep + tl::to_string (j);
-    if (present_names.find (b) == present_names.end ()) {
+    b = org_name + sep + tl::to_string(j);
+    if (present_names.find(b) == present_names.end()) {
       j -= m;
     }
   }
 
-  return org_name + sep + tl::to_string (j + 1);
+  return org_name + sep + tl::to_string(j + 1);
 }
 
 } // namespace tl
 
 #endif
-

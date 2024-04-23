@@ -19,19 +19,18 @@
 
 */
 
-
 #if !defined(HDR_gsiQtHelper_h)
-# define HDR_gsiQtHelper_h
+#define HDR_gsiQtHelper_h
 
-#include "gsiQtBasicCommon.h"
 #include "gsiDecl.h"
+#include "gsiQtBasicCommon.h"
 
 #include <QObject>
 
-namespace qt_gsi
-{
+namespace qt_gsi {
 
-QTBASIC_PUBLIC gsi::ObjectBase *get_watcher_object (QObject *qobject, bool required);
+QTBASIC_PUBLIC gsi::ObjectBase *get_watcher_object(QObject *qobject,
+                                                   bool required);
 
 }
 

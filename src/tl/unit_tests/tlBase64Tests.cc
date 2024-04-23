@@ -20,79 +20,81 @@
 
 */
 
-
 #include "tlBase64.h"
 #include "tlUnitTest.h"
 
-TEST(1)
-{
-  std::vector<unsigned char> r = tl::from_base64 ("");
-  EXPECT_EQ (r.empty (), true);
+TEST(1) {
+  std::vector<unsigned char> r = tl::from_base64("");
+  EXPECT_EQ(r.empty(), true);
 
-  r = tl::from_base64 ("YQ==");
-  EXPECT_EQ (std::string ((const char *) r.begin ().operator-> (), r.size ()), "a");
+  r = tl::from_base64("YQ==");
+  EXPECT_EQ(std::string((const char *)r.begin().operator->(), r.size()), "a");
 
-  r = tl::from_base64 ("YQ==");
-  EXPECT_EQ (std::string ((const char *) r.begin ().operator-> (), r.size ()), "a");
+  r = tl::from_base64("YQ==");
+  EXPECT_EQ(std::string((const char *)r.begin().operator->(), r.size()), "a");
 
-  r = tl::from_base64 ("YWI=");
-  EXPECT_EQ (std::string ((const char *) r.begin ().operator-> (), r.size ()), "ab");
+  r = tl::from_base64("YWI=");
+  EXPECT_EQ(std::string((const char *)r.begin().operator->(), r.size()), "ab");
 
-  r = tl::from_base64 ("YWJj");
-  EXPECT_EQ (std::string ((const char *) r.begin ().operator-> (), r.size ()), "abc");
+  r = tl::from_base64("YWJj");
+  EXPECT_EQ(std::string((const char *)r.begin().operator->(), r.size()), "abc");
 
-  r = tl::from_base64 ("YWJjZA==");
-  EXPECT_EQ (std::string ((const char *) r.begin ().operator-> (), r.size ()), "abcd");
+  r = tl::from_base64("YWJjZA==");
+  EXPECT_EQ(std::string((const char *)r.begin().operator->(), r.size()),
+            "abcd");
 
-  r = tl::from_base64 ("YWJjZA=");
-  EXPECT_EQ (std::string ((const char *) r.begin ().operator-> (), r.size ()), "abcd");
+  r = tl::from_base64("YWJjZA=");
+  EXPECT_EQ(std::string((const char *)r.begin().operator->(), r.size()),
+            "abcd");
 
-  r = tl::from_base64 ("SGVsbG8sIHdvcmxkIQo=");
-  EXPECT_EQ (std::string ((const char *) r.begin ().operator-> (), r.size ()), "Hello, world!\n");
+  r = tl::from_base64("SGVsbG8sIHdvcmxkIQo=");
+  EXPECT_EQ(std::string((const char *)r.begin().operator->(), r.size()),
+            "Hello, world!\n");
 
-  r = tl::from_base64 ("SGVsbG\n8sIHd  \tvcmxkIQo=");
-  EXPECT_EQ (std::string ((const char *) r.begin ().operator-> (), r.size ()), "Hello, world!\n");
+  r = tl::from_base64("SGVsbG\n8sIHd  \tvcmxkIQo=");
+  EXPECT_EQ(std::string((const char *)r.begin().operator->(), r.size()),
+            "Hello, world!\n");
 
   try {
-    r = tl::from_base64 ("YWJjZ==");
-    EXPECT_EQ (true, false);
+    r = tl::from_base64("YWJjZ==");
+    EXPECT_EQ(true, false);
   } catch (tl::Exception &ex) {
-    EXPECT_EQ (ex.msg (), "Error decoding base64 data: padding character does not match zero byte");
+    EXPECT_EQ(ex.msg(), "Error decoding base64 data: padding character does "
+                        "not match zero byte");
   }
 
   try {
-    r = tl::from_base64 ("YW#jZA==");
-    EXPECT_EQ (true, false);
+    r = tl::from_base64("YW#jZA==");
+    EXPECT_EQ(true, false);
   } catch (tl::Exception &ex) {
-    EXPECT_EQ (ex.msg (), "Error decoding base64 data: invalid character '#'");
+    EXPECT_EQ(ex.msg(), "Error decoding base64 data: invalid character '#'");
   }
 }
 
-TEST(2)
-{
+TEST(2) {
   std::string s, r;
 
   s = "";
-  r = tl::to_base64 ((const unsigned char *) s.c_str (), s.size ());
-  EXPECT_EQ (r, "");
+  r = tl::to_base64((const unsigned char *)s.c_str(), s.size());
+  EXPECT_EQ(r, "");
 
   s = "a";
-  r = tl::to_base64 ((const unsigned char *) s.c_str (), s.size ());
-  EXPECT_EQ (r, "YQ==");
+  r = tl::to_base64((const unsigned char *)s.c_str(), s.size());
+  EXPECT_EQ(r, "YQ==");
 
   s = "ab";
-  r = tl::to_base64 ((const unsigned char *) s.c_str (), s.size ());
-  EXPECT_EQ (r, "YWI=");
+  r = tl::to_base64((const unsigned char *)s.c_str(), s.size());
+  EXPECT_EQ(r, "YWI=");
 
   s = "abc";
-  r = tl::to_base64 ((const unsigned char *) s.c_str (), s.size ());
-  EXPECT_EQ (r, "YWJj");
+  r = tl::to_base64((const unsigned char *)s.c_str(), s.size());
+  EXPECT_EQ(r, "YWJj");
 
   s = "abcd";
-  r = tl::to_base64 ((const unsigned char *) s.c_str (), s.size ());
-  EXPECT_EQ (r, "YWJjZA==");
+  r = tl::to_base64((const unsigned char *)s.c_str(), s.size());
+  EXPECT_EQ(r, "YWJjZA==");
 
   s = "Hello, world!\n";
-  r = tl::to_base64 ((const unsigned char *) s.c_str (), s.size ());
-  EXPECT_EQ (r, "SGVsbG8sIHdvcmxkIQo=");
+  r = tl::to_base64((const unsigned char *)s.c_str(), s.size());
+  EXPECT_EQ(r, "SGVsbG8sIHdvcmxkIQo=");
 }

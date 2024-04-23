@@ -23,10 +23,8 @@
 #include "dbConverters.h"
 #include "tlInternational.h"
 
-namespace db
-{
+namespace db {
 
-  //  .. nothing yet ..
+//  .. nothing yet ..
 
 }
-

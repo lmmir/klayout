@@ -21,5 +21,5 @@
 */
 
 #if QT_VERSION >= 0x060000
-#  include "../qt6/QtCore5Compat/gsiQtExternals.h"
+#include "../qt6/QtCore5Compat/gsiQtExternals.h"
 #endif

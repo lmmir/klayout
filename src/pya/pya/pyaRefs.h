@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef _HDR_pyaRefs
 #define _HDR_pyaRefs
 
@@ -29,8 +28,7 @@
 struct _object;
 typedef _object PyObject;
 
-namespace pya
-{
+namespace pya {
 
 class PythonPtr;
 
@@ -40,16 +38,15 @@ class PythonPtr;
  *  This reference represents stolen references. Upon destruction, this
  *  object will automatically decrement the reference count.
  *  The constructor has a parameter which allows using that class for
- *  borrowed references too. 
+ *  borrowed references too.
  *  PythonRef will basically become the owner of the referred object.
  */
-class PYA_PUBLIC PythonRef
-{
+class PYA_PUBLIC PythonRef {
 public:
   /**
    *  @brief Creates a void (NULL) reference
    */
-  PythonRef ();
+  PythonRef();
 
   /**
    *  @brief Creates a reference from a pointer
@@ -57,80 +54,76 @@ public:
    *  The reference will not take over the ownership over the object,
    *  preserving the semantics of the pointer.
    */
-  PythonRef (const PythonPtr &ptr);
+  PythonRef(const PythonPtr &ptr);
 
-  /** 
+  /**
    *  @brief Creates a reference for the given object
    *  If new_ref is false, the reference is regarded a borrowed reference and
-   *  the reference count is incremented initially to compensate for the 
+   *  the reference count is incremented initially to compensate for the
    *  decrement in the destructor
    */
-  PythonRef (PyObject *obj, bool new_ref = true);
+  PythonRef(PyObject *obj, bool new_ref = true);
 
   /**
    *  @brief Assignment: refers to the same object than the other reference
    */
-  PythonRef (const PythonRef &other);
+  PythonRef(const PythonRef &other);
 
   /**
    *  @brief Destructor: releases the reference
    */
-  ~PythonRef ();
+  ~PythonRef();
 
   /**
    *  @brief Assigns the given new reference to this
    *  Any existing reference is released.
    */
-  PythonRef &operator= (PyObject *obj);
+  PythonRef &operator=(PyObject *obj);
 
   /**
    *  @brief Assigns the given borrowed reference to this
    *  Any existing reference is released.
    */
-  PythonRef &operator= (const PythonPtr &obj);
+  PythonRef &operator=(const PythonPtr &obj);
 
   /**
    *  @brief Assignment of another reference to this
    */
-  PythonRef &operator= (const PythonRef &other);
+  PythonRef &operator=(const PythonRef &other);
 
   /**
    *  @brief Returns true unless the reference is a NULL reference
    */
-  operator bool () const;
+  operator bool() const;
 
   /**
    *  @brief Dereferencing operator
    */
-  PyObject *operator-> () const;
+  PyObject *operator->() const;
 
   /**
    *  @brief Gets the pointer to the referred object
    */
-  PyObject *get () const;
+  PyObject *get() const;
 
   /**
    *  @brief Takes the pointer
-   *  After that operation, the PythonRef object is no longer the owner 
+   *  After that operation, the PythonRef object is no longer the owner
    *  of the referred object.
    */
-  PyObject *release ();
+  PyObject *release();
 
   /**
    *  @brief Comparison operator
    */
-  bool operator== (const PythonRef &other) const
-  {
+  bool operator==(const PythonRef &other) const {
     return mp_obj == other.mp_obj;
   }
 
   /**
    *  @brief Less operator
    */
-  bool operator< (const PythonRef &other) const
-  {
-    return mp_obj < other.mp_obj;
-  }
+  bool operator<(const PythonRef &other) const { return mp_obj < other.mp_obj; }
 
 private:
   PyObject *mp_obj;
@@ -139,77 +132,74 @@ private:
 /**
  *  @brief A reference-counted Python borrowed object reference
  *
- *  This reference represents borrowed references. Upon construction and destruction, this
- *  object will automatically increment and decrement the reference count.
+ *  This reference represents borrowed references. Upon construction and
+ * destruction, this object will automatically increment and decrement the
+ * reference count.
  */
-class PYA_PUBLIC PythonPtr
-{
+class PYA_PUBLIC PythonPtr {
 public:
   /**
    *  @brief Constructor
    *  The default constructor will create a NULL pointer.
    */
-  PythonPtr ();
+  PythonPtr();
 
   /**
    *  @brief Constructor from a borrowed reference
-   *  The PythonPtr will keep a reference to that object and release it when it is destroyed.
+   *  The PythonPtr will keep a reference to that object and release it when it
+   * is destroyed.
    */
-  PythonPtr (PyObject *obj);
+  PythonPtr(PyObject *obj);
 
   /**
    *  @brief Conversion constructor
    *  The PythonPtr will become another holder of the reference
    */
-  PythonPtr (const PythonRef &other);
+  PythonPtr(const PythonRef &other);
 
   /**
    *  @brief Copy constructor
    *  The PythonPtr will become another holder of the reference
    */
-  PythonPtr (const PythonPtr &other);
+  PythonPtr(const PythonPtr &other);
 
   /**
    *  @brief Destructor
    *  The destructor will release one reference.
    */
-  ~PythonPtr ();
+  ~PythonPtr();
 
   /**
    *  @brief assigns the other reference to this
    */
-  PythonPtr &operator= (const PythonPtr &other);
+  PythonPtr &operator=(const PythonPtr &other);
 
   /**
    *  @brief Returns true unless the reference is a NULL reference
    */
-  operator bool () const;
+  operator bool() const;
 
   /**
    *  @brief Dereferencing operator
    */
-  PyObject *operator-> () const;
+  PyObject *operator->() const;
 
   /**
    *  @brief Gets the pointer to the referred object
    */
-  PyObject *get () const;
+  PyObject *get() const;
 
   /**
    *  @brief Comparison operator
    */
-  bool operator== (const PythonPtr &other) const
-  {
+  bool operator==(const PythonPtr &other) const {
     return mp_obj == other.mp_obj;
   }
 
   /**
    *  @brief Less operator
    */
-  bool operator< (const PythonPtr &other) const
-  {
-    return mp_obj < other.mp_obj;
-  }
+  bool operator<(const PythonPtr &other) const { return mp_obj < other.mp_obj; }
 
   /**
    *  @brief Releases the object
@@ -217,13 +207,12 @@ public:
    *  This method returns and resets the raw pointer without changing the
    *  reference count.
    */
-  PyObject *release ();
+  PyObject *release();
 
 private:
   PyObject *mp_obj;
 };
 
-}
+} // namespace pya
 
-#endif 
-
+#endif

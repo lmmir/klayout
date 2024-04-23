@@ -25,38 +25,40 @@
 #ifndef HDR_layNetlistCrossReference
 #define HDR_layNetlistCrossReference
 
-#include "layuiCommon.h"
 #include "dbNetlistCrossReference.h"
+#include "layuiCommon.h"
 
 #include <QAbstractItemModel>
 
-namespace lay
-{
+namespace lay {
 
 /**
  *  @brief An indexed netlist model for the netlist cross-reference log
  */
-class LAYUI_PUBLIC NetlistLogModel
-  : public QAbstractItemModel
-{
+class LAYUI_PUBLIC NetlistLogModel : public QAbstractItemModel {
 public:
-  NetlistLogModel (QWidget *parent, const db::NetlistCrossReference *cross_ref);
+  NetlistLogModel(QWidget *parent, const db::NetlistCrossReference *cross_ref);
 
-  virtual bool hasChildren (const QModelIndex &parent) const;
-  virtual QModelIndex index (int row, int column, const QModelIndex &parent) const;
-  virtual QModelIndex parent (const QModelIndex &child) const;
-  virtual int rowCount (const QModelIndex &parent) const;
-  virtual int columnCount (const QModelIndex &parent) const;
-  virtual QVariant data (const QModelIndex &index, int role) const;
-  virtual QVariant headerData (int section, Qt::Orientation orientation, int role) const;
+  virtual bool hasChildren(const QModelIndex &parent) const;
+  virtual QModelIndex index(int row, int column,
+                            const QModelIndex &parent) const;
+  virtual QModelIndex parent(const QModelIndex &child) const;
+  virtual int rowCount(const QModelIndex &parent) const;
+  virtual int columnCount(const QModelIndex &parent) const;
+  virtual QVariant data(const QModelIndex &index, int role) const;
+  virtual QVariant headerData(int section, Qt::Orientation orientation,
+                              int role) const;
 
 private:
-  typedef std::pair<std::pair<const db::Circuit *, const db::Circuit *>, const db::NetlistCrossReference::PerCircuitData::log_entries_type *> circuit_entry;
+  typedef std::pair<
+      std::pair<const db::Circuit *, const db::Circuit *>,
+      const db::NetlistCrossReference::PerCircuitData::log_entries_type *>
+      circuit_entry;
   std::vector<circuit_entry> m_circuits;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

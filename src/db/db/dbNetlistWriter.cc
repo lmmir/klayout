@@ -20,12 +20,10 @@
 
 */
 
-
 #include "dbNetlistWriter.h"
 
-namespace db
-{
+namespace db {
 
-  //  .. nothing yet ..
+//  .. nothing yet ..
 
 }

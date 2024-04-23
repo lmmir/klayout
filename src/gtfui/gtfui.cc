@@ -20,14 +20,12 @@
 
 */
 
-
 #include <QApplication>
 
 #include "gtfUiDialog.h"
 #include "tlLog.h"
 
-int main (int argc, char *argv[]) 
-{
+int main(int argc, char *argv[]) {
   int result = 0;
 
   try {
@@ -37,20 +35,23 @@ int main (int argc, char *argv[])
 
     for (int i = 1; i < argc; ++i) {
 
-      std::string a = argv [i];
+      std::string a = argv[i];
 
       if (a == "-d" && (i + 1) < argc) {
 
-        int v = std::max (0, atoi (argv [++i]));
-        tl::verbosity (v);
+        int v = std::max(0, atoi(argv[++i]));
+        tl::verbosity(v);
 
       } else if (a == "-h") {
 
-        tl::info << tl::to_string (QObject::tr ("gtfui [<options>] [<file-au>] [<file-current>]")) << tl::endl
-                 << tl::to_string (QObject::tr ("options")) << tl::endl
-                 << tl::to_string (QObject::tr ("  -d <debug level>   Set debug level")) << tl::endl
-                 ;
-        exit (0);
+        tl::info << tl::to_string(QObject::tr(
+                        "gtfui [<options>] [<file-au>] [<file-current>]"))
+                 << tl::endl
+                 << tl::to_string(QObject::tr("options")) << tl::endl
+                 << tl::to_string(
+                        QObject::tr("  -d <debug level>   Set debug level"))
+                 << tl::endl;
+        exit(0);
 
       } else if (fn_count == 0) {
         fn_au = a;
@@ -59,36 +60,36 @@ int main (int argc, char *argv[])
         fn_current = a;
         ++fn_count;
       } else {
-        throw tl::Exception (tl::to_string (QObject::tr ("Too many file name arguments (usr -h to show usage)")));
+        throw tl::Exception(tl::to_string(QObject::tr(
+            "Too many file name arguments (usr -h to show usage)")));
       }
     }
 
     if (fn_count < 2) {
-      throw tl::Exception (tl::to_string (QObject::tr ("Too few file name arguments (usr -h to show usage)")));
+      throw tl::Exception(tl::to_string(
+          QObject::tr("Too few file name arguments (usr -h to show usage)")));
     }
 
-    QApplication app (argc, argv);
+    QApplication app(argc, argv);
 
-    gtf::UiDialog *dialog = new gtf::UiDialog ();
-    dialog->open_files (fn_au, fn_current);
-    dialog->show ();
+    gtf::UiDialog *dialog = new gtf::UiDialog();
+    dialog->open_files(fn_au, fn_current);
+    dialog->show();
 
-    result = app.exec ();
+    result = app.exec();
 
     delete dialog;
 
   } catch (std::exception &ex) {
-    tl::error << ex.what ();
+    tl::error << ex.what();
     result = 1;
   } catch (tl::Exception &ex) {
-    tl::error << ex.msg ();
+    tl::error << ex.msg();
     result = 1;
   } catch (...) {
-    tl::error << tl::to_string (QObject::tr ("unspecific error"));
+    tl::error << tl::to_string(QObject::tr("unspecific error"));
     result = 1;
   }
 
   return result;
-
 }
-

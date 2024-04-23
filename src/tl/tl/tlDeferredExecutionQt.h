@@ -26,51 +26,48 @@
 #include "tlCommon.h"
 #include "tlDeferredExecution.h"
 
+#include <QMutex>
 #include <QObject>
 #include <QTimer>
-#include <QMutex>
 
 #include <list>
 
-namespace tl
-{
+namespace tl {
 
 /**
  *  @brief The deferred method scheduler
  */
-class TL_PUBLIC DeferredMethodSchedulerQt
-  : public QObject, public DeferredMethodScheduler
-{
-Q_OBJECT
+class TL_PUBLIC DeferredMethodSchedulerQt : public QObject,
+                                            public DeferredMethodScheduler {
+  Q_OBJECT
 public:
   /**
    *  @brief Constructor
    */
-  DeferredMethodSchedulerQt ();
+  DeferredMethodSchedulerQt();
 
   /**
    *  @brief Destructor
    */
-  ~DeferredMethodSchedulerQt ();
+  ~DeferredMethodSchedulerQt();
 
 protected:
   /**
    *  @brief Reimplementation of the interface: queue an event
    *  In effect, the event should later trigger a call to do_execute ().
    */
-  void queue_event ();
+  void queue_event();
 
 private slots:
-  void timer ();
+  void timer();
 
 private:
   QTimer m_timer, m_fallback_timer;
   int m_event_type;
 
-  virtual bool event (QEvent *event);
+  virtual bool event(QEvent *event);
 };
 
-}
+} // namespace tl
 
 #endif
-

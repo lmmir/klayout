@@ -26,48 +26,38 @@
 #include "dbCommon.h"
 
 #include "dbLayerProperties.h"
-#include "dbTrans.h"
 #include "dbPoint.h"
+#include "dbTrans.h"
 
-namespace db
-{
+namespace db {
 
 /**
  *  @brief A converter for transformations
  *
  *  T is supposed a transformation type such as "db::DCplxTrans".
  */
-template <class T>
-struct DB_PUBLIC_TEMPLATE TransformationConverter
-{
-  std::string to_string (const T &t) const
-  {
-    return t.to_string ();
-  }
+template <class T> struct DB_PUBLIC_TEMPLATE TransformationConverter {
+  std::string to_string(const T &t) const { return t.to_string(); }
 
-  void from_string (const std::string &s, T &t) const
-  {
-    tl::Extractor ex (s.c_str ());
-    ex.read (t);
-    ex.expect_end ();
+  void from_string(const std::string &s, T &t) const {
+    tl::Extractor ex(s.c_str());
+    ex.read(t);
+    ex.expect_end();
   }
 };
 
 /**
  *  @brief A converter for layout layers
  */
-struct DB_PUBLIC LayoutLayerConverter
-{
-  std::string to_string (const db::LayerProperties &p) const
-  {
-    return p.to_string ();
+struct DB_PUBLIC LayoutLayerConverter {
+  std::string to_string(const db::LayerProperties &p) const {
+    return p.to_string();
   }
 
-  void from_string (const std::string &s, db::LayerProperties &p) const
-  {
-    tl::Extractor ex (s.c_str ());
-    p.read (ex);
-    ex.expect_end ();
+  void from_string(const std::string &s, db::LayerProperties &p) const {
+    tl::Extractor ex(s.c_str());
+    p.read(ex);
+    ex.expect_end();
   }
 };
 
@@ -76,26 +66,22 @@ struct DB_PUBLIC LayoutLayerConverter
  *
  *  P is supposed to be a point type (i.e. db::DPoint).
  */
-template <class P>
-struct DB_PUBLIC_TEMPLATE PointConverter
-{
-  std::string to_string (const P &p) const
-  {
-    return tl::to_string (p.x ()) + "," + tl::to_string (p.y ());
+template <class P> struct DB_PUBLIC_TEMPLATE PointConverter {
+  std::string to_string(const P &p) const {
+    return tl::to_string(p.x()) + "," + tl::to_string(p.y());
   }
 
-  void from_string (const std::string &s, P &p) const
-  {
+  void from_string(const std::string &s, P &p) const {
     typename P::coord_type x, y;
-    tl::Extractor ex (s.c_str ());
-    ex.read (x);
-    ex.expect (",");
-    ex.read (y);
-    p = P (x, y);
-    ex.expect_end ();
+    tl::Extractor ex(s.c_str());
+    ex.read(x);
+    ex.expect(",");
+    ex.read(y);
+    p = P(x, y);
+    ex.expect_end();
   }
 };
 
-}
+} // namespace db
 
 #endif

@@ -20,49 +20,46 @@
 
 */
 
-#include "tlUtils.h"
 #include "tlUnitTest.h"
+#include "tlUtils.h"
 
-namespace
-{
-  class A { };
-  class B : public A { };
-  class D : public B { };
-  class C : public A { };
-  class E { };
-}
+namespace {
+class A {};
+class B : public A {};
+class D : public B {};
+class C : public A {};
+class E {};
+} // namespace
 
-struct XXX
-{
+struct XXX {
   int a, b;
 };
 
-class XX : public XXX, private tl::Object { };
+class XX : public XXX, private tl::Object {};
 
-TEST(1)
-{
-  EXPECT_EQ (tl::value_from_type (tl::type_from_value<false>::value ()), false);
-  EXPECT_EQ (tl::value_from_type (tl::type_from_value<true>::value ()), true);
+TEST(1) {
+  EXPECT_EQ(tl::value_from_type(tl::type_from_value<false>::value()), false);
+  EXPECT_EQ(tl::value_from_type(tl::type_from_value<true>::value()), true);
 
-  EXPECT_EQ (tl::value_from_type (tl::is_derived<A, A>::value ()), true);
-  EXPECT_EQ (tl::value_from_type (tl::is_derived<A, E>::value ()), false);
-  EXPECT_EQ (tl::value_from_type (tl::is_derived<A, B>::value ()), true);
-  EXPECT_EQ (tl::value_from_type (tl::is_derived<A, C>::value ()), true);
-  EXPECT_EQ (tl::value_from_type (tl::is_derived<A, D>::value ()), true);
-  EXPECT_EQ (tl::value_from_type (tl::is_derived<B, C>::value ()), false);
-  EXPECT_EQ (bool (tl::is_derived<A, D> ()), true);
-  EXPECT_EQ (bool (tl::is_derived<B, C> ()), false);
+  EXPECT_EQ(tl::value_from_type(tl::is_derived<A, A>::value()), true);
+  EXPECT_EQ(tl::value_from_type(tl::is_derived<A, E>::value()), false);
+  EXPECT_EQ(tl::value_from_type(tl::is_derived<A, B>::value()), true);
+  EXPECT_EQ(tl::value_from_type(tl::is_derived<A, C>::value()), true);
+  EXPECT_EQ(tl::value_from_type(tl::is_derived<A, D>::value()), true);
+  EXPECT_EQ(tl::value_from_type(tl::is_derived<B, C>::value()), false);
+  EXPECT_EQ(bool(tl::is_derived<A, D>()), true);
+  EXPECT_EQ(bool(tl::is_derived<B, C>()), false);
 
-  EXPECT_EQ (tl::value_from_type (tl::is_equal_type<A, D>::value ()), false);
-  EXPECT_EQ (tl::value_from_type (tl::is_equal_type<A, A>::value ()), true);
-  EXPECT_EQ (bool (tl::is_equal_type<A, D> ()), false);
-  EXPECT_EQ (bool (tl::is_equal_type<A, A> ()), true);
+  EXPECT_EQ(tl::value_from_type(tl::is_equal_type<A, D>::value()), false);
+  EXPECT_EQ(tl::value_from_type(tl::is_equal_type<A, A>::value()), true);
+  EXPECT_EQ(bool(tl::is_equal_type<A, D>()), false);
+  EXPECT_EQ(bool(tl::is_equal_type<A, A>()), true);
 
   A a;
   B b;
   C c;
-  EXPECT_EQ (tl::try_static_cast<A> (&a) == &a, true);
-  EXPECT_EQ (tl::try_static_cast<A> (&b) == (A *)&b, true);
-  EXPECT_EQ (tl::try_static_cast<A> (&c) == (A *)&c, true);
-  EXPECT_EQ (tl::try_static_cast<B> (&c) == 0, true);
+  EXPECT_EQ(tl::try_static_cast<A>(&a) == &a, true);
+  EXPECT_EQ(tl::try_static_cast<A>(&b) == (A *)&b, true);
+  EXPECT_EQ(tl::try_static_cast<A>(&c) == (A *)&c, true);
+  EXPECT_EQ(tl::try_static_cast<B>(&c) == 0, true);
 }

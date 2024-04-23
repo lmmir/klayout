@@ -20,8 +20,6 @@
 
 */
 
-
-
 #ifndef HDR_dbCellInst
 #define HDR_dbCellInst
 
@@ -29,19 +27,18 @@
 
 #include "dbBox.h"
 
-namespace db
-{
+namespace db {
 
 class Layout;
 
 /**
  *  @brief The cell instance class
- *  This class does not form the "real" instance. It just provides the link to the
- *  cell. The transformation is added through the "db::array" framework. A db::CellInst
- *  within a db::array forms a db::CellInstArray which is the actual cell instance.
+ *  This class does not form the "real" instance. It just provides the link to
+ * the cell. The transformation is added through the "db::array" framework. A
+ * db::CellInst within a db::array forms a db::CellInstArray which is the actual
+ * cell instance.
  */
-class DB_PUBLIC CellInst
-{
+class DB_PUBLIC CellInst {
 public:
   typedef db::Layout layout_type;
   typedef db::Box box_type;
@@ -52,34 +49,24 @@ public:
   /**
    *  @brief Default ctor
    */
-  CellInst ()
-    : m_cell_index (0)
-  { }
+  CellInst() : m_cell_index(0) {}
 
   /**
    *  @brief Create a cell instance from the given index
-   *  
+   *
    *  @param ci The cell index
    */
-  CellInst (cell_index_type ci)
-    : m_cell_index (ci)
-  { }
+  CellInst(cell_index_type ci) : m_cell_index(ci) {}
 
   /**
    *  @brief The cell index accessor
    */
-  cell_index_type cell_index () const
-  {
-    return m_cell_index;
-  }
+  cell_index_type cell_index() const { return m_cell_index; }
 
   /**
    *  @brief The cell index setter
    */
-  void cell_index (cell_index_type ci) 
-  {
-    m_cell_index = ci;
-  }
+  void cell_index(cell_index_type ci) { m_cell_index = ci; }
 
   /**
    *  @brief Compute the bounding box
@@ -88,7 +75,7 @@ public:
    *  As a requirement, the cell's bounding box must have been
    *  computed before.
    */
-  box_type bbox (const Layout &g) const;
+  box_type bbox(const Layout &g) const;
 
   /**
    *  @brief Compute the bounding box
@@ -98,31 +85,29 @@ public:
    *  As a requirement, the cell's bounding boxes must have been
    *  computed before.
    */
-  box_type bbox (const Layout &g, unsigned int l) const;
+  box_type bbox(const Layout &g, unsigned int l) const;
 
   /**
-   *  @brief Comparison: comparison for equality 
+   *  @brief Comparison: comparison for equality
    */
-  bool operator== (const CellInst &d) const
-  {
+  bool operator==(const CellInst &d) const {
     return m_cell_index == d.m_cell_index;
   }
 
   /**
-   *  @brief Comparison: compare by cell id 
+   *  @brief Comparison: compare by cell id
    *
-   *  This sorting order is used by the cell instances of the 
+   *  This sorting order is used by the cell instances of the
    *  cell.
    */
-  bool operator< (const CellInst &d) const
-  {
+  bool operator<(const CellInst &d) const {
     return m_cell_index < d.m_cell_index;
   }
 
   /**
    *  @brief Convert to a string
    */
-  std::string to_string () const;
+  std::string to_string() const;
 
 private:
   cell_index_type m_cell_index;
@@ -131,4 +116,3 @@ private:
 } // namespace db
 
 #endif
-

@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_antForceLink
 #define HDR_antForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the ant module
  */
 
-namespace ant
-{
-  ANT_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace ant {
+ANT_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace ant
 
 #endif
-

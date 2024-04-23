@@ -29,32 +29,31 @@
 #include "tlStream.h"
 
 namespace img {
-  
+
 /**
  *  @brief An object streaming image data from or to files
  */
-struct IMG_PUBLIC ImageStreamer
-{
+struct IMG_PUBLIC ImageStreamer {
 public:
   /**
    *  @brief The constructor
    */
-  ImageStreamer () { }
+  ImageStreamer() {}
 
   /**
    *  @brief Reads an image Object from a stream
    *
-   *  This method returns a new'd object. It's the responsibility of the caller to delete the object.
+   *  This method returns a new'd object. It's the responsibility of the caller
+   * to delete the object.
    */
   static Object *read(tl::InputStream &stream);
 
   /**
    *  @brief Writes an image object to a stream
    */
-  static void write (tl::OutputStream &stream, const img::Object &img);
+  static void write(tl::OutputStream &stream, const img::Object &img);
 };
 
-}
+} // namespace img
 
 #endif
-

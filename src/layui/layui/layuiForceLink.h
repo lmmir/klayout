@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layuiForceLink
 #define HDR_layuiForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the layui module
  */
 
-namespace layui
-{
-  LAYUI_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace layui {
+LAYUI_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace layui
 
 #endif
-

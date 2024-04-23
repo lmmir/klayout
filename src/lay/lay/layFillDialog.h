@@ -20,35 +20,28 @@
 
 */
 
-
 #ifndef HDR_FillDialog
 #define HDR_FillDialog
 
 #include "ui_FillDialog.h"
 
-#include "layLayoutView.h"
-#include "layPlugin.h"
-#include "layMarker.h"
 #include "layCommon.h"
+#include "layLayoutView.h"
+#include "layMarker.h"
+#include "layPlugin.h"
 
 #include "dbRegion.h"
 
 #include <QDialog>
 
-namespace lay
-{
+namespace lay {
 
-struct LAY_PUBLIC FillParameters
-{
-  FillParameters ()
-    : exclude_all_layers (true), fill_region_mode (WholeCell), enhanced_fill (false)
-  { }
+struct LAY_PUBLIC FillParameters {
+  FillParameters()
+      : exclude_all_layers(true), fill_region_mode(WholeCell),
+        enhanced_fill(false) {}
 
-  enum FillRegionMode {
-    WholeCell,
-    Region,
-    Layer
-  };
+  enum FillRegionMode { WholeCell, Region, Layer };
 
   bool exclude_all_layers;
   std::vector<db::LayerProperties> exclude_layers;
@@ -68,37 +61,34 @@ struct LAY_PUBLIC FillParameters
   db::DBox fc_bbox2;
 };
 
-class LAY_PUBLIC FillDialog
-  : public QDialog,
-    public lay::Plugin,
-    private Ui::FillDialog
-{
-Q_OBJECT 
+class LAY_PUBLIC FillDialog : public QDialog,
+                              public lay::Plugin,
+                              private Ui::FillDialog {
+  Q_OBJECT
 
 public:
-  FillDialog (QWidget *parent, lay::LayoutViewBase *view);
-  ~FillDialog ();
+  FillDialog(QWidget *parent, lay::LayoutViewBase *view);
+  ~FillDialog();
 
 public slots:
-  void fill_area_changed (int);
-  void ok_pressed ();
-  void choose_fc ();
-  void choose_fc_2nd ();
+  void fill_area_changed(int);
+  void ok_pressed();
+  void choose_fc();
+  void choose_fc_2nd();
 
 private:
   //  implementation of the lay::Plugin interface
-  virtual bool configure (const std::string &name, const std::string &value);
+  virtual bool configure(const std::string &name, const std::string &value);
 
   //  implementation of the lay::Plugin interface
-  void menu_activated (const std::string &symbol);
+  void menu_activated(const std::string &symbol);
 
-  void generate_fill (const FillParameters &fp);
-  FillParameters get_fill_parameters ();
+  void generate_fill(const FillParameters &fp);
+  FillParameters get_fill_parameters();
 
   lay::LayoutViewBase *mp_view;
 };
 
-}
+} // namespace lay
 
 #endif
-

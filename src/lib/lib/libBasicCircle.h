@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_libBasicCircle
 #define HDR_libBasicCircle
 
@@ -28,63 +27,71 @@
 
 #include "dbPCellDeclaration.h"
 
-namespace lib
-{
+namespace lib {
 
 /**
  *  @brief Implements the "CIRCLE" PCell of the basic library
  */
-class BasicCircle 
-  : public db::PCellDeclaration
-{
+class BasicCircle : public db::PCellDeclaration {
 public:
   /**
    *  @brief The constructor
    */
-  BasicCircle ();
+  BasicCircle();
 
   /**
    *  @brief This PCell can be created from a shape
    */
-  virtual bool can_create_from_shape (const db::Layout &layout, const db::Shape &shape, unsigned int layer) const;
+  virtual bool can_create_from_shape(const db::Layout &layout,
+                                     const db::Shape &shape,
+                                     unsigned int layer) const;
 
   /**
    *  @brief Get the parameters from a shape
    */
-  virtual db::pcell_parameters_type parameters_from_shape (const db::Layout &layout, const db::Shape &shape, unsigned int layer) const;
+  virtual db::pcell_parameters_type
+  parameters_from_shape(const db::Layout &layout, const db::Shape &shape,
+                        unsigned int layer) const;
 
   /**
    *  @brief Get the instance transformation from a shape
    */
-  virtual db::Trans transformation_from_shape (const db::Layout &layout, const db::Shape &shape, unsigned int layer) const;
+  virtual db::Trans transformation_from_shape(const db::Layout &layout,
+                                              const db::Shape &shape,
+                                              unsigned int layer) const;
 
   /**
    *  @brief Get the layer declarations
    */
-  virtual std::vector<db::PCellLayerDeclaration> get_layer_declarations (const db::pcell_parameters_type &parameters) const;
+  virtual std::vector<db::PCellLayerDeclaration>
+  get_layer_declarations(const db::pcell_parameters_type &parameters) const;
 
   /**
    *  @brief Coerces the parameters (in particular updates the computed ones)
    */
-  virtual void coerce_parameters (const db::Layout &layout, db::pcell_parameters_type &parameters) const;
+  virtual void coerce_parameters(const db::Layout &layout,
+                                 db::pcell_parameters_type &parameters) const;
 
   /**
    *  @brief Produces the layout
    */
-  virtual void produce (const db::Layout &layout, const std::vector<unsigned int> &layer_ids, const db::pcell_parameters_type &parameters, db::Cell &cell) const;
+  virtual void produce(const db::Layout &layout,
+                       const std::vector<unsigned int> &layer_ids,
+                       const db::pcell_parameters_type &parameters,
+                       db::Cell &cell) const;
 
   /**
    *  @brief Get the display name for a PCell with the given parameters
    */
-  virtual std::string get_display_name (const db::pcell_parameters_type &) const;
+  virtual std::string get_display_name(const db::pcell_parameters_type &) const;
 
   /**
    *  @brief Get the parameter declarations
    */
-  virtual std::vector<db::PCellParameterDeclaration> get_parameter_declarations () const;
+  virtual std::vector<db::PCellParameterDeclaration>
+  get_parameter_declarations() const;
 };
 
-}
+} // namespace lib
 
 #endif
-

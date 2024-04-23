@@ -22,11 +22,6 @@
 
 #include "antForceLink.h"
 
-namespace ant
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace ant {
+int _force_link_f() { return 0; }
+} // namespace ant

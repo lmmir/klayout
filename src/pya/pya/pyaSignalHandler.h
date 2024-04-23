@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef _HDR_pyaSignalHandler
 #define _HDR_pyaSignalHandler
 
@@ -30,19 +29,17 @@
 
 #include "gsiSignals.h"
 
-namespace pya
-{
+namespace pya {
 
 /**
  *  @brief A storage object for a function to callback
  */
-struct CallbackFunction
-{
-  CallbackFunction (PythonRef pym, const gsi::MethodBase *m);
+struct CallbackFunction {
+  CallbackFunction(PythonRef pym, const gsi::MethodBase *m);
 
-  PythonRef callable () const;
-  const gsi::MethodBase *method () const;
-  bool operator== (const CallbackFunction &other) const;
+  PythonRef callable() const;
+  const gsi::MethodBase *method() const;
+  bool operator==(const CallbackFunction &other) const;
 
 private:
   PythonRef m_callable;
@@ -50,59 +47,59 @@ private:
   PythonRef m_class;
   const gsi::MethodBase *mp_method;
 
-  PyObject *self_ref () const;
-  PyObject *callable_ref () const;
-  bool is_instance_method () const;
+  PyObject *self_ref() const;
+  PyObject *callable_ref() const;
+  bool is_instance_method() const;
 };
 
 /**
  *  @brief The signal handler abstraction
  *
- *  This class implements the signal handler that interfaces to GSI's signal system
+ *  This class implements the signal handler that interfaces to GSI's signal
+ * system
  */
-class SignalHandler
-  : public gsi::SignalHandler
-{
+class SignalHandler : public gsi::SignalHandler {
 public:
   /**
    *  @brief Constructor
    */
-  SignalHandler ();
+  SignalHandler();
 
   /**
    *  @brief Destructor
    */
-  ~SignalHandler ();
+  ~SignalHandler();
 
   /**
    *  @brief Implementation of the callback interface
    */
-  virtual void call (const gsi::MethodBase *method, gsi::SerialArgs &args, gsi::SerialArgs &ret) const;
+  virtual void call(const gsi::MethodBase *method, gsi::SerialArgs &args,
+                    gsi::SerialArgs &ret) const;
 
   /**
    *  @brief Adds a callable to the list of targets
    */
-  void add (PyObject *callable);
+  void add(PyObject *callable);
 
   /**
    *  @brief Removes a callable from the list of targets
    */
-  void remove (PyObject *callable);
+  void remove(PyObject *callable);
 
   /**
    *  @brief Clears the list of callables
    */
-  void clear ();
+  void clear();
 
   /**
    *  @brief Assign another handler to this
    */
-  void assign (const SignalHandler *other);
+  void assign(const SignalHandler *other);
 
 private:
   std::vector<CallbackFunction> m_cbfuncs;
 };
 
-}
+} // namespace pya
 
 #endif

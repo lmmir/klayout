@@ -20,51 +20,48 @@
 
 */
 
-
 #include "dbTechnology.h"
-#include "tlUnitTest.h"
 #include "tlFileUtils.h"
+#include "tlUnitTest.h"
 
-TEST(1_Basic)
-{
-  db::Technology tech ("name", "description");
+TEST(1_Basic) {
+  db::Technology tech("name", "description");
 
-  EXPECT_EQ (tech.name (), "name");
-  EXPECT_EQ (tech.description (), "description");
+  EXPECT_EQ(tech.name(), "name");
+  EXPECT_EQ(tech.description(), "description");
 
-  tech.set_name ("x");
-  EXPECT_EQ (tech.name (), "x");
+  tech.set_name("x");
+  EXPECT_EQ(tech.name(), "x");
 
-  tech.set_description ("y");
-  EXPECT_EQ (tech.description (), "y");
+  tech.set_description("y");
+  EXPECT_EQ(tech.description(), "y");
 
-  tech.set_grain_name ("a");
-  EXPECT_EQ (tech.grain_name (), "a");
+  tech.set_grain_name("a");
+  EXPECT_EQ(tech.grain_name(), "a");
 
-  tech.set_grain_name ("a");
-  EXPECT_EQ (tech.grain_name (), "a");
+  tech.set_grain_name("a");
+  EXPECT_EQ(tech.grain_name(), "a");
 
-  tech.set_dbu (2.5);
-  EXPECT_EQ (tech.dbu (), 2.5);
+  tech.set_dbu(2.5);
+  EXPECT_EQ(tech.dbu(), 2.5);
 }
 
-TEST(2_BasePath)
-{
-  db::Technology tech ("x", "description");
+TEST(2_BasePath) {
+  db::Technology tech("x", "description");
 
-  tech.set_default_base_path ("def");
-  EXPECT_EQ (tech.default_base_path (), "def");
+  tech.set_default_base_path("def");
+  EXPECT_EQ(tech.default_base_path(), "def");
 
-  tech.set_explicit_base_path ("$(tech_name)_plus");
-  EXPECT_EQ (tech.explicit_base_path (), "$(tech_name)_plus");
+  tech.set_explicit_base_path("$(tech_name)_plus");
+  EXPECT_EQ(tech.explicit_base_path(), "$(tech_name)_plus");
 
-  EXPECT_EQ (tech.base_path (), "x_plus");
-  EXPECT_EQ (tech.correct_path (tl::combine_path ("x_plus", "z")), "z");
+  EXPECT_EQ(tech.base_path(), "x_plus");
+  EXPECT_EQ(tech.correct_path(tl::combine_path("x_plus", "z")), "z");
 
-  tech.set_tech_file_path ("lyt");
-  tech.set_explicit_base_path ("$(tech_file)_plus");
-  EXPECT_EQ (tech.base_path (), "lyt_plus");
+  tech.set_tech_file_path("lyt");
+  tech.set_explicit_base_path("$(tech_file)_plus");
+  EXPECT_EQ(tech.base_path(), "lyt_plus");
 
-  tech.set_explicit_base_path ("$(tech_dir)_plus");
-  EXPECT_EQ (tech.base_path (), "def_plus");
+  tech.set_explicit_base_path("$(tech_dir)_plus");
+  EXPECT_EQ(tech.base_path(), "def_plus");
 }

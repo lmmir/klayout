@@ -20,11 +20,9 @@
 
 */
 
-
 #include "tlCopyOnWrite.h"
 
-namespace tl
-{
+namespace tl {
 
 tl::Mutex tl::CopyOnWritePtrBase::ms_lock;
 

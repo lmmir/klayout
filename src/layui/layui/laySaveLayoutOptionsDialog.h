@@ -25,92 +25,89 @@
 #ifndef HDR_laySaveLayoutOptionsDialog
 #define HDR_laySaveLayoutOptionsDialog
 
-#include "layuiCommon.h"
-#include "dbStream.h"
 #include "dbSaveLayoutOptions.h"
+#include "dbStream.h"
 #include "layStream.h"
+#include "layuiCommon.h"
 #include "tlStream.h"
 
-#include <string>
 #include <QDialog>
+#include <string>
 
 class QScrollArea;
 class QAbstractButton;
 class QWidget;
 
-namespace db
-{
-  class SaveLayoutOptions;
-  class Technologies;
-}
+namespace db {
+class SaveLayoutOptions;
+class Technologies;
+} // namespace db
 
-namespace Ui
-{
-  class SaveLayoutAsOptionsDialog;
-  class SaveLayoutOptionsDialog;
-}
+namespace Ui {
+class SaveLayoutAsOptionsDialog;
+class SaveLayoutOptionsDialog;
+} // namespace Ui
 
-namespace lay
-{
+namespace lay {
 
 class LayoutViewBase;
 
-class LAYUI_PUBLIC SaveLayoutAsOptionsDialog
-  : public QDialog
-{
-  Q_OBJECT 
+class LAYUI_PUBLIC SaveLayoutAsOptionsDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  SaveLayoutAsOptionsDialog (QWidget *parent, const std::string &title);
-  ~SaveLayoutAsOptionsDialog ();
+  SaveLayoutAsOptionsDialog(QWidget *parent, const std::string &title);
+  ~SaveLayoutAsOptionsDialog();
 
-  bool get_options (lay::LayoutViewBase *view, unsigned int cv_index, const std::string &fn, tl::OutputStream::OutputStreamMode &compression, db::SaveLayoutOptions &options);
+  bool get_options(lay::LayoutViewBase *view, unsigned int cv_index,
+                   const std::string &fn,
+                   tl::OutputStream::OutputStreamMode &compression,
+                   db::SaveLayoutOptions &options);
 
 public slots:
-  void ok_button_pressed ();
-  void fmt_cbx_changed (int);
+  void ok_button_pressed();
+  void fmt_cbx_changed(int);
 
 private:
   Ui::SaveLayoutAsOptionsDialog *mp_ui;
-  std::vector< std::pair<StreamWriterOptionsPage *, std::string> > m_pages;
+  std::vector<std::pair<StreamWriterOptionsPage *, std::string>> m_pages;
   std::vector<int> m_tab_positions;
   std::string m_filename;
   db::SaveLayoutOptions m_options;
   const db::Technology *mp_tech;
 };
 
-class LAYUI_PUBLIC SaveLayoutOptionsDialog
-  : public QDialog
-{
-  Q_OBJECT 
+class LAYUI_PUBLIC SaveLayoutOptionsDialog : public QDialog {
+  Q_OBJECT
 
 public:
-  SaveLayoutOptionsDialog (QWidget *parent, const std::string &title);
-  ~SaveLayoutOptionsDialog ();
+  SaveLayoutOptionsDialog(QWidget *parent, const std::string &title);
+  ~SaveLayoutOptionsDialog();
 
-  bool edit_global_options (lay::Dispatcher *dispatcher, db::Technologies *technologies);
-  bool get_options (db::SaveLayoutOptions &options);
+  bool edit_global_options(lay::Dispatcher *dispatcher,
+                           db::Technologies *technologies);
+  bool get_options(db::SaveLayoutOptions &options);
 
 public slots:
-  void ok_button_pressed ();
-  void reset_button_pressed ();
-  void button_pressed (QAbstractButton *button);
-  void current_tech_changed (int index);
+  void ok_button_pressed();
+  void reset_button_pressed();
+  void button_pressed(QAbstractButton *button);
+  void current_tech_changed(int index);
 
 private:
   Ui::SaveLayoutOptionsDialog *mp_ui;
-  std::vector< std::pair<StreamWriterOptionsPage *, std::string> > m_pages;
+  std::vector<std::pair<StreamWriterOptionsPage *, std::string>> m_pages;
   int m_technology_index;
   std::vector<db::SaveLayoutOptions> m_opt_array;
   std::vector<const db::Technology *> m_tech_array;
 
-  void commit ();
-  void update ();
-  bool get_options_internal ();
+  void commit();
+  void update();
+  bool get_options_internal();
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

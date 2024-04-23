@@ -20,20 +20,15 @@
 
 */
 
-
-
 #include "tlException.h"
 #include "tlString.h"
 
-namespace tl
-{
+namespace tl {
 
-void
-Exception::init (const std::string &fmt, const std::vector<tl::Variant> &a)
-{ 
+void Exception::init(const std::string &fmt,
+                     const std::vector<tl::Variant> &a) {
   m_first_chance = true;
-  m_msg = tl::sprintf (fmt, a);
+  m_msg = tl::sprintf(fmt, a);
 }
 
-}
-
+} // namespace tl

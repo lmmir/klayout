@@ -28,61 +28,60 @@
 #include "dbNetlistCompare.h"
 #include "dbNetlistCrossReference.h"
 
-namespace db
-{
+namespace db {
 
 /**
- *  @brief An extension of the LayoutToNetlist framework towards comparision vs. schematic
+ *  @brief An extension of the LayoutToNetlist framework towards comparision vs.
+ * schematic
  *
- *  This aggregate holds the following entities in addition to the ones provided by
- *  the LayoutToNetlist entity:
+ *  This aggregate holds the following entities in addition to the ones provided
+ * by the LayoutToNetlist entity:
  *
  *  * A reference netlist
  *  * A cross-reference object
  *
- *  The cross-reference object connects the extracted netlist with the reference netlist.
+ *  The cross-reference object connects the extracted netlist with the reference
+ * netlist.
  *
- *  In addition to the steps required to create a LayoutToNetlist object, the following
- *  has to be provided:
+ *  In addition to the steps required to create a LayoutToNetlist object, the
+ * following has to be provided:
  *
  *  * A reference netlist has to be loaded using "set_reference_netlist"
- *  * Netlist comparison has to be performed using the NetlistCompare object provided.
- *    This will establish the cross-reference between the two netlists.
+ *  * Netlist comparison has to be performed using the NetlistCompare object
+ * provided. This will establish the cross-reference between the two netlists.
  */
-class DB_PUBLIC LayoutVsSchematic
-  : public db::LayoutToNetlist
-{
+class DB_PUBLIC LayoutVsSchematic : public db::LayoutToNetlist {
 public:
   /**
    *  @brief The constructor
    *
    *  See the LayoutToNetlist for details.
    */
-  LayoutVsSchematic (const db::RecursiveShapeIterator &iter);
+  LayoutVsSchematic(const db::RecursiveShapeIterator &iter);
 
   /**
    *  @brief Alternative constructor using an external deep shape storage
    *
    *  See the LayoutToNetlist for details.
    */
-  LayoutVsSchematic (db::DeepShapeStore *dss, unsigned int layout_index = 0);
+  LayoutVsSchematic(db::DeepShapeStore *dss, unsigned int layout_index = 0);
 
   /**
    *  @brief Alternative constructor for flat mode
    *
    *  See the LayoutToNetlist for details.
    */
-  LayoutVsSchematic (const std::string &topcell_name, double dbu);
+  LayoutVsSchematic(const std::string &topcell_name, double dbu);
 
   /**
    *  @brief The default constructor
    */
-  LayoutVsSchematic ();
+  LayoutVsSchematic();
 
   /**
    *  @brief The destructor
    */
-  ~LayoutVsSchematic ();
+  ~LayoutVsSchematic();
 
   /**
    *  @brief Sets the reference netlist
@@ -94,23 +93,19 @@ public:
    *  Setting the reference netlist will reset the cross-reference
    *  object.
    */
-  void set_reference_netlist (db::Netlist *ref_netlist);
+  void set_reference_netlist(db::Netlist *ref_netlist);
 
   /**
    *  @brief Gets the reference netlist
    */
-  const db::Netlist *reference_netlist () const
-  {
-    return mp_reference_netlist.get ();
+  const db::Netlist *reference_netlist() const {
+    return mp_reference_netlist.get();
   }
 
   /**
    *  @brief Gets the reference netlist (non-const version)
    */
-  db::Netlist *reference_netlist ()
-  {
-    return mp_reference_netlist.get ();
-  }
+  db::Netlist *reference_netlist() { return mp_reference_netlist.get(); }
 
   /**
    *  @brief Performs the comparison
@@ -122,9 +117,8 @@ public:
    *
    *  This reference is 0 if the netlist compare has not been performed yet.
    */
-  const db::NetlistCrossReference *cross_ref () const
-  {
-    return mp_cross_ref.get ();
+  const db::NetlistCrossReference *cross_ref() const {
+    return mp_cross_ref.get();
   }
 
   /**
@@ -132,44 +126,43 @@ public:
    *
    *  This reference is 0 if the netlist compare has not been performed yet.
    */
-  db::NetlistCrossReference *cross_ref ()
-  {
-    return mp_cross_ref.get ();
-  }
+  db::NetlistCrossReference *cross_ref() { return mp_cross_ref.get(); }
 
   /**
    *  @brief Creates the cross-reference object if it isn't created yet
    *
    *  This method is provided for special purposes such as the reader.
    */
-  db::NetlistCrossReference *make_cross_ref ();
+  db::NetlistCrossReference *make_cross_ref();
 
   /**
    *  @brief Saves the database to the given path
    *
-   *  Currently, the internal format will be used. If "short_format" is true, the short version
-   *  of the format is used.
+   *  Currently, the internal format will be used. If "short_format" is true,
+   * the short version of the format is used.
    *
-   *  This is a convenience method. The low-level functionality is the LayoutVsSchematicWriter.
+   *  This is a convenience method. The low-level functionality is the
+   * LayoutVsSchematicWriter.
    */
-  void save (const std::string &path, bool short_format);
+  void save(const std::string &path, bool short_format);
 
   /**
    *  @brief Loads the database from the given path
    *
-   *  This is a convenience method. The low-level functionality is the LayoutVsSchematicReader.
+   *  This is a convenience method. The low-level functionality is the
+   * LayoutVsSchematicReader.
    */
-  void load (const std::string &path);
+  void load(const std::string &path);
 
 private:
   //  no copying
-  LayoutVsSchematic (const db::LayoutVsSchematic &other);
-  LayoutVsSchematic &operator= (const db::LayoutVsSchematic &other);
+  LayoutVsSchematic(const db::LayoutVsSchematic &other);
+  LayoutVsSchematic &operator=(const db::LayoutVsSchematic &other);
 
   tl::shared_ptr<db::Netlist> mp_reference_netlist;
   tl::shared_ptr<db::NetlistCrossReference> mp_cross_ref;
 };
 
-}
+} // namespace db
 
 #endif

@@ -22,80 +22,68 @@
 
 #if defined(HAVE_QT)
 
-#include <QDialog>
 #include <QApplication>
+#include <QDialog>
 
 #include "layBrowser.h"
 #include "layLayoutViewBase.h"
 
 #include <vector>
 
-namespace lay
-{
+namespace lay {
 
 #if QT_VERSION >= 0x050000
-Browser::Browser (lay::Dispatcher *root, lay::LayoutViewBase *view, const char *name, Qt::WindowFlags fl)
+Browser::Browser(lay::Dispatcher *root, lay::LayoutViewBase *view,
+                 const char *name, Qt::WindowFlags fl)
 #else
-Browser::Browser (lay::Dispatcher *root, lay::LayoutViewBase *view, const char *name, Qt::WFlags fl)
+Browser::Browser(lay::Dispatcher *root, lay::LayoutViewBase *view,
+                 const char *name, Qt::WFlags fl)
 #endif
-    //  TODO: clarify whether to keep the browsers as separate (potentially hidden) windows
-  : QDialog (0 /*view*/, fl),
-    lay::Plugin (view),
-    m_active (false),
-    mp_view (view),
-    mp_root (root)
-{
-  QObject::setObjectName (QString::fromUtf8 (name));
+    //  TODO: clarify whether to keep the browsers as separate (potentially
+    //  hidden) windows
+    : QDialog(0 /*view*/, fl), lay::Plugin(view), m_active(false),
+      mp_view(view), mp_root(root) {
+  QObject::setObjectName(QString::fromUtf8(name));
 }
 
-Browser::~Browser ()
-{
-  if (active ()) {
-    deactivated ();
+Browser::~Browser() {
+  if (active()) {
+    deactivated();
   }
 }
 
-void 
-Browser::activate ()
-{
-  if (! active ()) {
+void Browser::activate() {
+  if (!active()) {
     m_active = true;
-    activated ();
-    QDialog::show ();
+    activated();
+    QDialog::show();
   }
 }
 
-void 
-Browser::deactivate ()
-{
-  if (active ()) {
+void Browser::deactivate() {
+  if (active()) {
     m_active = false;
-    deactivated ();
-    QDialog::hide ();
+    deactivated();
+    QDialog::hide();
   }
 }
 
-void 
-Browser::closeEvent (QCloseEvent *event)
-{
-  if (active ()) {
+void Browser::closeEvent(QCloseEvent *event) {
+  if (active()) {
     m_active = false;
-    deactivated ();
-    QDialog::closeEvent (event);
+    deactivated();
+    QDialog::closeEvent(event);
   }
 }
 
-void
-Browser::accept ()
-{
-  if (active ()) {
+void Browser::accept() {
+  if (active()) {
     m_active = false;
-    deactivated ();
-    QDialog::accept ();
+    deactivated();
+    QDialog::accept();
   }
 }
 
-}
+} // namespace lay
 
 #endif
-

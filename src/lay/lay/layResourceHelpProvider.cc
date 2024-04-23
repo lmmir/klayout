@@ -20,72 +20,81 @@
 
 */
 
-
 #include "layResourceHelpProvider.h"
 
-#include "tlString.h"
 #include "tlClassRegistry.h"
+#include "tlString.h"
 
-#include <QResource>
 #include <QFileInfo>
+#include <QResource>
 #include <QUrl>
 
-namespace lay
-{
+namespace lay {
 
 // --------------------------------------------------------------------------------------------
 //  Implementation of the resource help provider
 
-static QString resource_url (const QString &u)
-{
-  QUrl url (u);
-  return QString::fromUtf8 (":/help") + url.path ();
+static QString resource_url(const QString &u) {
+  QUrl url(u);
+  return QString::fromUtf8(":/help") + url.path();
 }
 
-ResourceHelpProvider::ResourceHelpProvider (const char *folder, const std::string &title)
-  : m_folder (folder), m_title (title)
-{
+ResourceHelpProvider::ResourceHelpProvider(const char *folder,
+                                           const std::string &title)
+    : m_folder(folder), m_title(title) {
   // .. nothing yet ..
 }
 
-QDomDocument 
-ResourceHelpProvider::get (lay::HelpSource * /*src*/, const std::string &path) const
-{
-  QString qpath = tl::to_qstring (path);
-  QResource res (resource_url (qpath));
-  if (res.size () == 0) {
-    throw tl::Exception (tl::to_string (QObject::tr ("ERROR: no data found for resource ")) + tl::to_string (res.fileName ()));
+QDomDocument ResourceHelpProvider::get(lay::HelpSource * /*src*/,
+                                       const std::string &path) const {
+  QString qpath = tl::to_qstring(path);
+  QResource res(resource_url(qpath));
+  if (res.size() == 0) {
+    throw tl::Exception(
+        tl::to_string(QObject::tr("ERROR: no data found for resource ")) +
+        tl::to_string(res.fileName()));
   }
 
   QByteArray data;
 #if QT_VERSION >= 0x60000
-  if (res.compressionAlgorithm () == QResource::ZlibCompression) {
+  if (res.compressionAlgorithm() == QResource::ZlibCompression) {
 #else
-  if (res.isCompressed ()) {
+  if (res.isCompressed()) {
 #endif
-    data = qUncompress ((const unsigned char *)res.data (), (int)res.size ());
+    data = qUncompress((const unsigned char *)res.data(), (int)res.size());
   } else {
-    data = QByteArray ((const char *)res.data (), (int)res.size ());
+    data = QByteArray((const char *)res.data(), (int)res.size());
   }
 
-  if (tl::verbosity () >= 20) {
+  if (tl::verbosity() >= 20) {
     tl::info << "Help provider: create content for " << path;
   }
 
   QDomDocument doc;
   QString errorMsg;
-  int errorLine = 0 ;
-  if (! doc.setContent (data, true, &errorMsg, &errorLine)) {
-    throw tl::Exception (tl::to_string (errorMsg) + ", in line " + tl::to_string (errorLine) + " of " + path);
+  int errorLine = 0;
+  if (!doc.setContent(data, true, &errorMsg, &errorLine)) {
+    throw tl::Exception(tl::to_string(errorMsg) + ", in line " +
+                        tl::to_string(errorLine) + " of " + path);
   }
-  
+
   return doc;
 }
 
 //  declare the resource-based help providers
-static tl::RegisteredClass<lay::HelpProvider> manual_help_provider (new ResourceHelpProvider ("manual", tl::to_string (QObject::tr ("User Manual"))), 100);
-static tl::RegisteredClass<lay::HelpProvider> about_help_provider (new ResourceHelpProvider ("about", tl::to_string (QObject::tr ("Various Topics and Detailed Information About Certain Features"))), 200);
-static tl::RegisteredClass<lay::HelpProvider> programming_help_provider (new ResourceHelpProvider ("programming", tl::to_string (QObject::tr ("Programming Ruby Scripts"))), 300);
+static tl::RegisteredClass<lay::HelpProvider> manual_help_provider(
+    new ResourceHelpProvider("manual",
+                             tl::to_string(QObject::tr("User Manual"))),
+    100);
+static tl::RegisteredClass<lay::HelpProvider> about_help_provider(
+    new ResourceHelpProvider(
+        "about",
+        tl::to_string(QObject::tr(
+            "Various Topics and Detailed Information About Certain Features"))),
+    200);
+static tl::RegisteredClass<lay::HelpProvider> programming_help_provider(
+    new ResourceHelpProvider(
+        "programming", tl::to_string(QObject::tr("Programming Ruby Scripts"))),
+    300);
 
-}
-
+} // namespace lay

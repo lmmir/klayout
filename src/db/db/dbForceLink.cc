@@ -22,11 +22,6 @@
 
 #include "dbForceLink.h"
 
-namespace db
-{
-  int _force_link_f ()
-  {
-    return 0;
-  }
-}
-
+namespace db {
+int _force_link_f() { return 0; }
+} // namespace db

@@ -20,50 +20,41 @@
 
 */
 
-
 #include "tlWebDAV.h"
-#include "tlXMLParser.h"
-#include "tlHttpStream.h"
-#include "tlStream.h"
-#include "tlInternational.h"
-#include "tlProgress.h"
-#include "tlLog.h"
-#include "tlUri.h"
 #include "tlFileUtils.h"
+#include "tlHttpStream.h"
+#include "tlInternational.h"
+#include "tlLog.h"
+#include "tlProgress.h"
+#include "tlStream.h"
+#include "tlUri.h"
+#include "tlXMLParser.h"
 
 #include <memory>
 
-namespace tl
-{
+namespace tl {
 
 // ---------------------------------------------------------------
 //  WebDAVCollection implementation
 
-WebDAVObject::WebDAVObject ()
-{
+WebDAVObject::WebDAVObject() {
   //  .. nothing yet ..
 }
 
-namespace
-{
+namespace {
 
 /**
  *  @brief A dummy "DOM" for the WebDAV reply
  */
-struct ResourceType
-{
-  ResourceType () : is_collection (false) { }
+struct ResourceType {
+  ResourceType() : is_collection(false) {}
 
-  const std::string &collection () const
-  {
+  const std::string &collection() const {
     static std::string empty;
     return empty;
   }
 
-  void set_collection (const std::string &)
-  {
-    is_collection = true;
-  }
+  void set_collection(const std::string &) { is_collection = true; }
 
   bool is_collection;
 };
@@ -71,16 +62,14 @@ struct ResourceType
 /**
  *  @brief A dummy "DOM" for the WebDAV reply
  */
-struct Prop
-{
+struct Prop {
   ResourceType resourcetype;
 };
 
 /**
  *  @brief A dummy "DOM" for the WebDAV reply
  */
-struct PropStat
-{
+struct PropStat {
   std::string status;
   Prop prop;
 };
@@ -88,8 +77,7 @@ struct PropStat
 /**
  *  @brief A dummy "DOM" for the WebDAV reply
  */
-struct Response
-{
+struct Response {
   std::string href;
   PropStat propstat;
 };
@@ -97,102 +85,104 @@ struct Response
 /**
  *  @brief A dummy "DOM" for the WebDAV reply
  */
-struct MultiStatus
-{
+struct MultiStatus {
   typedef std::list<Response> container;
   typedef container::const_iterator iterator;
 
-  iterator begin () const { return responses.begin (); }
-  iterator end () const { return responses.end (); }
-  void add (const Response &r) { responses.push_back (r); }
+  iterator begin() const { return responses.begin(); }
+  iterator end() const { return responses.end(); }
+  void add(const Response &r) { responses.push_back(r); }
 
   container responses;
 };
 
-}
+} // namespace
 
-tl::XMLStruct<MultiStatus> xml_struct ("multistatus",
-  tl::make_element (&MultiStatus::begin, &MultiStatus::end, &MultiStatus::add, "response",
-    tl::make_member (&Response::href, "href") +
-    tl::make_element (&Response::propstat, "propstat",
-      tl::make_member (&PropStat::status, "status") +
-      tl::make_element (&PropStat::prop, "prop",
-        tl::make_element (&Prop::resourcetype, "resourcetype",
-          tl::make_member (&ResourceType::collection, &ResourceType::set_collection, "collection")
-        )
-      )
-    )
-  )
-);
+tl::XMLStruct<MultiStatus> xml_struct(
+    "multistatus",
+    tl::make_element(
+        &MultiStatus::begin, &MultiStatus::end, &MultiStatus::add, "response",
+        tl::make_member(&Response::href, "href") +
+            tl::make_element(
+                &Response::propstat, "propstat",
+                tl::make_member(&PropStat::status, "status") +
+                    tl::make_element(
+                        &PropStat::prop, "prop",
+                        tl::make_element(
+                            &Prop::resourcetype, "resourcetype",
+                            tl::make_member(&ResourceType::collection,
+                                            &ResourceType::set_collection,
+                                            "collection"))))));
 
-static std::string item_name (const std::string &path1, const std::string &path2)
-{
-  std::vector <std::string> sl1 = tl::split (path1, "/");
-  if (! sl1.empty () && sl1.back ().empty ()) {
-    sl1.pop_back ();
+static std::string item_name(const std::string &path1,
+                             const std::string &path2) {
+  std::vector<std::string> sl1 = tl::split(path1, "/");
+  if (!sl1.empty() && sl1.back().empty()) {
+    sl1.pop_back();
   }
 
-  std::vector <std::string> sl2 = tl::split (path2, "/");
-  if (! sl2.empty () && sl2.back ().empty ()) {
-    sl2.pop_back ();
+  std::vector<std::string> sl2 = tl::split(path2, "/");
+  if (!sl2.empty() && sl2.back().empty()) {
+    sl2.pop_back();
   }
 
   if (sl1 == sl2) {
     //  This is the top-level item (echoed in the PROPFIND response)
-    return std::string ();
-  } else if (! sl2.empty ()) {
-    return sl2.back ();
+    return std::string();
+  } else if (!sl2.empty()) {
+    return sl2.back();
   } else {
-    throw tl::Exception (tl::to_string (tr ("Invalid WebDAV response: %s is not a collection sub-item of %s")), path2, path1);
+    throw tl::Exception(
+        tl::to_string(tr(
+            "Invalid WebDAV response: %s is not a collection sub-item of %s")),
+        path2, path1);
   }
 }
 
-void
-WebDAVObject::read (const std::string &url, int depth, double timeout, tl::InputHttpStreamCallback *callback)
-{
-  tl::URI base_uri (url);
+void WebDAVObject::read(const std::string &url, int depth, double timeout,
+                        tl::InputHttpStreamCallback *callback) {
+  tl::URI base_uri(url);
 
-  tl::InputHttpStream http (url);
-  http.set_timeout (timeout);
-  http.set_callback (callback);
-  http.add_header ("User-Agent", "SVN");
-  http.add_header ("Depth", tl::to_string (depth));
-  http.set_request ("PROPFIND");
-  http.set_data ("<?xml version=\"1.0\" encoding=\"utf-8\"?><propfind xmlns=\"DAV:\"><prop><resourcetype xmlns=\"DAV:\"/></prop></propfind>");
+  tl::InputHttpStream http(url);
+  http.set_timeout(timeout);
+  http.set_callback(callback);
+  http.add_header("User-Agent", "SVN");
+  http.add_header("Depth", tl::to_string(depth));
+  http.set_request("PROPFIND");
+  http.set_data(
+      "<?xml version=\"1.0\" encoding=\"utf-8\"?><propfind "
+      "xmlns=\"DAV:\"><prop><resourcetype xmlns=\"DAV:\"/></prop></propfind>");
 
   MultiStatus multistatus;
-  tl::InputStream stream (http);
-  tl::XMLStreamSource source (stream);
-  xml_struct.parse (source, multistatus);
+  tl::InputStream stream(http);
+  tl::XMLStreamSource source(stream);
+  xml_struct.parse(source, multistatus);
 
   //  TODO: check status ..
 
-  m_items.clear ();
-  for (MultiStatus::iterator r = multistatus.begin (); r != multistatus.end (); ++r) {
+  m_items.clear();
+  for (MultiStatus::iterator r = multistatus.begin(); r != multistatus.end();
+       ++r) {
 
     bool is_collection = r->propstat.prop.resourcetype.is_collection;
-    tl::URI item_url = base_uri.resolved (tl::URI (r->href));
+    tl::URI item_url = base_uri.resolved(tl::URI(r->href));
 
-    std::string n = item_name (base_uri.path (), item_url.path ());
-    std::string item_url_string = item_url.to_string ();
+    std::string n = item_name(base_uri.path(), item_url.path());
+    std::string item_url_string = item_url.to_string();
 
-    if (! n.empty ()) {
-      m_items.push_back (WebDAVItem (is_collection, item_url_string, n));
+    if (!n.empty()) {
+      m_items.push_back(WebDAVItem(is_collection, item_url_string, n));
     } else {
       m_is_collection = is_collection;
       m_url = item_url_string;
     }
-
   }
 }
 
-namespace
-{
+namespace {
 
-struct DownloadItem
-{
-  DownloadItem (const std::string &u, const std::string &p)
-  {
+struct DownloadItem {
+  DownloadItem(const std::string &u, const std::string &p) {
     url = u;
     path = p;
   }
@@ -201,119 +191,147 @@ struct DownloadItem
   std::string path;
 };
 
-}
+} // namespace
 
-static
-void fetch_download_items (const std::string &url, const std::string &target, std::list<DownloadItem> &items, tl::AbsoluteProgress &progress, double timeout, tl::InputHttpStreamCallback *callback)
-{
+static void fetch_download_items(const std::string &url,
+                                 const std::string &target,
+                                 std::list<DownloadItem> &items,
+                                 tl::AbsoluteProgress &progress, double timeout,
+                                 tl::InputHttpStreamCallback *callback) {
   ++progress;
 
   WebDAVObject object;
-  object.read (url, 1, timeout, callback);
+  object.read(url, 1, timeout, callback);
 
-  if (object.is_collection ()) {
+  if (object.is_collection()) {
 
-    if (! tl::file_exists (target)) {
-      throw tl::Exception (tl::to_string (tr ("Download failed: target directory '%s' does not exists")), target);
+    if (!tl::file_exists(target)) {
+      throw tl::Exception(
+          tl::to_string(
+              tr("Download failed: target directory '%s' does not exists")),
+          target);
     }
 
-    for (WebDAVObject::iterator i = object.begin (); i != object.end (); ++i) {
+    for (WebDAVObject::iterator i = object.begin(); i != object.end(); ++i) {
 
-      std::string item_path = tl::absolute_file_path (tl::combine_path (target, i->name ()));
+      std::string item_path =
+          tl::absolute_file_path(tl::combine_path(target, i->name()));
 
-      if (i->is_collection ()) {
+      if (i->is_collection()) {
 
-        if (! tl::file_exists (item_path)) {
-          if (! tl::mkpath (item_path)) {
-            throw tl::Exception (tl::to_string (tr ("Download failed: unable to create subdirectory '%s' in '%s'")), i->name (), target);
+        if (!tl::file_exists(item_path)) {
+          if (!tl::mkpath(item_path)) {
+            throw tl::Exception(
+                tl::to_string(tr("Download failed: unable to create "
+                                 "subdirectory '%s' in '%s'")),
+                i->name(), target);
           }
-        } else if (! tl::is_dir (item_path)) {
-          throw tl::Exception (tl::to_string (tr ("Download failed: unable to create subdirectory '%s' in '%s' - is already a file")), i->name (), target);
-        } else if (! tl::is_writable (item_path)) {
-          throw tl::Exception (tl::to_string (tr ("Download failed: unable to create subdirectory '%s' in '%s' - no write permissions")), i->name (), target);
+        } else if (!tl::is_dir(item_path)) {
+          throw tl::Exception(
+              tl::to_string(tr("Download failed: unable to create subdirectory "
+                               "'%s' in '%s' - is already a file")),
+              i->name(), target);
+        } else if (!tl::is_writable(item_path)) {
+          throw tl::Exception(
+              tl::to_string(tr("Download failed: unable to create subdirectory "
+                               "'%s' in '%s' - no write permissions")),
+              i->name(), target);
         }
 
-        fetch_download_items (i->url (), item_path, items, progress, timeout, callback);
+        fetch_download_items(i->url(), item_path, items, progress, timeout,
+                             callback);
 
       } else {
 
-        if (tl::file_exists (item_path) && ! tl::is_writable (item_path)) {
-          throw tl::Exception (tl::to_string (tr ("Download failed: file is '%s' in '%s' - already exists, but no write permissions")), i->name (), target);
+        if (tl::file_exists(item_path) && !tl::is_writable(item_path)) {
+          throw tl::Exception(
+              tl::to_string(tr("Download failed: file is '%s' in '%s' - "
+                               "already exists, but no write permissions")),
+              i->name(), target);
         }
 
-        items.push_back (DownloadItem (i->url (), item_path));
-
+        items.push_back(DownloadItem(i->url(), item_path));
       }
     }
 
   } else {
-    items.push_back (DownloadItem (url, target));
+    items.push_back(DownloadItem(url, target));
   }
 }
 
 tl::InputStream *
-WebDAVObject::download_item (const std::string &url, double timeout, tl::InputHttpStreamCallback *callback)
-{
-  tl::InputHttpStream *http = new tl::InputHttpStream (url);
-  http->set_timeout (timeout);
-  http->set_callback (callback);
+WebDAVObject::download_item(const std::string &url, double timeout,
+                            tl::InputHttpStreamCallback *callback) {
+  tl::InputHttpStream *http = new tl::InputHttpStream(url);
+  http->set_timeout(timeout);
+  http->set_callback(callback);
   //  This trick allows accessing GitHub repos through their SVN API
-  http->add_header ("User-Agent", "SVN");
-  return new tl::InputStream (http);
+  http->add_header("User-Agent", "SVN");
+  return new tl::InputStream(http);
 }
 
-bool
-WebDAVObject::download (const std::string &url, const std::string &target, double timeout, tl::InputHttpStreamCallback *callback)
-{
+bool WebDAVObject::download(const std::string &url, const std::string &target,
+                            double timeout,
+                            tl::InputHttpStreamCallback *callback) {
   std::list<DownloadItem> items;
 
   try {
 
-    tl::info << tr ("Fetching file structure from ") << url;
-    tl::AbsoluteProgress progress (tl::sprintf (tl::to_string (tr ("Fetching directory structure from %s")), url));
-    fetch_download_items (url, target, items, progress, timeout, callback);
+    tl::info << tr("Fetching file structure from ") << url;
+    tl::AbsoluteProgress progress(tl::sprintf(
+        tl::to_string(tr("Fetching directory structure from %s")), url));
+    fetch_download_items(url, target, items, progress, timeout, callback);
 
   } catch (tl::Exception &ex) {
-    tl::error << tr ("Error downloading file structure from '") << url << "':" << tl::endl << ex.msg ();
+    tl::error << tr("Error downloading file structure from '") << url
+              << "':" << tl::endl
+              << ex.msg();
     return false;
   }
 
   bool has_errors = false;
 
   {
-    tl::info << tl::sprintf (tl::to_string (tr ("Downloading %d file(s) now ..")), items.size ());
+    tl::info << tl::sprintf(tl::to_string(tr("Downloading %d file(s) now ..")),
+                            items.size());
 
-    tl::RelativeProgress progress (tl::sprintf (tl::to_string (tr ("Downloading file(s) from %s")), url), items.size (), 1);
+    tl::RelativeProgress progress(
+        tl::sprintf(tl::to_string(tr("Downloading file(s) from %s")), url),
+        items.size(), 1);
 
-    for (std::list<DownloadItem>::const_iterator i = items.begin (); i != items.end (); ++i) {
+    for (std::list<DownloadItem>::const_iterator i = items.begin();
+         i != items.end(); ++i) {
 
-      tl::info << tl::sprintf (tl::to_string (tr ("Downloading '%s' to '%s' ..")), i->url, i->path);
+      tl::info << tl::sprintf(tl::to_string(tr("Downloading '%s' to '%s' ..")),
+                              i->url, i->path);
 
       try {
 
-        tl::OutputStream os (i->path);
-        std::unique_ptr<tl::InputStream> is (download_item (i->url, timeout, callback));
-        is->copy_to (os);
+        tl::OutputStream os(i->path);
+        std::unique_ptr<tl::InputStream> is(
+            download_item(i->url, timeout, callback));
+        is->copy_to(os);
 
         ++progress;
 
       } catch (tl::BreakException &ex) {
-        tl::info << tr ("Download was cancelled") << tl::endl << ex.msg ();
+        tl::info << tr("Download was cancelled") << tl::endl << ex.msg();
         has_errors = true;
         break;
       } catch (tl::CancelException &ex) {
-        tl::info << tr ("Download was cancelled") << tl::endl << ex.msg ();
+        tl::info << tr("Download was cancelled") << tl::endl << ex.msg();
         has_errors = true;
         break;
       } catch (tl::Exception &ex) {
-        tl::error << tr ("Error downloading file from '") << i->url << "':" << tl::endl << ex.msg ();
+        tl::error << tr("Error downloading file from '") << i->url
+                  << "':" << tl::endl
+                  << ex.msg();
         has_errors = true;
       }
-
     }
   }
 
-  return ! has_errors;
+  return !has_errors;
 }
 
-}
+} // namespace tl

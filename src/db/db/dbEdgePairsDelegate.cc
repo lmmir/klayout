@@ -20,49 +20,36 @@
 
 */
 
-
 #include "dbEdgePairsDelegate.h"
 
-namespace db
-{
+namespace db {
 
 // -------------------------------------------------------------------------------------------------------------
 
-EdgePairsDelegate::EdgePairsDelegate ()
-{
-  m_report_progress = false;
-}
+EdgePairsDelegate::EdgePairsDelegate() { m_report_progress = false; }
 
-EdgePairsDelegate::EdgePairsDelegate (const EdgePairsDelegate &other)
-  : ShapeCollectionDelegateBase ()
-{
-  operator= (other);
+EdgePairsDelegate::EdgePairsDelegate(const EdgePairsDelegate &other)
+    : ShapeCollectionDelegateBase() {
+  operator=(other);
 }
 
 EdgePairsDelegate &
-EdgePairsDelegate::operator= (const EdgePairsDelegate &other)
-{
+EdgePairsDelegate::operator=(const EdgePairsDelegate &other) {
   if (this != &other) {
     m_report_progress = other.m_report_progress;
   }
   return *this;
 }
 
-EdgePairsDelegate::~EdgePairsDelegate ()
-{
+EdgePairsDelegate::~EdgePairsDelegate() {
   //  .. nothing yet ..
 }
 
-void EdgePairsDelegate::enable_progress (const std::string &progress_desc)
-{
+void EdgePairsDelegate::enable_progress(const std::string &progress_desc) {
   m_report_progress = true;
   m_progress_desc = progress_desc;
 }
 
-void EdgePairsDelegate::disable_progress ()
-{
-  m_report_progress = false;
-}
+void EdgePairsDelegate::disable_progress() { m_report_progress = false; }
 
-}
-
+} // namespace db

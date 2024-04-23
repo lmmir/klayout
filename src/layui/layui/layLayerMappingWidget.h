@@ -27,76 +27,72 @@
 
 #include <QFrame>
 
-#include "layuiCommon.h"
 #include "dbStreamLayers.h"
+#include "layuiCommon.h"
 
-namespace Ui
-{
-  class LayerMappingWidget;
+namespace Ui {
+class LayerMappingWidget;
 }
 
-namespace lay
-{
+namespace lay {
 
 class FileDialog;
 
 /**
  *  @brief A widget for editing the layer mapping for the reader options
  */
-class LAYUI_PUBLIC LayerMappingWidget
-  : public QFrame
-{
-Q_OBJECT
+class LAYUI_PUBLIC LayerMappingWidget : public QFrame {
+  Q_OBJECT
 
 public:
   /**
    *  @brief Constructor
    */
-  LayerMappingWidget (QWidget *parent);
+  LayerMappingWidget(QWidget *parent);
 
   /**
    *  @brief Destructor
    */
-  ~LayerMappingWidget ();
+  ~LayerMappingWidget();
 
   /**
    *  @brief Set the layer mapping
    */
-  void set_layer_map (const db::LayerMap &lm);
+  void set_layer_map(const db::LayerMap &lm);
 
   /**
    *  @brief Get the layer mapping
    */
-  db::LayerMap get_layer_map () const;
+  db::LayerMap get_layer_map() const;
 
   /**
    *  @brief Get a value indicating whether the layer list is empty
    */
-  bool is_empty () const;
+  bool is_empty() const;
 
 signals:
-  void layerListChanged ();
-  void layerItemDeleted ();
-  void layerItemAdded ();
-  void enable_all_layers (bool en);
+  void layerListChanged();
+  void layerItemDeleted();
+  void layerItemAdded();
+  void enable_all_layers(bool en);
 
 private slots:
-  void load_button_pressed ();
-  void add_button_pressed ();
-  void delete_button_pressed ();
-  void edit_button_pressed ();
-  void current_tab_changed (int tab);
+  void load_button_pressed();
+  void add_button_pressed();
+  void delete_button_pressed();
+  void edit_button_pressed();
+  void current_tab_changed(int tab);
 
 private:
   lay::FileDialog *mp_layer_table_file_dialog;
   std::string m_layer_table_file;
   Ui::LayerMappingWidget *mp_ui;
 
-  db::LayerMap get_layer_map_from_tab (int tab) const;
+  db::LayerMap get_layer_map_from_tab(int tab) const;
 };
 
 } // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

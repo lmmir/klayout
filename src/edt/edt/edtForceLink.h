@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_edtForceLink
 #define HDR_edtForceLink
 
@@ -30,11 +29,9 @@
  *  @file Include this function to force linking of the edt module
  */
 
-namespace edt
-{
-  EDT_PUBLIC int _force_link_f ();
-  static int _force_link_target = _force_link_f ();
-}
+namespace edt {
+EDT_PUBLIC int _force_link_f();
+static int _force_link_target = _force_link_f();
+} // namespace edt
 
 #endif
-

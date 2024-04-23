@@ -20,7 +20,6 @@
 
 */
 
-
 #ifndef HDR_layVersion
 #define HDR_layVersion
 
@@ -32,23 +31,21 @@ namespace lay {
  *  @brief This class provides the program's version information
  */
 
-class LAY_PUBLIC Version
-{
+class LAY_PUBLIC Version {
 public:
-  static const char *exe_name ();
-  static const char *name ();
-  static const char *version ();
-  static const char *subversion ();
-  static const char *about_text ();
+  static const char *exe_name();
+  static const char *name();
+  static const char *version();
+  static const char *subversion();
+  static const char *about_text();
 
-  static void set_exe_name (const char *s);
-  static void set_name (const char *s);
-  static void set_version (const char *s);
-  static void set_subversion (const char *s);
-  static void set_about_text (const char *s);
+  static void set_exe_name(const char *s);
+  static void set_name(const char *s);
+  static void set_version(const char *s);
+  static void set_subversion(const char *s);
+  static void set_about_text(const char *s);
 };
 
-}
+} // namespace lay
 
 #endif
-

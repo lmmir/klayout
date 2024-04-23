@@ -33,30 +33,30 @@
 
 class QCloseEvent;
 
-namespace lay
-{
+namespace lay {
 
 class LayoutViewBase;
 class Dispatcher;
 
-class LAYUI_PUBLIC Browser
-  : public QDialog, 
-    public lay::Plugin
-{
+class LAYUI_PUBLIC Browser : public QDialog, public lay::Plugin {
 public:
   /**
-   *  @brief Constructor 
+   *  @brief Constructor
    */
 #if QT_VERSION >= 0x050000
-  Browser (lay::Dispatcher *root, lay::LayoutViewBase *view, const char *name = "", Qt::WindowFlags fl = Qt::Window /*adds minimize button for example*/);
+  Browser(lay::Dispatcher *root, lay::LayoutViewBase *view,
+          const char *name = "",
+          Qt::WindowFlags fl = Qt::Window /*adds minimize button for example*/);
 #else
-  Browser (lay::Dispatcher *root, lay::LayoutViewBase *view, const char *name = "", Qt::WFlags fl = Qt::Window /*adds minimize button for example*/);
+  Browser(lay::Dispatcher *root, lay::LayoutViewBase *view,
+          const char *name = "",
+          Qt::WFlags fl = Qt::Window /*adds minimize button for example*/);
 #endif
 
   /**
    *  @brief Destructor
    */
-  virtual ~Browser ();
+  virtual ~Browser();
 
   /**
    *  @brief Activation event
@@ -64,10 +64,10 @@ public:
    *  This method can be overloaded by derived classes to provide actions
    *  for activation of the dialog, like setup of the controls etc.
    *  This handler is called immediately before the dialog becomes visible.
-   *  The 'active' method returns a value indicating whether the dialog is active.
+   *  The 'active' method returns a value indicating whether the dialog is
+   * active.
    */
-  virtual void activated () 
-  {
+  virtual void activated() {
     //  the default implementation does nothing.
   }
 
@@ -78,34 +78,24 @@ public:
    *  request of the view or by closing the dialog. This method is supposed
    *  to release all resources related to the browsing, i.e. view objects etc.
    */
-  virtual void deactivated () 
-  {
+  virtual void deactivated() {
     //  the default implementation does nothing.
   }
-  
+
   /**
    *  @brief Tell if the dialog is active
    */
-  bool active () const
-  {
-    return m_active;
-  }
+  bool active() const { return m_active; }
 
-  /** 
-   *  @brief Return the pointer to the layout view 
+  /**
+   *  @brief Return the pointer to the layout view
    */
-  lay::LayoutViewBase *view ()
-  {
-    return mp_view;
-  }
+  lay::LayoutViewBase *view() { return mp_view; }
 
   /**
    *  @brief Returns the pointer to the root configuration object
    */
-  lay::Dispatcher *root ()
-  {
-    return mp_root;
-  }
+  lay::Dispatcher *root() { return mp_root; }
 
   /**
    *  @brief Activate the dialog
@@ -113,7 +103,7 @@ public:
    *  Calls activated() before the dialog is shown. show() can be used too
    *  but will not activate the dialog.
    */
-  void activate ();
+  void activate();
 
   /**
    *  @brief Deactivate the dialog
@@ -121,27 +111,25 @@ public:
    *  Calls deactivated() after the dialog is hidden. hide() can be used too
    *  but will not deactivate the dialog.
    */
-  void deactivate ();
+  void deactivate();
 
   /**
-   *  @brief implementation of the lay::Plugin interface: obtain a pointer to the lay::Browser interface
+   *  @brief implementation of the lay::Plugin interface: obtain a pointer to
+   * the lay::Browser interface
    */
-  lay::Browser *browser_interface ()
-  {
-    return this;
-  }
+  lay::Browser *browser_interface() { return this; }
 
 private:
   bool m_active;
   lay::LayoutViewBase *mp_view;
   lay::Dispatcher *mp_root;
 
-  void closeEvent (QCloseEvent *);
-  void accept ();
+  void closeEvent(QCloseEvent *);
+  void accept();
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

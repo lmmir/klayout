@@ -20,62 +20,51 @@
 
 */
 
-
 #include "layConverters.h"
 #include "tlInternational.h"
 #include "tlString.h"
 
-namespace lay
-{
+namespace lay {
 
 // ----------------------------------------------------------------
 //  ColorConverter implementation
 
 #if defined(HAVE_QT)
-std::string 
-ColorConverter::to_string (const QColor &c) const
-{
-  if (! c.isValid ()) {
+std::string ColorConverter::to_string(const QColor &c) const {
+  if (!c.isValid()) {
     return "auto";
   } else {
-    return tl::to_string (c.name ());
+    return tl::to_string(c.name());
   }
 }
 #endif
 
-std::string
-ColorConverter::to_string (const tl::Color &c) const
-{
-  if (! c.is_valid ()) {
+std::string ColorConverter::to_string(const tl::Color &c) const {
+  if (!c.is_valid()) {
     return "auto";
   } else {
-    return c.to_string ();
+    return c.to_string();
   }
 }
 
 #if defined(HAVE_QT)
-void
-ColorConverter::from_string (const std::string &s, QColor &c) const
-{
-  std::string t (tl::trim (s));
+void ColorConverter::from_string(const std::string &s, QColor &c) const {
+  std::string t(tl::trim(s));
   if (t == "auto") {
-    c = QColor ();
+    c = QColor();
   } else {
-    c = QColor (t.c_str ());
-  } 
+    c = QColor(t.c_str());
+  }
 }
 #endif
 
-void
-ColorConverter::from_string (const std::string &s, tl::Color &c) const
-{
-  std::string t (tl::trim (s));
+void ColorConverter::from_string(const std::string &s, tl::Color &c) const {
+  std::string t(tl::trim(s));
   if (t == "auto") {
-    c = tl::Color ();
+    c = tl::Color();
   } else {
-    c = tl::Color (t);
+    c = tl::Color(t);
   }
 }
 
-}
-
+} // namespace lay

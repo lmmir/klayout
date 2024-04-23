@@ -31,122 +31,125 @@
 
 #include <algorithm>
 
-namespace lay
-{
+namespace lay {
 
-SelectStippleForm::SelectStippleForm (QWidget *parent, const lay::DitherPattern &pattern, bool include_nil)
-  : QDialog (parent), m_selected (-1), m_pattern (pattern), m_include_nil (include_nil)
-{
-  mp_ui = new Ui::SelectStippleForm ();
+SelectStippleForm::SelectStippleForm(QWidget *parent,
+                                     const lay::DitherPattern &pattern,
+                                     bool include_nil)
+    : QDialog(parent), m_selected(-1), m_pattern(pattern),
+      m_include_nil(include_nil) {
+  mp_ui = new Ui::SelectStippleForm();
 
-  mp_ui->setupUi (this);
+  mp_ui->setupUi(this);
 
-  mp_ui->stipple_items->setUniformItemSizes (true);
+  mp_ui->stipple_items->setUniformItemSizes(true);
 
-  update ();
+  update();
 
-  connect (mp_ui->stipple_items, SIGNAL (currentItemChanged(QListWidgetItem*, QListWidgetItem*)), 
-           this, SLOT (sel_changed (QListWidgetItem *, QListWidgetItem *)));
+  connect(mp_ui->stipple_items,
+          SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
+          this, SLOT(sel_changed(QListWidgetItem *, QListWidgetItem *)));
 }
 
-SelectStippleForm::~SelectStippleForm ()
-{
+SelectStippleForm::~SelectStippleForm() {
   delete mp_ui;
   mp_ui = 0;
 }
 
-void 
-SelectStippleForm::set_selected (int selected)
-{
+void SelectStippleForm::set_selected(int selected) {
   if (selected != m_selected) {
     m_selected = selected;
-    mp_ui->stipple_items->setCurrentRow (m_include_nil ? (selected < 0 ? 0 : selected + 1) : selected);
+    mp_ui->stipple_items->setCurrentRow(
+        m_include_nil ? (selected < 0 ? 0 : selected + 1) : selected);
   }
 }
 
 namespace {
-  struct display_order
-  {
-    bool operator () (lay::DitherPattern::iterator a, lay::DitherPattern::iterator b)
-    {
-      return a->order_index () < b->order_index ();
-    }
-  };
-}
+struct display_order {
+  bool operator()(lay::DitherPattern::iterator a,
+                  lay::DitherPattern::iterator b) {
+    return a->order_index() < b->order_index();
+  }
+};
+} // namespace
 
-void 
-SelectStippleForm::update ()
-{
+void SelectStippleForm::update() {
 #if QT_VERSION >= 0x050000
-  double dpr = devicePixelRatio ();
+  double dpr = devicePixelRatio();
 #else
   double dpr = 1.0;
 #endif
 
-  mp_ui->stipple_items->clear ();
+  mp_ui->stipple_items->clear();
 
-  QSize icon_size = mp_ui->stipple_items->iconSize ();
+  QSize icon_size = mp_ui->stipple_items->iconSize();
 
   if (m_include_nil) {
-    new QListWidgetItem (QObject::tr ("None"), mp_ui->stipple_items);
+    new QListWidgetItem(QObject::tr("None"), mp_ui->stipple_items);
   }
 
-  std::vector <lay::DitherPattern::iterator> iters; 
-  for (lay::DitherPattern::iterator i = m_pattern.begin_custom (); i != m_pattern.end (); ++i) {
-    iters.push_back (i);
+  std::vector<lay::DitherPattern::iterator> iters;
+  for (lay::DitherPattern::iterator i = m_pattern.begin_custom();
+       i != m_pattern.end(); ++i) {
+    iters.push_back(i);
   }
-  std::sort (iters.begin (), iters.end (), display_order ());
+  std::sort(iters.begin(), iters.end(), display_order());
 
   //  fill the list of stipple items
-  for (lay::DitherPattern::iterator i = m_pattern.begin (); i != m_pattern.begin_custom (); ++i) {
+  for (lay::DitherPattern::iterator i = m_pattern.begin();
+       i != m_pattern.begin_custom(); ++i) {
 
-    std::string name (i->name ());
-    if (name.empty ()) {
-      name = tl::sprintf ("#%d", std::distance (m_pattern.begin (), i));
+    std::string name(i->name());
+    if (name.empty()) {
+      name = tl::sprintf("#%d", std::distance(m_pattern.begin(), i));
     }
 
-    const lay::DitherPatternInfo &dp_info = i->scaled (dpr);
-    QBitmap bitmap = dp_info.get_bitmap (icon_size.width () * dpr, icon_size.height () * dpr, dpr);
+    const lay::DitherPatternInfo &dp_info = i->scaled(dpr);
+    QBitmap bitmap = dp_info.get_bitmap(icon_size.width() * dpr,
+                                        icon_size.height() * dpr, dpr);
 #if QT_VERSION >= 0x050000
-    bitmap.setDevicePixelRatio (dpr);
+    bitmap.setDevicePixelRatio(dpr);
 #endif
-    new QListWidgetItem (QIcon (bitmap), tl::to_qstring (name), mp_ui->stipple_items);
-
+    new QListWidgetItem(QIcon(bitmap), tl::to_qstring(name),
+                        mp_ui->stipple_items);
   }
 
-  for (std::vector <lay::DitherPattern::iterator>::const_iterator i = iters.begin (); i != iters.end (); ++i) {
+  for (std::vector<lay::DitherPattern::iterator>::const_iterator i =
+           iters.begin();
+       i != iters.end(); ++i) {
 
-    if ((*i)->order_index () > 0) {
+    if ((*i)->order_index() > 0) {
 
-      std::string name ((*i)->name ());
-      if (name.empty ()) {
-        name = tl::sprintf ("custom #%d", (*i)->order_index ());
+      std::string name((*i)->name());
+      if (name.empty()) {
+        name = tl::sprintf("custom #%d", (*i)->order_index());
       }
 
-      const lay::DitherPatternInfo &dp_info = (*i)->scaled (dpr);
-      QBitmap bitmap = dp_info.get_bitmap (icon_size.width () * dpr, icon_size.height () * dpr, dpr);
+      const lay::DitherPatternInfo &dp_info = (*i)->scaled(dpr);
+      QBitmap bitmap = dp_info.get_bitmap(icon_size.width() * dpr,
+                                          icon_size.height() * dpr, dpr);
 #if QT_VERSION >= 0x050000
-      bitmap.setDevicePixelRatio (dpr);
+      bitmap.setDevicePixelRatio(dpr);
 #endif
-      new QListWidgetItem (QIcon (bitmap), tl::to_qstring (name), mp_ui->stipple_items);
-
+      new QListWidgetItem(QIcon(bitmap), tl::to_qstring(name),
+                          mp_ui->stipple_items);
     }
-
   }
 }
 
-void 
-SelectStippleForm::sel_changed (QListWidgetItem *citem, QListWidgetItem *)
-{
-  int row = mp_ui->stipple_items->row (citem);
+void SelectStippleForm::sel_changed(QListWidgetItem *citem, QListWidgetItem *) {
+  int row = mp_ui->stipple_items->row(citem);
   if (m_include_nil) {
     --row;
   }
 
-  if (row >= int (std::distance (m_pattern.begin (), m_pattern.begin_custom ()))) {
-    for (lay::DitherPattern::iterator i = m_pattern.begin_custom (); i != m_pattern.end (); ++i) {
-      if (int (i->order_index ()) - 1 + std::distance (m_pattern.begin (), m_pattern.begin_custom ()) == row) {
-        m_selected = std::distance (m_pattern.begin (), i);
+  if (row >= int(std::distance(m_pattern.begin(), m_pattern.begin_custom()))) {
+    for (lay::DitherPattern::iterator i = m_pattern.begin_custom();
+         i != m_pattern.end(); ++i) {
+      if (int(i->order_index()) - 1 +
+              std::distance(m_pattern.begin(), m_pattern.begin_custom()) ==
+          row) {
+        m_selected = std::distance(m_pattern.begin(), i);
         return;
       }
     }
@@ -157,6 +160,6 @@ SelectStippleForm::sel_changed (QListWidgetItem *citem, QListWidgetItem *)
   }
 }
 
-}
+} // namespace lay
 
 #endif

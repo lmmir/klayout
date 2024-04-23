@@ -25,8 +25,8 @@
 #ifndef HDR_layLayoutPropertiesForm
 #define HDR_layLayoutPropertiesForm
 
-#include "layuiCommon.h"
 #include "layCellView.h"
+#include "layuiCommon.h"
 
 #include "ui_LayoutProperties.h"
 
@@ -38,32 +38,32 @@ namespace lay {
 
 class LayoutViewBase;
 
-class LAYUI_PUBLIC LayoutPropertiesForm
-  : public QDialog, private Ui::LayoutPropertiesForm
-{
-  Q_OBJECT 
+class LAYUI_PUBLIC LayoutPropertiesForm : public QDialog,
+                                          private Ui::LayoutPropertiesForm {
+  Q_OBJECT
 
 public:
-  LayoutPropertiesForm (QWidget *parent, lay::LayoutViewBase *view, const char *name);
+  LayoutPropertiesForm(QWidget *parent, lay::LayoutViewBase *view,
+                       const char *name);
 
-  void accept ();
-  void commit ();
+  void accept();
+  void commit();
 
 public slots:
-  void layout_selected (int);
+  void layout_selected(int);
 
 private slots:
-  void prop_pb_clicked ();
+  void prop_pb_clicked();
 
 private:
-  std::vector <lay::LayoutHandleRef> m_handles;
+  std::vector<lay::LayoutHandleRef> m_handles;
   lay::LayoutViewBase *mp_view;
   int m_index;
   bool m_editable;
 };
 
-}
+} // namespace lay
 
 #endif
 
-#endif  //  defined(HAVE_QT)
+#endif //  defined(HAVE_QT)

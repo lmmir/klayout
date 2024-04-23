@@ -20,16 +20,14 @@
 
 */
 
-
-
 #ifndef HDR_layCanvasPlane
 #define HDR_layCanvasPlane
 
 #include "laybasicCommon.h"
 
 #include "dbEdge.h"
-#include "dbText.h"
 #include "dbHershey.h"
+#include "dbText.h"
 
 #include <stdint.h>
 
@@ -45,31 +43,28 @@ const double render_epsilon = 1e-6;
  *  This is the base class for lay::Bitmap for example.
  *  It is used by the renderer to identify the rendering target.
  */
-class LAYBASIC_PUBLIC CanvasPlane 
-{
+class LAYBASIC_PUBLIC CanvasPlane {
 public:
   /**
    *  @brief Destructor
    */
-  virtual ~CanvasPlane ();
+  virtual ~CanvasPlane();
 
   /**
    *  @brief Clear the plane
    */
-  virtual void clear () = 0;
+  virtual void clear() = 0;
 
   /**
-   *  @brief Fill method 
+   *  @brief Fill method
    *
    *  This method is supposed to draw a small rectangle of 1 pixel
    *
    *  @param x,y The coordinate where to put the pixel (lower left corner)
    */
-  virtual void pixel (unsigned int y, unsigned int x) = 0;
+  virtual void pixel(unsigned int y, unsigned int x) = 0;
 };
 
 } // namespace lay
 
 #endif
-
-

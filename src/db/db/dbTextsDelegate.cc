@@ -20,49 +20,35 @@
 
 */
 
-
 #include "dbTextsDelegate.h"
 
-namespace db
-{
+namespace db {
 
 // -------------------------------------------------------------------------------------------------------------
 
-TextsDelegate::TextsDelegate ()
-{
-  m_report_progress = false;
+TextsDelegate::TextsDelegate() { m_report_progress = false; }
+
+TextsDelegate::TextsDelegate(const TextsDelegate &other)
+    : db::ShapeCollectionDelegateBase() {
+  operator=(other);
 }
 
-TextsDelegate::TextsDelegate (const TextsDelegate &other)
-  : db::ShapeCollectionDelegateBase ()
-{
-  operator= (other);
-}
-
-TextsDelegate &
-TextsDelegate::operator= (const TextsDelegate &other)
-{
+TextsDelegate &TextsDelegate::operator=(const TextsDelegate &other) {
   if (this != &other) {
     m_report_progress = other.m_report_progress;
   }
   return *this;
 }
 
-TextsDelegate::~TextsDelegate ()
-{
+TextsDelegate::~TextsDelegate() {
   //  .. nothing yet ..
 }
 
-void TextsDelegate::enable_progress (const std::string &progress_desc)
-{
+void TextsDelegate::enable_progress(const std::string &progress_desc) {
   m_report_progress = true;
   m_progress_desc = progress_desc;
 }
 
-void TextsDelegate::disable_progress ()
-{
-  m_report_progress = false;
-}
+void TextsDelegate::disable_progress() { m_report_progress = false; }
 
-}
-
+} // namespace db

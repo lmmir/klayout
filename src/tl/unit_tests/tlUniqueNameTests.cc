@@ -27,27 +27,26 @@
 #include <string>
 
 //  basic tests
-TEST(1)
-{
+TEST(1) {
   std::set<std::string> names;
 
-  EXPECT_EQ (tl::unique_name ("A", names), "A");
-  names.insert ("A");
-  EXPECT_EQ (tl::unique_name ("A", names), "A$1");
-  EXPECT_EQ (tl::unique_name ("A", names, "_"), "A_1");
-  names.insert ("A$1");
-  EXPECT_EQ (tl::unique_name ("A", names), "A$2");
-  names.insert ("A$2");
-  names.insert ("A$5");
-  EXPECT_EQ (tl::unique_name ("A", names), "A$3");
-  names.insert ("A$3");
-  EXPECT_EQ (tl::unique_name ("A", names), "A$4");
-  names.insert ("A$4");
-  EXPECT_EQ (tl::unique_name ("A", names), "A$6");
-  names.insert ("A$6");
-  EXPECT_EQ (tl::unique_name ("B", names), "B");
-  names.insert ("B");
-  EXPECT_EQ (tl::unique_name ("", names), "");
-  names.insert ("");
-  EXPECT_EQ (tl::unique_name ("", names), "$1");
+  EXPECT_EQ(tl::unique_name("A", names), "A");
+  names.insert("A");
+  EXPECT_EQ(tl::unique_name("A", names), "A$1");
+  EXPECT_EQ(tl::unique_name("A", names, "_"), "A_1");
+  names.insert("A$1");
+  EXPECT_EQ(tl::unique_name("A", names), "A$2");
+  names.insert("A$2");
+  names.insert("A$5");
+  EXPECT_EQ(tl::unique_name("A", names), "A$3");
+  names.insert("A$3");
+  EXPECT_EQ(tl::unique_name("A", names), "A$4");
+  names.insert("A$4");
+  EXPECT_EQ(tl::unique_name("A", names), "A$6");
+  names.insert("A$6");
+  EXPECT_EQ(tl::unique_name("B", names), "B");
+  names.insert("B");
+  EXPECT_EQ(tl::unique_name("", names), "");
+  names.insert("");
+  EXPECT_EQ(tl::unique_name("", names), "$1");
 }
