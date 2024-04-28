@@ -1729,6 +1729,7 @@ void RedrawThreadWorker::draw_layer_wo_cache(
     const db::CplxTrans &trans, const std::vector<db::Box> &vv, int level,
     lay::CanvasPlane *fill, lay::CanvasPlane *frame, lay::CanvasPlane *vertex,
     lay::CanvasPlane *text, const UpdateSnapshotCallback *update_snapshot) {
+  //将db中图形数据 转换到lay中可以渲染的数据。
   const db::Cell &cell = mp_layout->cell(ci);
 
   lay::Renderer &r = *mp_renderer;
@@ -1835,7 +1836,7 @@ void RedrawThreadWorker::draw_layer_wo_cache(
             continue;
           }
         }
-
+        //将db图形边和顶点分别渲染到对应的CanvasPlane
         mp_renderer->draw(*shape, trans, fill, frame, vertex, text);
         ++shape;
       }

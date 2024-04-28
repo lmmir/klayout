@@ -945,6 +945,7 @@ struct ReplaceDitherPatternOp : public db::Op {
 };
 
 DitherPattern::DitherPattern() : db::Object(0) {
+  //初始化stipple 图形中填充的图案。
   for (unsigned int d = 0;
        d < sizeof(dither_strings) / sizeof(dither_strings[0]); d += 2) {
     m_pattern.push_back(DitherPatternInfo());
