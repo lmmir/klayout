@@ -277,7 +277,8 @@ private:
   unsigned int m_height;
   double m_resolution;
   std::vector<uint32_t *> m_scanlines;
-  std::vector<uint32_t *> m_free; //为了高效使用内存，不进行频繁释放
+  std::vector<uint32_t *> m_free; //为了高效使用内存，不进行频繁分配与释放，将释放的内存转入m_free,
+                                  //如果需要分配，先从m_free中获取。
   uint32_t *m_empty_scanline;
   unsigned int m_first_sl, m_last_sl;
 
