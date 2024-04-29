@@ -255,6 +255,7 @@ void BitmapRenderer::render_contour(lay::CanvasPlane &plane) {
 }
 
 void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
+  //有些逻辑下，每次渲染一个图形，外部调用的时候会调用clear，清除之前的edge。
   //多边形内部区域填充，用来表示哪些是内部区域,为后面多边形内部区域进行样式渲染做标记.
   //参考render_fill.png
   //选中和非选中的bitmap不一样,非选中 bitmap为图形所在的cell 和layer下

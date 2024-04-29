@@ -148,6 +148,7 @@ void Bitmap::init(unsigned int w, unsigned int h) {
     for (uint32_t *s = m_empty_scanline; b > 0; --b) {
       *s++ = 0;
     }
+    //初始化第一行，其他行在实际访问的时候在初始化，参考::scanline 函数
   }
 
   m_last_sl = m_first_sl = 0;
@@ -319,6 +320,8 @@ static const uint32_t masks[32] = {
 static const uint32_t all_ones = 0xffffffff;
 
 void Bitmap::fill(unsigned int y, unsigned int x1, unsigned int x2) {
+  //像素存在uint32_t中，一个uint32_t存储32个像素，bitmap像素就0和1。
+  // b1 是实际像素在bitmap中的偏移。
   unsigned int b1 = x1 / 32;
 
   uint32_t *sl = scanline(y);
