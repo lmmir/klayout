@@ -133,6 +133,7 @@ void BitmapRenderer::insert(const db::DEdge &e) { // e 画布坐标.
 
   //  check, if the edge is neither horizontal nor vertical -
   //  reset the orthogonal flag in this case.
+  //  判断是否水平或者垂直。
   if (m_ortho && fabs(e.x1() - e.x2()) > render_epsilon &&
       fabs(e.y1() - e.y2()) > render_epsilon) {
     m_ortho = false;
@@ -254,8 +255,10 @@ void BitmapRenderer::render_contour(lay::CanvasPlane &plane) {
 }
 
 void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
-  //多边形内部区域填充，用来表示哪些是内部区域,为后面布多边形内部区域进行样式渲染做标记.
+  //多边形内部区域填充，用来表示哪些是内部区域,为后面多边形内部区域进行样式渲染做标记.
   //参考render_fill.png
+  //选中和非选中的bitmap不一样,非选中 bitmap为图形所在的cell 和layer下
+  //所有图形的最大区域
   lay::Bitmap *bitmap = static_cast<lay::Bitmap *>(&plane);
 
   //  a basic shortcut if there are no edges to render
@@ -264,13 +267,17 @@ void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
   }
 
   //  basic optimizations: outside window
+  //  画布坐标系
   if (m_xmax < -0.5 || m_xmin > bitmap->width() - 0.5 || m_ymax < -0.5 ||
       m_ymin > bitmap->height() - 0.5) {
+    //选中的时候，出现marker黑框的时候，并且图形移到视图显示区域外部
     return;
   }
 
   //  basic optimization: just a line or a dot
+  //  box 单边重叠为线，双边重叠为点。
   if (floor(m_xmax + 0.5) == floor(m_xmin + 0.5)) {
+    //左右边重叠成一条直线
     unsigned int y1int = (unsigned int)(std::max(
         0.0, std::min(m_ymin + 0.5, double(bitmap->height() - 1))));
     unsigned int y2int = (unsigned int)(std::max(
@@ -284,6 +291,7 @@ void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
   }
 
   if (floor(m_ymax + 0.5) == floor(m_ymin + 0.5)) {
+    //上下边重叠成一条直线
     unsigned int x1int = (unsigned int)(std::max(
         0.0, std::min(m_xmin + 0.5, double(bitmap->width() - 1))));
     unsigned int x2int = (unsigned int)(std::max(
@@ -295,20 +303,21 @@ void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
   }
 
   if (m_ortho) {
+    //线段水平或者垂直
     bitmap->render_fill_ortho(m_edges);
   } else {
     bitmap->render_fill(m_edges);
   }
 
-  //  QImage image(bitmap->width(), bitmap->height(), QImage::Format_Mono);
-  //
-  //  // image.fill(Qt::white);
-  //  for (int i = 0; i < bitmap->height(); i++) {
-  //    if (!bitmap->is_scanline_empty(i)) {
-  //      memcpy(image.scanLine(i), bitmap->scanline(i), bitmap->width() / 8);
-  //    }
-  //  }
-  //  image.save("/home/yangqi/image.png");
+  QImage image(bitmap->width(), bitmap->height(), QImage::Format_Mono);
+
+  // image.fill(Qt::white);
+  for (int i = 0; i < bitmap->height(); i++) {
+    if (!bitmap->is_scanline_empty(i)) {
+      memcpy(image.scanLine(i), bitmap->scanline(i), bitmap->width() / 8);
+    }
+  }
+  image.save("/home/yangqi/image.png");
 }
 
 void BitmapRenderer::render_dot(double x, double y, lay::CanvasPlane *plane) {

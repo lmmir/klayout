@@ -2134,6 +2134,7 @@ void RedrawThreadWorker::draw_layer(
 
           //  Hint: this rounding scheme guarantees a integer-pixel shift vector
           //  at least for the first instance
+          // fill frame vertex text 四个bitmap相对于视图窗口的偏移
           db::DPoint d = cell_box_trans.lower_left() + trans.disp();
           d = db::DPoint(floor(d.x()), floor(d.y()));
           cached_cell->second.offset = d - trans.disp();
@@ -2145,6 +2146,7 @@ void RedrawThreadWorker::draw_layer(
                               //  sides and one for safety
           int height = int(cell_box_trans.height() + 3);
 
+          //按照最大绘图区域创建
           cached_cell->second.fill = new lay::Bitmap(width, height, 1.0);
           cached_cell->second.frame = new lay::Bitmap(width, height, 1.0);
           cached_cell->second.vertex = new lay::Bitmap(width, height, 1.0);
