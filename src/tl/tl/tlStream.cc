@@ -323,9 +323,11 @@ const char *InputStream::get(size_t n, bool bypass_inflate) {
   }
 
   if (m_blen < n) {
+    //将要读取的长度大于缓冲区剩余数据长度,需要从底层读取到缓冲区后再读取。
 
     //  to keep move activity low, allocate twice as much as required
     if (m_bcap < n * 2) {
+      //缓冲区大小不够,先调整缓冲区
 
       while (m_bcap < n) {
         m_bcap *= 2;
@@ -341,7 +343,7 @@ const char *InputStream::get(size_t n, bool bypass_inflate) {
     } else if (m_blen > 0) {
       memmove(mp_buffer, mp_bptr, m_blen);
     }
-
+    //调整缓冲后，将剩余缓冲区读满。
     if (mp_delegate) {
       m_blen += mp_delegate->read(mp_buffer + m_blen, m_bcap - m_blen);
     }
