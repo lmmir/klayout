@@ -513,7 +513,7 @@ private:
   size_t m_pos;
   char *mp_buffer; //缓冲区
   size_t m_bcap;   //缓冲区大小
-  size_t m_blen;   //缓冲区剩余数据长度
+  size_t m_blen;   //缓冲区剩余未读数据长度
   char *mp_bptr;   //接下来要读取的数据指针
   InputStreamBase *mp_delegate;
   bool m_owns_delegate;

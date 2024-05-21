@@ -38,7 +38,7 @@ public:
     //  p1 < p2. m_d is false if the points have been swapped.
     if (p2() < p1()) {
       swap_points();
-      m_d = !m_d;
+      m_d = false;
     }
 
     //  Horizontal is true, if the edge is horizontal within render_epsilon
@@ -49,7 +49,7 @@ public:
     if (m_horizontal) {
       m_slope = 0.0;
     } else {
-      m_slope = dx() / dy();
+      m_slope = dx() / dy(); // 斜率倒数 1/k, k = dy()/dx()
     }
 
     m_pos = 0.0;
@@ -73,6 +73,8 @@ public:
 
   bool is_horizontal() const { return m_horizontal; }
 
+  //  p1 < p2. m_d is false if the points have been swapped.
+  //  m_d为false 的时候，表示原来的线段是下降的（从上到下），交换过后朝右上。
   int delta() const { return m_d ? 1 : -1; }
 
   bool done(double y) const { return (y > y2()); }
@@ -277,8 +279,9 @@ private:
   unsigned int m_height;
   double m_resolution;
   std::vector<uint32_t *> m_scanlines;
-  std::vector<uint32_t *> m_free; //为了高效使用内存，不进行频繁分配与释放，将释放的内存转入m_free,
-                                  //如果需要分配，先从m_free中获取。
+  std::vector<uint32_t *>
+      m_free; //为了高效使用内存，不进行频繁分配与释放，将释放的内存转入m_free,
+              //如果需要分配，先从m_free中获取。
   uint32_t *m_empty_scanline;
   unsigned int m_first_sl, m_last_sl;
 

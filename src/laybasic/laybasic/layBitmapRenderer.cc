@@ -286,6 +286,7 @@ void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
     unsigned int xint = (unsigned int)(std::max(
         0.0, std::min(m_xmin + 0.5, double(bitmap->width() - 1))));
     for (unsigned int y = y1int; y <= y2int; ++y) {
+      //因为fill函数是对某一行进行填充，这里处理的事垂直的直线，所以for循环，每行处理一个点。下边上下垂直的就不用循环处理。
       bitmap->fill(y, xint, xint + 1);
     }
     return;
@@ -310,15 +311,15 @@ void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
     bitmap->render_fill(m_edges);
   }
 
-  QImage image(bitmap->width(), bitmap->height(), QImage::Format_Mono);
+  //  QImage image(bitmap->width(), bitmap->height(), QImage::Format_Mono);
 
-  // image.fill(Qt::white);
-  for (int i = 0; i < bitmap->height(); i++) {
-    if (!bitmap->is_scanline_empty(i)) {
-      memcpy(image.scanLine(i), bitmap->scanline(i), bitmap->width() / 8);
-    }
-  }
-  image.save("/home/yangqi/image.png");
+  //  // image.fill(Qt::white);
+  //  for (int i = 0; i < bitmap->height(); i++) {
+  //    if (!bitmap->is_scanline_empty(i)) {
+  //      memcpy(image.scanLine(i), bitmap->scanline(i), bitmap->width() / 8);
+  //    }
+  //  }
+  //  image.save("/home/yangqi/image.png");
 }
 
 void BitmapRenderer::render_dot(double x, double y, lay::CanvasPlane *plane) {
@@ -726,6 +727,11 @@ void BitmapRenderer::draw(const db::Box &box, const db::CplxTrans &trans,
 
       clear();
       insert(box, trans);
+      //有些逻辑下，每次渲染一个图形，外部调用的时候会调用clear，清除之前的edge。
+      //多边形内部区域填充，用来表示哪些是内部区域,为后面多边形内部区域进行样式渲染做标记.
+      //参考render_fill.png
+      //选中和非选中的bitmap不一样,非选中 bitmap为图形所在的cell
+      //和layer下,所有图形的最大区域
 
       if (vertices) {
         render_vertices(*vertices,

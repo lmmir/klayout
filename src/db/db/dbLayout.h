@@ -2014,7 +2014,6 @@ private:
   cell_list m_cells;
   size_t m_cells_size;
   cell_ptr_vector m_cell_ptrs;
-  cell_index_vector m_free_cell_indices;
   mutable unsigned int m_invalid;
   cell_index_vector m_top_down_list;
   size_t m_top_cells;

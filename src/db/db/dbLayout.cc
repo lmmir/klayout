@@ -349,7 +349,6 @@ void Layout::dbu(double d) {
 void Layout::clear() {
   invalidate_hier();
 
-  m_free_cell_indices.clear();
   m_cells.clear();
   m_cells_size = 0;
   m_cell_ptrs.clear();
@@ -651,7 +650,6 @@ void Layout::mem_stat(MemStatistics *stat, MemStatistics::purpose_t purpose,
   m_layers.mem_stat(stat, purpose, cat, true, (void *)this);
 
   db::mem_stat(stat, purpose, cat, m_cell_ptrs, true, (void *)this);
-  db::mem_stat(stat, purpose, cat, m_free_cell_indices, true, (void *)this);
   db::mem_stat(stat, purpose, cat, m_top_down_list, true, (void *)this);
   db::mem_stat(stat, purpose, cat, m_cell_names, true, (void *)this);
   db::mem_stat(stat, purpose, cat, m_cell_map, true, (void *)this);
@@ -1482,13 +1480,8 @@ cell_index_type Layout::allocate_new_cell() {
   invalidate_hier();
 
   cell_index_type new_index;
-  if (m_free_cell_indices.empty()) {
-    new_index = cell_index_type(m_cell_ptrs.size());
-    m_cell_ptrs.push_back(0);
-  } else {
-    new_index = m_free_cell_indices.back();
-    m_free_cell_indices.pop_back();
-  }
+  new_index = cell_index_type(m_cell_ptrs.size());
+  m_cell_ptrs.push_back(0);
 
   ++m_cells_size;
 

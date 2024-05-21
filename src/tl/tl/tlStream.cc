@@ -688,6 +688,7 @@ InputZLibFile::InputZLibFile(const std::string &path)
   mp_d->zs = gzdopen(fd, "rb");
 #else
   mp_d->zs = gzopen(tl::string_to_system(m_source).c_str(), "rb");
+
 #endif
   if (mp_d->zs == NULL) {
     throw FileOpenErrorException(m_source, errno);

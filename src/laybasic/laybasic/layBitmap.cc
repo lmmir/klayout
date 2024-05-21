@@ -24,6 +24,7 @@
 #include "layBitmapRenderer.h"
 #include "layFixedFont.h"
 #include "tlAlgorithm.h"
+#include <QDebug>
 
 namespace lay {
 
@@ -319,6 +320,7 @@ static const uint32_t masks[32] = {
 
 static const uint32_t all_ones = 0xffffffff;
 
+//对某行进行填充,x1是起始坐标，x2是结束坐标。
 void Bitmap::fill(unsigned int y, unsigned int x1, unsigned int x2) {
   //像素存在uint32_t中，一个uint32_t存储32个像素，bitmap像素就0和1。
   // b1 是实际像素在bitmap中的偏移。
@@ -329,17 +331,24 @@ void Bitmap::fill(unsigned int y, unsigned int x1, unsigned int x2) {
 
   unsigned int b = x2 / 32 - b1;
   if (b == 0) {
-
+    // x1，x2的区域是同一个 uint32_t, 经典运算
+    // 将x1到x2范围的bit置为1.
     *sl |= (masks[x2 % 32] & ~masks[x1 % 32]);
 
   } else if (b > 0) {
+    //首尾分别进行位运算
 
+    //第一个uint32_t满足的bit进行置1
     *sl++ |= ~masks[x1 % 32];
+
     while (b > 1) {
+      // b>1表示 x1到x2的坐标，至少横跨3个 uint32_t，
+      // while循环里对不是首尾的完整的uint32_t进行置1.
       *sl++ |= all_ones;
       b--;
     }
 
+    //最后一个uint32_t中满足的条件的bit进行置1
     unsigned int m = masks[x2 % 32];
     //  Hint: if x2==width and width%32==0, sl must not be accessed. This is
     //  guaranteed by checking if m != 0.
@@ -389,36 +398,75 @@ struct X1CompareF {
   }
 };
 
+//图形是矩形的填充,函数中应该使用了扫描线算法
 void Bitmap::render_fill(std::vector<lay::RenderEdge> &edges) {
   //  sort the edges so we can operate on the sorted list
-  tl::sort(edges.begin(), edges.end());
+  // edges 的坐标已经转换成在相对bitmap的区域的坐标了。
+  // edges
+  // 中的线段从y最小，如果y有多个，则取x最小的顶点开始，方向都是朝上或者朝右表示，不是首尾相连表示。
+  // 参考算法 https://www.cnblogs.com/wkfvawl/p/11622265.html
 
-  double y = std::max(0.0, floor(edges.begin()->y1()));
+#ifdef QT_DEBUG
+  std::map<lay::RenderEdge, QString> mapEdge;
+
+  for (int i = 0; i < edges.size(); i++) {
+    auto &e = edges[i];
+    qDebug() << e.p1().x() << e.p1().y() << " , " << e.p2().x() << e.p2().y();
+    mapEdge[e] = QString("p%1").arg(i + 1);
+  }
+#endif
+
+  tl::sort(edges.begin(),
+           edges.end()); //按照线段起点的y坐标升序排序，比较顺序p1.y p1.x p2.y
+                         // p2.x，排序相当于构建 NET(新边表)
+
+  for (auto &e : edges) {
+    qDebug() << mapEdge[e];
+  }
+
+  //从最下方水平线开始向上扫描，y相当于扫描线
+  double y = std::max(0.0, floor(edges.begin()->y1())); // 0-y1()的整数。
   std::vector<lay::RenderEdge>::iterator done = edges.begin();
 
   //  this is generic case
   while (done != edges.end() && y < height()) {
-
+    //构建活性表(AET)开始
     for (; done != edges.end(); ++done) {
       if (!done->done(y)) {
+
         break;
       }
     }
+
+    QString oriDone = mapEdge[*done];
+
+    int distance = std::distance(edges.begin(), done);
 
     std::vector<lay::RenderEdge>::iterator todo = done;
 
+    //上开下闭，右开左闭。
     for (; todo != edges.end(); ++todo) {
       if (todo->done(y)) {
-        std::swap(*done, *todo);
+        //未相交
+        std::swap(*done, *todo); // done 未相交，todo相交
         ++done;
       }
+
       if (todo->todo(y)) {
+        //未相交
         break;
       }
     }
+    //构建活性表(AET)结束，done -> todo的链表为活性表。
+
+    qDebug() << y << ", " << oriDone << ", distance:" << distance
+             << mapEdge[*done] << mapEdge[*todo]
+             << std::distance(edges.begin(), done)
+             << std::distance(edges.begin(), todo);
 
     std::vector<lay::RenderEdge>::iterator e;
     for (e = done; e != todo; ++e) {
+      //与y的交点位置
       e->set_pos(e->x1() + e->slope() * (y - e->y1()));
     }
 
@@ -434,6 +482,7 @@ void Bitmap::render_fill(std::vector<lay::RenderEdge> &edges) {
       if (!e->is_horizontal()) {
         c += e->delta();
         if (c == 0) { //  this is implementing the != 0 rule
+          //配对交点，需要填充。1-2，3-4，5-6，......
           if (e->pos() > 0) {
             unsigned int x1int = 0;
             if (x1 > 0.0) {
@@ -461,7 +510,8 @@ void Bitmap::render_fill(std::vector<lay::RenderEdge> &edges) {
 }
 
 void Bitmap::render_fill_ortho(std::vector<lay::RenderEdge> &edges) {
-  //  sort the edges so we can operate on the sorted list
+  // sort the edges so we can operate on the sorted list
+
   tl::sort(edges.begin(), edges.end());
 
   double y = std::max(0.0, floor(edges.begin()->y1()));
@@ -470,7 +520,6 @@ void Bitmap::render_fill_ortho(std::vector<lay::RenderEdge> &edges) {
   //  this is the purely manhattan case
   //  TODO: the manhattan optimization is not really effective ..
   while (done != edges.end() && y < height()) {
-
     for (; done != edges.end(); ++done) {
       if (!done->done(y)) {
         break;
@@ -483,7 +532,9 @@ void Bitmap::render_fill_ortho(std::vector<lay::RenderEdge> &edges) {
         std::swap(*done, *todo);
         ++done;
       }
+
       if (todo->todo(y)) {
+
         break;
       }
     }
