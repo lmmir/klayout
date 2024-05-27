@@ -542,6 +542,7 @@ void Worker::checkpoint() {
 }
 
 void Worker::run() {
+  //一个layout 将会有一个run 循环持续运行。
   WorkerProgressAdaptor progress_adaptor(this);
 
   while (true) {

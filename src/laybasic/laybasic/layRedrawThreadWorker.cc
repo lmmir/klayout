@@ -261,6 +261,7 @@ void RedrawThreadWorker::perform_task(tl::Task *task) {
     }
 
   } else if (task_id == draw_boxes_queue_entry) {
+    //界面上的Navigator 里的涉及到这部分代码。
 
     //  draw the bounding boxes
     if (tl::verbosity() >= 40) {
@@ -458,7 +459,7 @@ void RedrawThreadWorker::perform_task(tl::Task *task) {
     }
 
   } else if (task_id == draw_custom_queue_entry) {
-
+    // Ruler 的绘制涉及到这部分代码
     //  draw the decorations
     if (tl::verbosity() >= 40) {
       tl::info << tl::to_string(tr("Drawing decorations"));

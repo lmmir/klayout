@@ -406,23 +406,9 @@ void Bitmap::render_fill(std::vector<lay::RenderEdge> &edges) {
   // 中的线段从y最小，如果y有多个，则取x最小的顶点开始，方向都是朝上或者朝右表示，不是首尾相连表示。
   // 参考算法 https://www.cnblogs.com/wkfvawl/p/11622265.html
 
-#ifdef QT_DEBUG
-  std::map<lay::RenderEdge, QString> mapEdge;
-
-  for (int i = 0; i < edges.size(); i++) {
-    auto &e = edges[i];
-    qDebug() << e.p1().x() << e.p1().y() << " , " << e.p2().x() << e.p2().y();
-    mapEdge[e] = QString("p%1").arg(i + 1);
-  }
-#endif
-
   tl::sort(edges.begin(),
            edges.end()); //按照线段起点的y坐标升序排序，比较顺序p1.y p1.x p2.y
                          // p2.x，排序相当于构建 NET(新边表)
-
-  for (auto &e : edges) {
-    qDebug() << mapEdge[e];
-  }
 
   //从最下方水平线开始向上扫描，y相当于扫描线
   double y = std::max(0.0, floor(edges.begin()->y1())); // 0-y1()的整数。
@@ -437,10 +423,6 @@ void Bitmap::render_fill(std::vector<lay::RenderEdge> &edges) {
         break;
       }
     }
-
-    QString oriDone = mapEdge[*done];
-
-    int distance = std::distance(edges.begin(), done);
 
     std::vector<lay::RenderEdge>::iterator todo = done;
 
@@ -458,11 +440,6 @@ void Bitmap::render_fill(std::vector<lay::RenderEdge> &edges) {
       }
     }
     //构建活性表(AET)结束，done -> todo的链表为活性表。
-
-    qDebug() << y << ", " << oriDone << ", distance:" << distance
-             << mapEdge[*done] << mapEdge[*todo]
-             << std::distance(edges.begin(), done)
-             << std::distance(edges.begin(), todo);
 
     std::vector<lay::RenderEdge>::iterator e;
     for (e = done; e != todo; ++e) {

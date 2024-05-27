@@ -767,7 +767,8 @@ bool LayoutViewBase::configure(const std::string &name,
     return true;
 
   } else if (name == cfg_ctx_color) {
-
+    // Setup->Display->Context->In this color
+    // 有多个cell的时候，并且有层次关系，选中一个非顶层的cell，然后按ctrl+d，可以看出效果。
     tl::Color color;
     ColorConverter().from_string(value, color);
     ctx_color(color);
@@ -991,7 +992,9 @@ bool LayoutViewBase::configure(const std::string &name,
     return true;
 
   } else if (name == cfg_guiding_shape_visible) {
-
+    // Instance 中
+    // 画一个图形，这个图形一些属性，比如画CIRCLE，会显示一个R。如果是false的话，这个R就不显示了。
+    //下面 cfg_guiding_shape_color的就是这个R的颜色。
     bool v = false;
     tl::from_string(value, v);
     guiding_shapes_visible(v);
@@ -1005,14 +1008,9 @@ bool LayoutViewBase::configure(const std::string &name,
     return true;
 
   } else if (name == cfg_guiding_shape_color) {
-
-    tl::Color color;
-    ColorConverter().from_string(value, color);
-    guiding_shapes_color(color);
-    return true;
-
-  } else if (name == cfg_guiding_shape_color) {
-
+    // Instance 中
+    // 画一个图形，这个图形一些属性，比如画CIRCLE，会显示一个R,
+    // cfg_guiding_shape_color的就是这个R的颜色。
     tl::Color color;
     ColorConverter().from_string(value, color);
     guiding_shapes_color(color);
@@ -3961,7 +3959,9 @@ void LayoutViewBase::set_view_ops() {
       ++nlayers;
     }
   }
-
+  // planes_per_layer = 12
+  //大概原因是没个layer 分为 context cell, current cell ,child
+  // cell,每个cell包含frame, fill, vertex, text
   std::vector<lay::ViewOp> view_ops;
   view_ops.reserve(nlayers * planes_per_layer + special_planes_before +
                    special_planes_after);
@@ -3975,7 +3975,8 @@ void LayoutViewBase::set_view_ops() {
 
   //  cell boxes
   if (m_cell_box_visible) {
-
+    //主界面 View里的Show Cell Frames 配置项, 界面上Cells里的 Levels
+    //改成0-0,就可以观察出区别。
     lay::ViewOp vop;
 
     //  context level
@@ -4033,6 +4034,9 @@ void LayoutViewBase::set_view_ops() {
 
   tl::color_t gs_color = box_color.rgb();
   if (m_guiding_shape_color.is_valid()) {
+    // Instance 中
+    // 画一个图形，这个图形一些属性，比如画CIRCLE，会显示一个R
+    // m_guiding_shape_color就是这个R的颜色。
     gs_color = m_guiding_shape_color.rgb();
   }
 
@@ -4078,6 +4082,10 @@ void LayoutViewBase::set_view_ops() {
     }
 
     if (m_guiding_shape_visible) {
+      //主界面 Setup Display Cells Show PCell guiding... 配置项
+      // Instance 中
+      // 画一个图形，这个图形一些属性，比如画CIRCLE，会显示一个R
+      // m_guiding_shape_visible就是这个R是否显示
 
       //  fill
       view_ops.push_back(lay::ViewOp(fill_color, mode, 0, dp, 0)); // fill

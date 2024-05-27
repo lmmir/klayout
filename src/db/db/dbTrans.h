@@ -1540,6 +1540,7 @@ public:
    *  @return The transformed point
    */
   point<F> operator()(const point<I> &p) const {
+    //在计算机图形学和机器人学中，通常采用先旋转再平移的顺序。
     // cn 旋转矩阵，角度a
     //[x, y]*[cosa, -sina]
     //       [sina,  cosa] 逆时针旋转
