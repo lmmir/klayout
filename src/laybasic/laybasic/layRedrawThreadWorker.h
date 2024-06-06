@@ -40,6 +40,9 @@ class RedrawThread;
 class Drawing;
 class CanvasPlane;
 
+//大概原因是没个layer 分为 context cell, current cell ,child
+// cell,每个cell包含frame, fill, vertex, text
+//(fill, frame, vertex, text)*(context,child,current) 4*3 = 12
 //  some helpful constants
 const int planes_per_layer = 12;
 const int cell_box_planes = planes_per_layer;      // for cell boxes

@@ -24,7 +24,9 @@
 #include "layDitherPattern.h"
 
 namespace lay {
-
+// void LayoutViewBase::set_view_ops() 这里进行一些viewop的构造
+// m_dither_offset 用来实现 Animation的
+// 图案滚动，Scroll内部填充的图案会滚动。Blink则是图案闪烁
 ViewOp::ViewOp()
     : m_line_style_index(0), m_dither_index(0), m_dither_offset(0),
       m_shape(Rect), m_width(0), m_bitmap_index(0) {

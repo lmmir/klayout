@@ -409,6 +409,7 @@ void BitmapRedrawThreadCanvas::to_image(
   }
 
   //  convert the planes of the "drawing" objects too:
+
   std::vector<std::vector<lay::Bitmap *>>::const_iterator bt =
       mp_drawing_plane_buffers.begin();
   for (lay::Drawings::const_iterator d = drawings->begin();
@@ -425,7 +426,6 @@ void BitmapRedrawThreadCanvas::to_image(
       //      active),
       //                       *bt, dp, ls, dpr, &pb, width, height, true,
       //                       &mutex());
-
       //      pb.to_image().save("/home/yangqi/layRedrawThreadCanvas2.png");
     }
   }

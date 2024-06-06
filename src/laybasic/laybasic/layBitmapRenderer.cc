@@ -25,6 +25,26 @@
 #include <QElapsedTimer>
 #include <QImage>
 namespace lay {
+static bool bitmapToQImage(lay::Bitmap *bitmap) {
+  static QElapsedTimer et;
+  if (!et.isValid()) {
+    et.start();
+  }
+  if (et.elapsed() > 3000) {
+    et.restart();
+  }
+
+  QImage image(bitmap->width(), bitmap->height(), QImage::Format_MonoLSB);
+  image.fill(Qt::white);
+  for (int h = 0; h < bitmap->height(); h++) {
+    if (!bitmap->is_scanline_empty(h)) {
+      memcpy(image.scanLine(h), bitmap->scanline(h), bitmap->width() / 8);
+    }
+  }
+
+  image.save("/home/yangqi/image2.png");
+  return true;
+}
 
 // ----------------------------------------------------------------------------------------------
 //  BitmapRenderer implementation
@@ -276,7 +296,6 @@ void BitmapRenderer::render_fill(lay::CanvasPlane &plane) {
   }
 
   //  basic optimization: just a line or a dot
-  //  box 单边重叠为线，双边重叠为点。
   if (floor(m_xmax + 0.5) == floor(m_xmin + 0.5)) {
     //左右边重叠成一条直线
     unsigned int y1int = (unsigned int)(std::max(
@@ -504,6 +523,7 @@ void BitmapRenderer::draw(const db::Shape &shape, const db::CplxTrans &trans,
       }
     }
   }
+  bitmapToQImage((lay::Bitmap *)fill);
 }
 
 void BitmapRenderer::draw(const db::Polygon &poly, const db::CplxTrans &trans,

@@ -27,6 +27,12 @@
 #include <QDebug>
 
 namespace lay {
+// Format_MonoLSB是小端。
+// 小端模式，是指数据的高字节保存在内存的高地址中，而数据的低字节保存在内存的低地址中
+// x86平台上,有一个int型变量,在内存中的内部由低到高分别是:0x12,0x34,0x56,0x78
+// x86是小端模式 高位高地址地位低地址 所以该数 实际为0x78563412
+// scanline 中 uint32_t 的按位解释是最低位在左。
+//
 
 Bitmap::Bitmap() : m_empty_scanline(0) {
   init(0, 0);
@@ -83,9 +89,11 @@ uint32_t *Bitmap::scanline(unsigned int n) {
   if (sl == 0) {
     unsigned int b = (m_width + 31) / 32;
     if (!m_free.empty()) {
+      //缓冲区有释放的空间则从缓冲区读取
       sl = m_scanlines[n] = m_free.back();
       m_free.pop_back();
     } else {
+      //没有缓冲区空间，则重新分配
       sl = m_scanlines[n] = new uint32_t[b];
     }
     for (uint32_t *p = sl; b > 0; --b) {
@@ -149,7 +157,8 @@ void Bitmap::init(unsigned int w, unsigned int h) {
     for (uint32_t *s = m_empty_scanline; b > 0; --b) {
       *s++ = 0;
     }
-    //初始化第一行，其他行在实际访问的时候在初始化，参考::scanline 函数
+    //只初始化空行，在需要用时候用。实际像素在实际访问的时候在初始化，参考::scanline
+    //函数
   }
 
   m_last_sl = m_first_sl = 0;
@@ -320,8 +329,10 @@ static const uint32_t masks[32] = {
 
 static const uint32_t all_ones = 0xffffffff;
 
-//对某行进行填充,x1是起始坐标，x2是结束坐标。
+//对某行进行填充,x1是起始坐标，x2是结束坐标，从x1开始到x2的前一个坐标进行填充
 void Bitmap::fill(unsigned int y, unsigned int x1, unsigned int x2) {
+  //每32个bit 从uint32_t 低位开始填充
+
   //像素存在uint32_t中，一个uint32_t存储32个像素，bitmap像素就0和1。
   // b1 是实际像素在bitmap中的偏移。
   unsigned int b1 = x1 / 32;

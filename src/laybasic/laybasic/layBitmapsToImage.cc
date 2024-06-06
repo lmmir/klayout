@@ -42,8 +42,11 @@ static void render_scanline_std(const uint32_t *dp, unsigned int ds,
 
   unsigned int x = w;
   while (x >= lay::wordlen) {
-    *data++ = *ps++ & *dm++;
+    *data++ =
+        *ps++ &
+        *dm++; //原图满足条件则ps是1和样式进行'与'操作，则绘制出包含样式的填充bitmap
     if (dm == dp + ds) {
+      //循环图案
       dm = dp;
     }
     x -= lay::wordlen;
@@ -53,7 +56,7 @@ static void render_scanline_std(const uint32_t *dp, unsigned int ds,
     *data = *ps & *dm;
   }
 }
-static void bitmapToQImage(lay::Bitmap *bitmap) {
+static bool bitmapToQImage(lay::Bitmap *bitmap) {
   static QElapsedTimer et;
   if (!et.isValid()) {
     et.start();
@@ -62,24 +65,29 @@ static void bitmapToQImage(lay::Bitmap *bitmap) {
     et.restart();
   }
 
-  QImage image(bitmap->width(), bitmap->height(), QImage::Format_Mono);
-  //   image.fill(Qt::white);
+  QImage image(bitmap->width(), bitmap->height(), QImage::Format_MonoLSB);
+  image.fill(Qt::white);
   for (int h = 0; h < bitmap->height(); h++) {
     if (!bitmap->is_scanline_empty(h)) {
       memcpy(image.scanLine(h), bitmap->scanline(h), bitmap->width() / 8);
     }
   }
+
   image.save("/home/yangqi/image2.png");
+  return true;
 }
 static void render_scanline_std_edge(const uint32_t *dp, unsigned int ds,
                                      const lay::Bitmap *pbitmap, unsigned int y,
                                      unsigned int w, unsigned int h,
                                      uint32_t *data) {
-  const uint32_t *psp =
-      (y > 0 ? pbitmap->scanline(y - 1) : pbitmap->empty_scanline());
+  //整个函数是用来对边缘进行填充,修改data的数据，data是scanline数据，用来处理后输出,bitmap是原图数据
+
+  const uint32_t *psp = (y > 0 ? pbitmap->scanline(y - 1)
+                               : pbitmap->empty_scanline()); //指向上一条扫描线
   const uint32_t *psn =
-      (y < h - 1 ? pbitmap->scanline(y + 1) : pbitmap->empty_scanline());
-  const uint32_t *ps = pbitmap->scanline(y);
+      (y < h - 1 ? pbitmap->scanline(y + 1)
+                 : pbitmap->empty_scanline()); //指向下一条扫描线
+  const uint32_t *ps = pbitmap->scanline(y);   //指向当前扫描线
 
   const uint32_t *dm = dp;
 
@@ -91,6 +99,8 @@ static void render_scanline_std_edge(const uint32_t *dp, unsigned int ds,
   int x = int(w);
   while (x > 0) {
 
+    //读取当前像素 d 及其邻居像素 dsn（下）、dsp（上），以及
+    // ddn（当前下一位像素）。
     uint32_t d = 0;
     uint32_t dsn = 0, dsp = 0;
     uint32_t ddn = 0;
@@ -110,19 +120,18 @@ static void render_scanline_std_edge(const uint32_t *dp, unsigned int ds,
     }
 
     //  di selects the inner bits - such that have a left, right neighbor
-    uint32_t dhn1 = (d & ((d >> 1) | ((ddn & 1) << 31)));
+    uint32_t dhn1 = (d & ((d >> 1) | ((ddn & 1) << 31))); //因为
     uint32_t dhn2 = (d & ((d << 1) | ((ddp >> 31) & 1)));
     uint32_t dhi = dhn1 & dhn2;
     uint32_t dhn = dhn1 | dhn2;
 
-    //  dvi selects the vertically inner bits - such that have a top and botton
-    //  neighbor
+    //  dvi selects the vertically inner bits - such that have a top and
+    //  botton neighbor
     uint32_t dvn1 = dsn & d;
     uint32_t dvn2 = dsp & d;
     uint32_t dvi = dvn1 & dvn2;
     uint32_t dvn = dvn1 | dvn2;
 
-#if 1
     /*
       NOTE: this solution is ugly for lines with angles a little away from 45
       degree like 30..40 and 50..60 degree. This is the truth table of the
@@ -176,69 +185,6 @@ static void render_scanline_std_edge(const uint32_t *dp, unsigned int ds,
     if (vflag) {
       dd |= with_vm | (with_hvm & hm);
     }
-
-#else
-    /*
-      NOTE: this alternative solution is ugly for very steep angles
-      such as 60 to 85 degree.
-
-      It is based on the following configuration table:
-
-      configuration   use mask   dhi   dvi   dhn   dvn
-      --------------------------------------------------
-       .              H          0     0     0     0
-      .x.             [sol]
-       .
-
-       .    .         H          0     0     1     0
-      xx.  .xx        [twin]
-       .    .
-
-       .    x         H          0     0     0     1
-      .x.  .x.        [twin]
-       x    .
-
-       .    x         H|V        0     0     1     1
-      .xx  .xx        [corner]
-       x    .
-
-       .    x
-      xx.  xx.
-       x    .
-
-       x    x    x    V          0     1     x     (1)
-      .x.  .xx  xx.   [vbar]
-       x    x    x
-
-       .    .    x    H          1     0     (1)   x
-      xxx  xxx  xxx   [hbar]
-       .    x    .
-
-       x              H*V        1     1     (1)   (1)
-      xxx
-       x
-
-     */
-
-    uint32_t sol = d - (d & (dhi | dvi | dhn | dvn));
-    uint32_t twin = (d - (d & (dhi | dvi))) & (dhn ^ dvn);
-    uint32_t corner = (d - (d & (dhi | dvi))) & dhn & dvn;
-    uint32_t hbar = (d - (d & dvi)) & dhi;
-    uint32_t vbar = (d - (d & dhi)) & dvi;
-    uint32_t inner = d & dhi & dvi;
-
-    uint32_t hm = *dm++;
-    uint32_t dd = 0;
-    //  H (and H|V)
-    dd = (sol | twin | hbar | corner /*H|V*/) & hm;
-    if (vflag) {
-      //  V (and H|V)
-      dd |= vbar | corner /*H|V*/;
-      //  H*V
-      dd |= inner & hm;
-    }
-
-#endif
 
     *data++ = dd;
 
@@ -451,6 +397,7 @@ static void create_precursor_bitmaps(
     unsigned int width, unsigned int height,
     std::map<unsigned int, lay::Bitmap> &precursors, tl::Mutex *mutex) {
   tl_assert(bm_map.size() == vo_map.size());
+  // vo_map 和 pbitmaps_in的vec 应该对应layer
 
   //  Styled lines with width > 1 are not rendered directly, but through an
   //  intermediate step. We prepare the necessary precursor bitmaps now
@@ -473,8 +420,14 @@ static void create_precursor_bitmaps(
               .first->second;
       const LineStyleInfo &ls_info =
           ls.style(op.line_style_index()).scaled(op.width());
+      if (mutex != 0) {
+        mutex->isRecursive();
+        //  bitmapToQImage(pbitmaps_in[bm_index]);
+        //  bitmapToQImage(&bp);
+      }
 
       for (unsigned int y = 0; y < height; y++) {
+        //    pbitmaps_in[bm_index]输入原图，bp是style化的输出图
         render_scanline_std_edge(ls_info.pattern(), ls_info.pattern_stride(),
                                  pbitmaps_in[bm_index], y, width, height,
                                  bp.scanline(y));
@@ -493,7 +446,17 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
                       double dpr, tl::PixelBuffer *pimage, unsigned int width,
                       unsigned int height, bool use_bitmap_index,
                       tl::Mutex *mutex) {
+  // view_ops_in 绘制颜色,线条样式
+  // pbitmaps_in 的内容是在layBitmapRenderer.cc
+  // 中的函数进行渲染的，比如render_fill 渲染填充样式
 
+  if (mutex != 0) {
+    for (auto &b : pbitmaps_in) {
+      if (!b->empty()) {
+        mutex->isRecursive();
+      }
+    }
+  }
   bool transparent = pimage->transparent();
 
   std::vector<unsigned int> bm_map;
@@ -504,8 +467,8 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
   unsigned int n_in = 0;
 
   //  drop invisible and empty bitmaps, build bitmap mask
+  // view_ops_in 会根据系统的一些配置项和设置项进行设置。
   for (unsigned int i = 0; i < view_ops_in.size(); ++i) {
-
     const lay::ViewOp &vop = view_ops_in[i];
 
     unsigned int bi = (use_bitmap_index && vop.bitmap_index() >= 0)
@@ -513,8 +476,10 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
                           : i;
     const lay::Bitmap *pb = bi < pbitmaps_in.size() ? pbitmaps_in[bi] : 0;
 
+    //~:位运算取反,|:按位或
     if ((vop.ormask() | ~vop.andmask()) != 0 && pb && !pb->empty()) {
-      // ormask二进制不是全为0或andmask不是二进制全为1，满足条件第一个条件.
+      // (vop.ormask() | ~vop.andmask()) != 0:可理解为
+      // ormask二进制不是全为0或andmask不是全为1的图层需要参与mask。可理解为一个数与0进行or，还是本身，与1进行and运算，还是本身。
       vo_map.push_back(i);
       bm_map.push_back(bi);
       ++n_in;
@@ -530,7 +495,8 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
   std::vector<lay::ViewOp> view_ops;
   std::vector<const lay::Bitmap *> pbitmaps;
   std::vector<std::pair<tl::color_t, tl::color_t>> masks;
-  std::vector<uint32_t> non_empty_sls;
+  std::vector<uint32_t> non_empty_sls; //记录slice内的非空行，uint32_t
+                                       //是32位，正好记录一个slice 32行。
 
   view_ops.reserve(n_in);
   pbitmaps.reserve(n_in);
@@ -544,9 +510,14 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
   //  allocate a pixel buffer large enough to hold a scanline for all
   //  planes.
   unsigned int nwords = (width + 31) / 32;
-  uint32_t *buffer = new uint32_t[n_in * nwords];
+  uint32_t *buffer = new uint32_t[n_in * nwords]; //
+
+  QImage qimage(width, height, QImage::Format_MonoLSB);
+  qimage.fill(Qt::white);
 
   for (unsigned int y = 0; y < height; y++) {
+
+    //开始一行一行绘制，由bitmap转成pixel
 
     //  lock bitmaps against change by the redraw thread
     if (mutex) {
@@ -555,10 +526,12 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
 
     //  every "slice" scan lines test what bitmaps are empty
     if (y % slice == 0) {
+
       //按片处理，片大小为32.
 
       view_ops.erase(view_ops.begin(), view_ops.end());
       pbitmaps.erase(pbitmaps.begin(), pbitmaps.end());
+
       non_empty_sls.erase(non_empty_sls.begin(), non_empty_sls.end());
       for (unsigned int i = 0; i < n_in; ++i) {
 
@@ -569,6 +542,7 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
         unsigned int bm_index = bm_map[i];
         if (bm_map[i] < pbitmaps_in.size()) {
           if (w > 1 && ls.style(vop.line_style_index()).width() > 0) {
+            //边框frame, 不是直线, 且边框宽度大于1px
             tl_assert(precursors.find(bm_index) != precursors.end());
             pb = &precursors[bm_index];
           } else {
@@ -581,17 +555,20 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
              w > 1) &&
             (vop.ormask() | ~vop.andmask()) != 0) {
 
-          uint32_t non_empty_sl = 0;
+          uint32_t non_empty_sl =
+              0; //每个bit表示slice的其中一行，non_empty_sl如果是0xffffffff,则表示32行全部不是空。
           uint32_t m = 1;
 
           for (unsigned int yy = 0; yy < slice && yy + y < height;
                ++yy, m <<= 1) {
+            //计算该slice内的非空行
             if (!pb->is_scanline_empty(yy + y)) {
               non_empty_sl |= m;
             }
           }
-
+          //如何没有text的情况下，一般过滤出来两个view_ops, frame和fill
           if (non_empty_sl || w > 1) {
+            //有非空行或者粗细大于1，需要处理。
             view_ops.push_back(vop);
             pbitmaps.push_back(pb);
             non_empty_sls.push_back(non_empty_sl);
@@ -607,42 +584,59 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
     const uint32_t needed_bits = 0x00ffffff; // alpha channel not needed
     const uint32_t fill_bits = 0xff000000;   // fill alpha value with ones
     uint32_t *dptr = buffer;
-    uint32_t ne_mask = (1 << (y % slice));
+    uint32_t ne_mask =
+        (1 << (y % slice)); /*当前行掩码，主要用在non_empty_sls[i] & ne_mask
+                               来判断当前行在某些view_op是否非空*/
+                            // view_ops :fill, frame, vertex, text
     for (unsigned int i = 0; i < view_ops.size(); ++i) {
-
       const ViewOp &op = view_ops[i];
       if (op.width() > 1 ||
           (op.width() == 1 && (non_empty_sls[i] & ne_mask) != 0)) {
 
         const LineStyleInfo &ls_info =
-            ls.style(op.line_style_index()).scaled(op.width());
+            ls.style(op.line_style_index())
+                .scaled(
+                    op.width()); // op.line_style_index()对应界面上的Style里的样式
         const DitherPatternInfo &dp_info =
-            dp.pattern(op.dither_index()).scaled(dpr);
+            dp.pattern(op.dither_index())
+                .scaled(
+                    dpr); // op.dither_index():界面上Stipple里的填充图形样式索引
+
+        /*
+        op.dither_offset(),Animation选中Scrool，则dither_offset会++变化，渲染出填充图案滚动的动画效果
+        dp_info.pattern() Stipple图案,dither图案数据中某行数据
+        */
         const uint32_t *dither =
             dp_info.pattern()[(y + op.dither_offset()) % dp_info.height()];
+
         if (dither != 0) {
-
           unsigned int dither_stride = dp_info.pattern_stride();
-
           masks.push_back(
               std::make_pair(op.ormask() & needed_bits,
                              ~op.ormask() & op.andmask() & needed_bits));
 
           if (op.width() == 1) {
             if (ls_info.width() > 0) {
+              //边框是虚线的时候， 2，6 ，12,width
+              //是图案长度，参考layLineStyles.cc里的style_strings 定义。
               render_scanline_std_edge(ls_info.pattern(),
                                        ls_info.pattern_stride(), pbitmaps[i], y,
                                        width, height, dptr);
+
             } else {
+              //默认绘制方式,比如绘制fill填充，pbitmaps[i]里渲染的所有满足条件的填充位置。
+              //所以如果gds就一个矩形，对应的fill的pbitmaps[i]保存查看是一块空白区域。
+              // render_scanline_std在这些满足条件的位置根据填充的style进行二次处理。生成到dptr上
               render_scanline_std(dither, dither_stride, pbitmaps[i], y, width,
                                   height, dptr);
-              // bitmapToQImage((lay::Bitmap *)pbitmaps[i]);
             }
           } else if (op.width() > 1) {
+            //边框粗细大于1的时候
             if (op.shape() == lay::ViewOp::Rect) {
               render_scanline_px(dither, dither_stride, pbitmaps[i], y, width,
                                  height, dptr, (unsigned int)op.width());
             } else if (op.shape() == lay::ViewOp::Cross) {
+              //界面上Layer Toolbox中Style中选中Marked
               render_scanline_cross(dither, dither_stride, pbitmaps[i], y,
                                     width, height, dptr,
                                     (unsigned int)op.width());
@@ -719,7 +713,9 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
           dptr -= nwords;
         }
 
+        //对一行的像素进行处理
         for (unsigned int k = 0; k < 32 && x + k < width; ++k) {
+          // y是透明度处理
           *pt = (*pt & z[k]) | y[k];
           ++pt;
         }
@@ -743,6 +739,9 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
                       double dpr, tl::BitmapBuffer *pimage, unsigned int width,
                       unsigned int height, bool use_bitmap_index,
                       tl::Mutex *mutex) {
+
+  //将各个层bitmap进行合成。
+
   std::vector<unsigned int> bm_map;
   std::vector<unsigned int> vo_map;
 
@@ -807,7 +806,7 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
       non_empty_sls.erase(non_empty_sls.begin(), non_empty_sls.end());
       for (unsigned int i = 0; i < n_in; ++i) {
 
-        const lay::ViewOp &vop = view_ops_in[vo_map[i]];
+        const lay::ViewOp &vop = view_ops_in[vo_map[i]]; // 获取对应的op
         unsigned int w = vop.width();
 
         const lay::Bitmap *pb = 0;
@@ -992,7 +991,8 @@ void bitmap_to_bitmap(const lay::ViewOp &view_op, const lay::Bitmap &bitmap,
         const lay::Bitmap *bp = &bitmap;
 
         //  Styled lines with width > 1 are not rendered directly, but through
-        //  an intermediate step. We prepare the necessary precursor bitmaps now
+        //  an intermediate step. We prepare the necessary precursor bitmaps
+        //  now
         lay::Bitmap precursor;
         if (ls_info.width() > 0) {
 

@@ -1846,6 +1846,7 @@ void LayoutViewBase::set_layer_node_expanded(
 void LayoutViewBase::set_properties(unsigned int index,
                                     const LayerPropertiesConstIterator &iter,
                                     const LayerProperties &props) {
+  //界面上Layer Toolbox->Stipple填充图案的变化会触发此函数。
   if (index >= layer_lists()) {
     return;
   }
