@@ -44,7 +44,7 @@ static void render_scanline_std(const uint32_t *dp, unsigned int ds,
   while (x >= lay::wordlen) {
     *data++ =
         *ps++ &
-        *dm++; //原图满足条件则ps是1和样式进行'与'操作，则绘制出包含样式的填充bitmap
+        *dm++; //原图满足条件则ps是1和样式进行'与'操作，则绘制出包含样式bitmap
     if (dm == dp + ds) {
       //循环图案
       dm = dp;
@@ -79,9 +79,11 @@ static bool bitmapToQImage(lay::Bitmap *bitmap) {
 static void render_scanline_std_edge(const uint32_t *dp, unsigned int ds,
                                      const lay::Bitmap *pbitmap, unsigned int y,
                                      unsigned int w, unsigned int h,
-                                     uint32_t *data) {
-  //整个函数是用来对边缘进行填充,修改data的数据，data是scanline数据，用来处理后输出,bitmap是原图数据
-
+                                     uint32_t *data, tl::Mutex *mutex = 0) {
+  if (mutex != 0) {
+    mutex->isRecursive();
+  }
+  //整个函数是用来对边缘进行填充,bitmap和dp数据进行计算后输出到data
   const uint32_t *psp = (y > 0 ? pbitmap->scanline(y - 1)
                                : pbitmap->empty_scanline()); //指向上一条扫描线
   const uint32_t *psn =
@@ -97,10 +99,11 @@ static void render_scanline_std_edge(const uint32_t *dp, unsigned int ds,
   uint32_t ddp = 0;
 
   int x = int(w);
+  //按slice片，批量bit位处理
   while (x > 0) {
 
-    //读取当前像素 d 及其邻居像素 dsn（下）、dsp（上），以及
-    // ddn（当前下一位像素）。
+    //读取当前slice, d ,及其邻居slice dsn（下）、dsp（上），以及
+    // ddn（接下来 32位slice）。
     uint32_t d = 0;
     uint32_t dsn = 0, dsp = 0;
     uint32_t ddn = 0;
@@ -120,17 +123,23 @@ static void render_scanline_std_edge(const uint32_t *dp, unsigned int ds,
     }
 
     //  di selects the inner bits - such that have a left, right neighbor
-    uint32_t dhn1 = (d & ((d >> 1) | ((ddn & 1) << 31))); //因为
+    /*
+    ((d >> 1) | ((ddn & 1) << 31))
+    先看这部分,不要整体看，这部分获取d的每个bit对应的后一位bit
+
+    d  & '与'操作后,结果是1的bit位表示，该bit后面的也是1
+    */
+    uint32_t dhn1 = (d & ((d >> 1) | ((ddn & 1) << 31)));
     uint32_t dhn2 = (d & ((d << 1) | ((ddp >> 31) & 1)));
-    uint32_t dhi = dhn1 & dhn2;
-    uint32_t dhn = dhn1 | dhn2;
+    uint32_t dhi = dhn1 & dhn2; // bit是1的位既有左邻居又有右邻居。
+    uint32_t dhn = dhn1 | dhn2; // bit是1的位有左邻居或右邻居。
 
     //  dvi selects the vertically inner bits - such that have a top and
     //  botton neighbor
     uint32_t dvn1 = dsn & d;
     uint32_t dvn2 = dsp & d;
-    uint32_t dvi = dvn1 & dvn2;
-    uint32_t dvn = dvn1 | dvn2;
+    uint32_t dvi = dvn1 & dvn2; // bit是1的位既有上邻居又有下邻居。
+    uint32_t dvn = dvn1 | dvn2; // bit是1的位有上邻居或下邻居。
 
     /*
       NOTE: this solution is ugly for lines with angles a little away from 45
@@ -175,14 +184,54 @@ static void render_scanline_std_edge(const uint32_t *dp, unsigned int ds,
 
      */
 
-    uint32_t sol = d - (d & (dhi | dvi | dhn | dvn));
-    uint32_t with_hm = (d - (d & dvi)) & dhn;
-    uint32_t with_vm = (d - (d & dhi)) & dvn;
-    uint32_t with_hvm = d & dhi & dvi & dhn & dvn;
+    /*
 
+     dhi: bit是1的位既有左邻居又有右邻居。
+     dhn: bit是1的位有左邻居或右邻居。
+     dvi: bit是1的位既有上邻居又有下邻居。
+     dvn: bit是1的位有上邻居或下邻居。
+dhi = dhn1 & dhn2; dhn = dhn1 | dhn2;
+    (dhi | dvi | dhn | dvn) 位运算结果中 bit是0 表示该点事孤立点。
+
+    d & (dhi | dvi | dhn | dvn)
+    这一位运算，我们得到的是当前bit中存在像素的哪些有邻居的像素
+
+    d - (d & (dhi | dvi | dhn
+    | dvn)) 我们实际上是在从 d
+    中减去所有有邻居的像素，剩下的就是那些没有邻居的像素，即孤立像素。
+    */
+    uint32_t sol = d - (d & (dhi | dvi | dhn | dvn));
+
+    /*with_hm 解释:
+       d & dvi :过滤出上下都有邻居像素的点
+       d - (d & dvi):排除同时有上下邻居的像素的点
+       (d - (d & dvi)) & dhn :上下邻居像素不同时存在，有左连通或者右连通的点。
+    */
+    uint32_t with_hm = (d - (d & dvi)) & dhn;
+
+    uint32_t with_vm = (d - (d & dhi)) &
+                       dvn; //左右邻居像素不同时存在，有上连通或者下连通的点。
+
+    uint32_t with_hvm = d & dhi & dvi & dhn & dvn; // 上下左右都有连通点。
+
+    if (mutex && d > 0) {
+      //  bitmapToQImage((lay::Bitmap *)pbitmap);
+      if (with_hvm) {
+        mutex->isRecursive();
+      }
+      if (with_vm) {
+        mutex->isRecursive();
+      }
+      if (with_hm) {
+        mutex->isRecursive();
+      }
+      if (sol) {
+        mutex->isRecursive();
+      }
+    }
     uint32_t hm = *dm++;
     uint32_t dd = (sol | with_hm) & hm;
-    if (vflag) {
+    if (vflag) { // y是否在样式填充区域上
       dd |= with_vm | (with_hvm & hm);
     }
 
@@ -621,11 +670,11 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
               //是图案长度，参考layLineStyles.cc里的style_strings 定义。
               render_scanline_std_edge(ls_info.pattern(),
                                        ls_info.pattern_stride(), pbitmaps[i], y,
-                                       width, height, dptr);
+                                       width, height, dptr, mutex);
 
             } else {
               //默认绘制方式,比如绘制fill填充，pbitmaps[i]里渲染的所有满足条件的填充位置。
-              //所以如果gds就一个矩形，对应的fill的pbitmaps[i]保存查看是一块空白区域。
+              //所以如果gds就一个矩形，对应的fill的pbitmaps[i]保存查看是一块矩形白色区域。
               // render_scanline_std在这些满足条件的位置根据填充的style进行二次处理。生成到dptr上
               render_scanline_std(dither, dither_stride, pbitmaps[i], y, width,
                                   height, dptr);
@@ -648,6 +697,8 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
       }
     }
 
+    if (mutex) {
+    }
     //  unlock bitmaps against change by the redraw thread
     if (mutex) {
       mutex->unlock();
@@ -722,6 +773,7 @@ void bitmaps_to_image(const std::vector<lay::ViewOp> &view_ops_in,
       }
     }
   }
+
   //  static int i = 0;
   //  static QVector<tl::PixelBuffer *> list;
   //  if (list.indexOf(pimage) == -1) {
