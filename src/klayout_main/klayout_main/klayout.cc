@@ -133,7 +133,7 @@ extern "C" int WINAPI WinMain(HINSTANCE /*hInstance*/,
 #else
 
 int main(int a_argc, const char **a_argv) {
-    KapiPluginDeclaration::declaration();
+
     char **argv = new char *[a_argc];
     for (int i = 0; i < a_argc; i++) {
         tl::string aa = tl::system_to_string(a_argv[i]);
