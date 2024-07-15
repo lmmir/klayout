@@ -3961,7 +3961,7 @@ void LayoutViewBase::set_view_ops() {
     }
   }
   // planes_per_layer = 12
-  //大概原因是没个layer 分为 context cell, current cell ,child
+  //大概原因是每个layer 分为 context cell, current cell ,child
   // cell,每个cell包含frame, fill, vertex, text
   std::vector<lay::ViewOp> view_ops;
   view_ops.reserve(nlayers * planes_per_layer + special_planes_before +
