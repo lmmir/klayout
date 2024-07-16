@@ -36,103 +36,105 @@ namespace tl {
  *  @brief A base class for method descriptors to be executed later
  *
  */
-class TL_PUBLIC DeferredMethodBase : public tl::Object {
-public:
-  DeferredMethodBase(bool compressed)
-      : m_compressed(compressed), m_scheduled(false) {
-    //  .. nothing yet ..
-  }
+    class TL_PUBLIC DeferredMethodBase : public tl::Object {
+    public:
+        DeferredMethodBase(bool compressed)
+                : m_compressed(compressed), m_scheduled(false) {
+            //  .. nothing yet ..
+        }
 
-  virtual ~DeferredMethodBase() {}
-  virtual void execute() = 0;
+        virtual ~DeferredMethodBase() {}
 
-private:
-  bool m_compressed, m_scheduled;
+        virtual void execute() = 0;
 
-  //  see comment below about who manages m_compressed and m_scheduled.
-  friend class DeferredMethodScheduler;
-};
+    private:
+        bool m_compressed, m_scheduled;
 
-template <class T> class DeferredMethod;
+        //  see comment below about who manages m_compressed and m_scheduled.
+        friend class DeferredMethodScheduler;
+    };
+
+    template<class T>
+    class DeferredMethod;
 
 /**
  *  @brief The deferred method scheduler
  */
-class TL_PUBLIC DeferredMethodScheduler {
-public:
-  /**
-   *  @brief The singleton instance of the scheduler
-   */
-  static DeferredMethodScheduler *instance();
+    class TL_PUBLIC DeferredMethodScheduler {
+    public:
+        /**
+         *  @brief The singleton instance of the scheduler
+         */
+        static DeferredMethodScheduler *instance();
 
-  /**
-   *  @brief Schedule a call to the specified method
-   */
-  void schedule(DeferredMethodBase *method);
+        /**
+         *  @brief Schedule a call to the specified method
+         */
+        void schedule(DeferredMethodBase *method);
 
-  /**
-   *  @brief Remove the specified method call(s) from the call queue
-   */
-  void unqueue(DeferredMethodBase *method);
+        /**
+         *  @brief Remove the specified method call(s) from the call queue
+         */
+        void unqueue(DeferredMethodBase *method);
 
-  /**
-   *  @brief Enable or disable execution of deferred calls
-   *
-   *  One use case for this method is to block execution of these methods
-   *  when the application is supposed only to show a progress bar and
-   *  therefore will process events but is not supposed to execute anything
-   * else.
-   *
-   *  Enabling is cumulative: multiple enable(true) calls must be matched to
-   *  the same number of enable(false) calls.
-   */
-  static void enable(bool en);
+        /**
+         *  @brief Enable or disable execution of deferred calls
+         *
+         *  One use case for this method is to block execution of these methods
+         *  when the application is supposed only to show a progress bar and
+         *  therefore will process events but is not supposed to execute anything
+         * else.
+         *
+         *  Enabling is cumulative: multiple enable(true) calls must be matched to
+         *  the same number of enable(false) calls.
+         */
+        static void enable(bool en);
 
-  /**
-   *  @brief Execute all queued methods
-   *
-   *  This method can be called to force execution of all queued methods.
-   */
-  static void execute();
+        /**
+         *  @brief Execute all queued methods
+         *
+         *  This method can be called to force execution of all queued methods.
+         */
+        static void execute();
 
-  /**
-   *  @brief Gets a value indicating whether the scheduler is disabled
-   */
-  bool is_disabled() const;
+        /**
+         *  @brief Gets a value indicating whether the scheduler is disabled
+         */
+        bool is_disabled() const;
 
-protected:
-  /**
-   *  @brief Reimplementation of the interface: queue an event
-   *  In effect, the event should later trigger a call to do_execute ().
-   */
-  virtual void queue_event() = 0;
+    protected:
+        /**
+         *  @brief Reimplementation of the interface: queue an event
+         *  In effect, the event should later trigger a call to do_execute ().
+         */
+        virtual void queue_event() = 0;
 
-  /**
-   *  @brief Executes the pending methods
-   *  Returns true if more calls are required because handlers have issued more
-   * calls
-   */
-  bool do_execute();
+        /**
+         *  @brief Executes the pending methods
+         *  Returns true if more calls are required because handlers have issued more
+         * calls
+         */
+        bool do_execute();
 
-  /**
-   *  @brief Constructor
-   */
-  DeferredMethodScheduler();
+        /**
+         *  @brief Constructor
+         */
+        DeferredMethodScheduler();
 
-  /**
-   *  @brief Destructor
-   */
-  virtual ~DeferredMethodScheduler();
+        /**
+         *  @brief Destructor
+         */
+        virtual ~DeferredMethodScheduler();
 
-private:
-  int m_disabled;
-  bool m_scheduled;
-  std::list<DeferredMethodBase *> m_methods, m_executing;
-  std::set<DeferredMethodBase *> m_unqueued;
-  tl::Mutex m_lock;
+    private:
+        int m_disabled;
+        bool m_scheduled;
+        std::list<DeferredMethodBase *> m_methods, m_executing;
+        std::set<DeferredMethodBase *> m_unqueued;
+        tl::Mutex m_lock;
 
-  void do_enable(bool en);
-};
+        void do_enable(bool en);
+    };
 
 /**
  *  @brief A protected region that ensures that deferred methods are not
@@ -148,19 +150,20 @@ private:
  *    QMessageBox::warning (...);
  *  }
  *  @endcode
+ *  用来在作用域内不触发延时调用方法。
  */
-class TL_PUBLIC NoDeferredMethods {
-public:
-  /**
-   *  @brief Constructor
-   */
-  NoDeferredMethods() { DeferredMethodScheduler::enable(false); }
+    class TL_PUBLIC NoDeferredMethods {
+    public:
+        /**
+         *  @brief Constructor
+         */
+        NoDeferredMethods() { DeferredMethodScheduler::enable(false); }
 
-  /**
-   *  @brief Destructor
-   */
-  ~NoDeferredMethods() { DeferredMethodScheduler::enable(true); }
-};
+        /**
+         *  @brief Destructor
+         */
+        ~NoDeferredMethods() { DeferredMethodScheduler::enable(true); }
+    };
 
 /**
  *  @brief Deferred execution of a const method
@@ -191,57 +194,59 @@ public:
  *  main thread.
  */
 
-template <class T> class DeferredMethod : public DeferredMethodBase {
-public:
-  /**
-   *  @brief Construct a deferred method call from a non-const method
-   */
-  DeferredMethod(T *t, void (T::*method)(), bool compressed = true)
-      : DeferredMethodBase(compressed), mp_t(t), m_method(method) {
-    //  .. nothing yet ..
-  }
+    template<class T>
+    class DeferredMethod : public DeferredMethodBase {
+    public:
+        /**
+         *  @brief Construct a deferred method call from a non-const method
+         */
+        DeferredMethod(T *t, void (T::*method)(), bool compressed = true)
+                : DeferredMethodBase(compressed), mp_t(t), m_method(method) {
+            //  .. nothing yet ..
+        }
 
-  /**
-   *  @brief Destructor
-   */
-  ~DeferredMethod() {
-    if (DeferredMethodScheduler::instance()) {
-      DeferredMethodScheduler::instance()->unqueue(this);
-    }
-  }
+        /**
+         *  @brief Destructor
+         */
+        ~DeferredMethod() {
+            if (DeferredMethodScheduler::instance()) {
+                DeferredMethodScheduler::instance()->unqueue(this);
+            }
+        }
 
-  /**
-   *  @brief Schedule a call to the method
-   */
-  void operator()() {
-    if (DeferredMethodScheduler::instance()) {
-      //  management of m_compressed and m_scheduled is done in the
-      //  DeferredMethodScheduler - there it is safely locked. Doing it there
-      //  saves a private mutex for this object.
-      DeferredMethodScheduler::instance()->schedule(this);
-    } else {
-      execute();
-    }
-  }
+        /**
+         *  @brief Schedule a call to the method
+         */
+        void operator()() {
+            if (DeferredMethodScheduler::instance()) {
+                //  management of m_compressed and m_scheduled is done in the
+                //  DeferredMethodScheduler - there it is safely locked. Doing it there
+                //  saves a private mutex for this object.
+                DeferredMethodScheduler::instance()->schedule(this);
+            } else {
+                execute();
+            }
+        }
 
-  /**
-   *  @brief Cancel any pending calls
-   */
-  void cancel() {
-    if (DeferredMethodScheduler::instance()) {
-      DeferredMethodScheduler::instance()->unqueue(this);
-    }
-  }
+        /**
+         *  @brief Cancel any pending calls
+         */
+        void cancel() {
+            if (DeferredMethodScheduler::instance()) {
+                DeferredMethodScheduler::instance()->unqueue(this);
+            }
+        }
 
-  /**
-   *  @brief Execute the call immediately
-   */
-  void execute() { (mp_t->*m_method)(); }
+        /**
+         *  @brief Execute the call immediately
+         */
+        void execute() { (mp_t->*m_method)(); }
 
-private:
-  T *mp_t;
-  void (T::*m_method)();
-};
+    private:
+        T *mp_t;
+
+        void (T::*m_method)();
+    };
 
 } // namespace tl
 
